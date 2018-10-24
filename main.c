@@ -5,7 +5,8 @@
 #include <string.h>
 
 int main ()
-{ printf("Hi bixby\n);
+{ 
+    printf("Hi bixby\n);
 
     return (0);
 }
