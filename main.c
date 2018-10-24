@@ -5,7 +5,7 @@
 #include <string.h>
 
 int main ()
-{ printf("Hello World\n);
+{ printf("Hi bixby\n);
 
     return (0);
 }
