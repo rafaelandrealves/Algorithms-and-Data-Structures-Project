@@ -1,11 +1,10 @@
 #include <stdlib.h>
-#include <stdboll.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 
 
-
+#include "util.h"
 
 int main (int argc, char ** argv)
 { 

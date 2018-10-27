@@ -22,3 +22,7 @@ main.o: main.c util.h
 
 util.o: util.c util.h
 	$(CC) -c $(CFLAGS) util.c
+
+
+clean::
+	rm -f *.o core a.out tuktuk *~
