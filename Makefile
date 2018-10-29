@@ -6,7 +6,7 @@ CFLAGS = -g -Wall -ansi -pedantic -std=c99
 
 # Sources
 
-SOURCES = main.c util.c util.h
+SOURCES = main.c util.c util.h defs.h
 
 # Objects
 
