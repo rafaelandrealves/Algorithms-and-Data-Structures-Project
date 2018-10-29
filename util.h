@@ -21,14 +21,9 @@
 
 
 
+void * Checked_Malloc(size_t size);
 
-
-
-
-
-
-
-
+FILE * Open_File(char * file_name, char * mode);
 
 
 

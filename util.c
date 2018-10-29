@@ -20,6 +20,30 @@
 
 #include "util.h"
 #include "defs.h"
+#include "leitura_fich.h"
+
+void * Checked_Malloc(size_t size)
+{
+    void * mem = malloc(size);
+    if(mem == NULL)
+    {
+        printf("Error alocating memory. Exiting\n");
+        exit(2);
+    }
+    return mem;
+}
 
 
+FILE * Open_File(char * file_name, char * mode)
+{
+    FILE * fp = NULL;
+
+    fp = fopen(file_name, mode);
+    if(fp == NULL)
+    {
+        printf("Error opening file %s. Exiting.\n", file_name);
+        exit(2);
+    }
+    return fp;
+}
 
