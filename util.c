@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "util.h"
+#include "defs.h"
 
 
 
