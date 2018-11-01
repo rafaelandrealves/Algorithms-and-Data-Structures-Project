@@ -13,7 +13,7 @@ int main (int argc, char ** argv)
     UNICODE * cavaleiro = Read_File(argv[1]);
     char *tok=NULL;
     if(argc>2){
-        printf("ERRO NUMERO ELEVADO DE ELEMENTOS");
+        printf("ERRO NUMERO ELEVADO DE ELEmENTOS");
         exit(1);
     }    
 

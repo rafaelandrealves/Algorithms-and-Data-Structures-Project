@@ -20,3 +20,4 @@
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
 UNICODE * Read_File(char *);
+int analisa_ficheiro(FILE *file);
