@@ -20,3 +20,4 @@
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
 UNICODE * Read_File(char *);
+char * OutPutFileName(char * nome_inicial)

@@ -34,3 +34,24 @@ UNICODE * Read_File(char * name_file)
 
     return new;
 }
+
+char * OutPutFileName(char * nome_inicial)
+{
+    int i = 0;
+    //descobrir qual é a posição do '.' no ficheiro original
+    for( i = 0; i < strlen(nome_inicial[1]); i++)
+    {
+        if(nome_inicial[1][i] ==  '.')
+        break;
+    }
+
+    char * novo = (char *) malloc((strlen(".walks") + i)*sizeof(char));
+
+    // copiar todos os caracteres até ao '.'
+    for (int j = 0; j < i; j++)
+        novo[j] = nome_inicial[1][j];
+
+    strcat(novo, ".walks"); // juntar as duas strings
+
+    return novo;
+}
