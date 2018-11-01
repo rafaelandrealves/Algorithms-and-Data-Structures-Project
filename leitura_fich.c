@@ -27,7 +27,7 @@ UNICODE * Read_File(char * name_file)
 {
     FILE * fp = Open_File(name_file, "r");
     UNICODE * new = (UNICODE *) Checked_Malloc(sizeof(UNICODE));
-    /*
+
     int check=0,i=0,j=0;
     char buffer[MAX_SIZE]={'\0'};
     char delim[4]=" ";
@@ -59,14 +59,15 @@ UNICODE * Read_File(char * name_file)
 
     }
 
-    */
+    // TODO: fazer um while com variável booleana para saber quando chegou ao final do ficheiro
+    // TODO: while não chega ao final vai lendo cada linha
+    // TODO: if(linha em branco) continue e não lê nada
+    // TODO: fazer mallocs para as vars
+
+    
 
 
 
-
-
-
-    // TODO: LEITURA DO FICHEIRO
 
 
 
