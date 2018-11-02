@@ -20,8 +20,5 @@
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
 UNICODE * Read_File(char *);
-<<<<<<< HEAD
 char * OutPutFileName(char * nome_inicial)
-=======
 int analisa_ficheiro(FILE *file);
->>>>>>> rafael

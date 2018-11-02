@@ -66,7 +66,6 @@ UNICODE * Read_File(char * name_file)
     return new;
 }
 
-<<<<<<< HEAD
 char * OutPutFileName(char * nome_inicial)
 {
     int i = 0;
@@ -87,7 +86,6 @@ char * OutPutFileName(char * nome_inicial)
 
     return novo;
 }
-=======
 
 int analisa_ficheiro(FILE *file){//vamos ter sempre de fazer free das variáveis,logo esta função devolve um sinal para ver se o while continua ou não
     int fim=1;// o while grande fica num main, em vez de ficar na função leitura, assim é mais fácil de fazer os free das variáveis
@@ -117,4 +115,3 @@ int analisa_ficheiro(FILE *file){//vamos ter sempre de fazer free das variáveis
 
 
 
->>>>>>> rafael
