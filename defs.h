@@ -28,7 +28,7 @@ typedef struct caminho
 
 typedef struct UNICODE // estrutura principal do programa
 {
-    int modo_jogo; // ou char
+    char modo_jogo; // ou char
     tabuleiro tabu; // tabuleiro
     caminho passadeira_vermelha; // conjunto de pontos que o utilizador coloca
     caminho * para_preguicosos;  // caminhos que podem ser a solução ótima
