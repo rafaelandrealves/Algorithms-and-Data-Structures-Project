@@ -94,9 +94,10 @@ char * OutPutFileName(char * nome_inicial)
     return novo;
 }
 
-int analisa_ficheiro( FILE * file ){ // vamos ter sempre de fazer free das variáveis,logo esta função devolve um sinal para ver se o while continua ou não
-    int fim = 1;// o while grande fica num main, em vez de ficar na função leitura, assim é mais fácil de fazer os free das variáveis
-    char buffer[MAX_SIZE] = {'\0'};//ATENÇÃO COM FCLOSE
+int analisa_ficheiro( FILE * file )
+{ 
+    int fim = 1;
+    char buffer[MAX_SIZE] = {'\0'};
 
 
     if( fgets(buffer,MAX_SIZE,file) != EOF){
@@ -105,10 +106,6 @@ int analisa_ficheiro( FILE * file ){ // vamos ter sempre de fazer free das vari�
     while(strcmp(buffer,"\n") == 0){
         fgets(buffer,MAX_SIZE,file);
     }
-
-
-
-
 
     return fim;
 }

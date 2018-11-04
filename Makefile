@@ -23,7 +23,7 @@ main.o: main.c util.h defs.h tabuleiros.h
 util.o: util.c util.h defs.h tabuleiros.h
 	$(CC) -c $(CFLAGS) util.c
 
-tabuleiros.o: tabuleiros.c util.h defs.h
+tabuleiros.o: tabuleiros.c defs.h util.h 
 	$(CC) -c $(CFLAGS) tabuleiros.c
 
 

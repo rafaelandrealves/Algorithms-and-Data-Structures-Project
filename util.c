@@ -76,7 +76,7 @@ void FreeAll(UNICODE * turista)
 {
     free(turista->passadeira_vermelha.points);
 
-    for(int i = 0; i < turista->tabu.size_x)
+    for(int i = 0; i < turista->tabu.size_x; i++)
         free(turista->tabu.tab[i]);
 
     free(turista->tabu.tab);
