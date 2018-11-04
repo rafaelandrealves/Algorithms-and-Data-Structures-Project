@@ -6,32 +6,37 @@
 
 #include "util.h"
 #include "defs.h"
-#include "leitura_fich.h"
+#include "tabuleiros.h"
+
+
+
+
 
 int main (int argc, char ** argv)
-{ 
-    UNICODE * cavaleiro = Read_File(argv[1]);
-    char *tok=NULL;
-    if(argc>2){
-        printf("ERRO NUMERO ELEVADO DE ELEmENTOS");
-        exit(1);
-    }    
+{
+    FILE * fp_in = checkArguments(argc, argv);
+    UNICODE * cavaleiro;
 
-    if(strstr(argv[1],".cities")==NULL) //será que é preciso garantir que está na posição certa??
-    {
-        printf("ERROR-HAS TO BE A .cities file");
-        exit (1);
-    }
-    tok=strtok(argv[1],".");
-    tok=strtok(NULL,"\0");
-    if(strcmp(tok,"cities")!=0){
-        printf("ERROR, TRYING THAT DOESNT WORK");
-        exit(1);
-    }
+    // aqui vamos ter o while principal do programa
 
-    
+    /*
+        LEITURA DO FICHEIRO
+    */
+    cavaleiro = Read_File(fp_in);
+
+    /*
+        PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
+    */
 
 
-    free(cavaleiro);
+
+   /*
+        LIBERTA A MEMÓRIA DESTA ITERAÇÃO
+   */
+
+    FreeAll(cavaleiro);
+
+
+    fclose(fp_in);
     return (0);
 }

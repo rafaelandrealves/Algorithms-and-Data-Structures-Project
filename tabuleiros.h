@@ -6,10 +6,12 @@
  * Revision:  27 Oct 2018
  *
  * NAME
- *     leitura_fich.c - Implementation of reading file functions
+ *     leitura_fich.h - Implementation of reading file functions
  *
 */
 
+#ifndef TABULEIROS_h
+#define TABULEIROS_H
 
 
 #include <stdlib.h>
@@ -18,7 +20,11 @@
 #include <string.h>
 
 
+
 // função para ler o ficheiro e colocar a informação na estrutura WAY
-UNICODE * Read_File(char *);
-char * OutPutFileName(char * nome_inicial)
+UNICODE * Read_File(FILE * fp);
+char * OutPutFileName(char * nome_inicial);
 int analisa_ficheiro(FILE *file);
+
+
+#endif
