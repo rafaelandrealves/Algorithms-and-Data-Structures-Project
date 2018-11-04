@@ -67,10 +67,6 @@ UNICODE * Read_File(FILE * fp)
 
 
     // printf("%d--%d---%c--%d--%d\n",new->tabu.size_x,new->passadeira_vermelha.num_pontos,new->modo_jogo,new->tabu.tab[0][0],new->tabu.tab[1][2]);
-    // TODO: fazer um while com variável booleana para saber quando chegou ao final do ficheiro
-    // TODO: while não chega ao final vai lendo cada linha
-    // TODO: if(linha em branco) continue e não lê nada
-    // TODO: fazer mallocs para as vars
 
     return new;
 }
