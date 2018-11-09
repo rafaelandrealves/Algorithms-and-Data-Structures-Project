@@ -7,6 +7,7 @@
 #include "defs.h"
 #include "util.h"
 #include "tabuleiros.h"
+#include "points.h"
 
 
 

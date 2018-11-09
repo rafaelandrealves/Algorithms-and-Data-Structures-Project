@@ -21,6 +21,7 @@
 #include "defs.h"
 #include "util.h"
 #include "tabuleiros.h"
+#include "points.h"
 
 
 void * Checked_Malloc(size_t size)

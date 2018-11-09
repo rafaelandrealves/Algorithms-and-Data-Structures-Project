@@ -14,17 +14,20 @@ OBJECTS = util.o tabuleiros.o main.o
 
 %.o: %.c
 
-tuktuk: main.o util.o tabuleiros.o
-	$(CC) $(CFLAGS) -o tuktuk main.o util.o tabuleiros.o
+tuktuk: main.o util.o tabuleiros.o points.o
+	$(CC) $(CFLAGS) -o tuktuk main.o util.o tabuleiros.o points.o
 
-main.o: main.c util.h defs.h tabuleiros.h
+main.o: main.c util.h defs.h tabuleiros.h points.h
 	$(CC) -c $(CFLAGS) main.c
 
-util.o: util.c util.h defs.h tabuleiros.h
+util.o: util.c util.h defs.h tabuleiros.h points.h
 	$(CC) -c $(CFLAGS) util.c
 
-tabuleiros.o: tabuleiros.c defs.h util.h 
+tabuleiros.o: tabuleiros.c defs.h util.h points.h
 	$(CC) -c $(CFLAGS) tabuleiros.c
+
+points.o: points.c defs.h util.h points.h
+	$(CC) -c $(CFLAGS) points.c
 
 
 clean::
