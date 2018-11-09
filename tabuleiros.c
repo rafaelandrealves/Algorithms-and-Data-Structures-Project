@@ -29,13 +29,12 @@
 UNICODE * Read_File(FILE * fp)
 {
     UNICODE * new = (UNICODE *) Checked_Malloc(sizeof(UNICODE));
-
+ 
     int i = 0,j = 0;
     char buffer[MAX_SIZE] = {'\0'};
     char delim[4] = " ";
     char * tok = NULL;
     fgets(buffer,MAX_SIZE,fp);
-
 
     sscanf(buffer,"%d %d %c %d", &new->tabu.size_x, &new->tabu.size_y, &new->modo_jogo, &new->passadeira_vermelha.num_pontos);
 
@@ -51,7 +50,6 @@ UNICODE * Read_File(FILE * fp)
         i++;
     }
     i = 0;
-
     while(i < new->tabu.size_x)
     {
         fgets(buffer,MAX_SIZE,fp);
@@ -68,7 +66,7 @@ UNICODE * Read_File(FILE * fp)
     }
 
 
-    // printf("%d--%d---%c--%d--%d\n",new->tabu.size_x,new->passadeira_vermelha.num_pontos,new->modo_jogo,new->tabu.tab[0][0],new->tabu.tab[1][2]);
+     //printf("%d--%d---%c--%d--%d\n",new->tabu.size_x,new->passadeira_vermelha.num_pontos,new->modo_jogo,new->tabu.tab[0][0],new->tabu.tab[1][2]);
 
     return new;
 }

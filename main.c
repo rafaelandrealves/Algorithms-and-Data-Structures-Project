@@ -21,7 +21,7 @@ int main (int argc, char ** argv)
 
     // aqui vamos ter o while principal do programa
 
-    while( check_EOF(fp_in) )
+    do
     {
         /*
             LEITURA DO FICHEIRO
@@ -32,14 +32,13 @@ int main (int argc, char ** argv)
             PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
         */
         num++;
-
         /*
             LIBERTA A MEMÓRIA DESTA ITERAÇÃO
         */
 
         FreeAll(cavaleiro);
         
-    }
+    }while( check_EOF(fp_in));
 
     printf("Fiz %d vezes\n", num);
 
