@@ -11,10 +11,10 @@
 */
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
+// #include <stdlib.h>
+// #include <stdio.h>
+// #include <math.h>
+// #include <string.h>
 
 
 #include "defs.h"
@@ -26,47 +26,39 @@
 
 
 
-UNICODE * Read_File(FILE * fp)
+UNICODE * Read_File(FILE * fp, bool *end_of_file)
 {
     UNICODE * new = (UNICODE *) Checked_Malloc(sizeof(UNICODE));
- 
-    int i = 0,j = 0;
-    char buffer[MAX_SIZE] = {'\0'};
-    char delim[4] = " ";
-    char * tok = NULL;
-    fgets(buffer,MAX_SIZE,fp);
 
-    sscanf(buffer,"%d %d %c %d", &new->tabu.size_x, &new->tabu.size_y, &new->modo_jogo, &new->passadeira_vermelha.num_pontos);
 
-    new->tabu.tab = (int **) Checked_Malloc(new->tabu.size_x * sizeof(int*));
+
+    if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) < 4)
+    {
+        *end_of_file = true;
+        return NULL;
+    }
+    printf("%d %d %c %d\n", new->tabu.size_y, new->tabu.size_x, new->modo_jogo, new->passadeira_vermelha.num_pontos);
+
+    new->tabu.tab = (int **) Checked_Malloc(new->tabu.size_y * sizeof(int*));
+    for(int i = 0; i < new->tabu.size_y; i++)
+        new->tabu.tab[i] = (int *) Checked_Malloc(new->tabu.size_x * sizeof(int));
+
     new->passadeira_vermelha.points = (point *) Checked_Malloc( new->passadeira_vermelha.num_pontos * sizeof(point));
 
 
-    while(i < new->passadeira_vermelha.num_pontos)
+    for(int i = 0; i < new->passadeira_vermelha.num_pontos; i++)
     {
-        fgets(buffer,MAX_SIZE,fp);  
-        sscanf(buffer,"%d %d",&new->passadeira_vermelha.points[i].x,&new->passadeira_vermelha.points[i].y);
-        // FIXME: tinhas aqui um erro porque estavas a ler tudo para a mesma posição
-        i++;
-    }
-    i = 0;
-    while(i < new->tabu.size_x)
-    {
-        fgets(buffer,MAX_SIZE,fp);
-        new->tabu.tab[i] = (int *) Checked_Malloc(new->tabu.size_y*sizeof(int));
-        tok = strtok(buffer,delim); 
-        while (tok != NULL)
-        { 
-            new->tabu.tab[i][j] = atoi(tok); 
-            tok = strtok(NULL, delim); 
-            j++;
-        }
-        j=0;
-        i++;
+        fscanf(fp, "%d %d", &new->passadeira_vermelha.points[i].x, &new->passadeira_vermelha.points[i].y);
+        printf("%d %d \n \a", new->passadeira_vermelha.points[i].x, new->passadeira_vermelha.points[i].y);
     }
 
+    
+    for(int yy = 0; yy < new->tabu.size_y; yy++)
+    {
+       for(int xx = 0; xx < new->tabu.size_x; xx++)
+           fscanf(fp, "%d ", &new->tabu.tab[yy][xx]);
+    }
 
-     //printf("%d--%d---%c--%d--%d\n",new->tabu.size_x,new->passadeira_vermelha.num_pontos,new->modo_jogo,new->tabu.tab[0][0],new->tabu.tab[1][2]);
 
     return new;
 }

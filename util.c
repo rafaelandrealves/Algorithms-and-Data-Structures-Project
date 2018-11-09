@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "defs.h"
 #include "util.h"
@@ -54,8 +55,11 @@ FILE * checkArguments(int _argc, char ** _argv)
 {
     char * tok = NULL;
     char backup[40] ={'\0'};
+
+
     strcpy(backup,_argv[1]);
-    if(_argc>2){
+
+    if(_argc > 2){
         printf("ERRO NUMERO ELEVADO DE ELEMENTOS");
         exit(1);
     }    
@@ -75,6 +79,7 @@ FILE * checkArguments(int _argc, char ** _argv)
     return Open_File(backup, "r");
 }
 
+
 void FreeAll(UNICODE * turista)
 {
     free(turista->passadeira_vermelha.points);
@@ -88,20 +93,29 @@ void FreeAll(UNICODE * turista)
 
 int check_EOF( FILE * file )
 { 
-    int fim = 1;
-    char buffer[MAX_SIZE] = {'\0'};
-    char *aux=NULL;
-    fgets(buffer,MAX_SIZE,file);
-    printf("ola\n");
-    while(aux != NULL && strcmp(buffer,"\n") == 0){
-       aux = fgets(buffer,MAX_SIZE,file);
-       puts(buffer);
-           printf("ola1\n");
-    }
+    bool fim = true;
+
+    if(file != NULL)    fim = false;
+   
+   
+    // int fim = 1;
+    // char buffer[MAX_SIZE] = {'\0'};
+    // char *aux = NULL;
+
+    // fgets(buffer,MAX_SIZE,file);
+
+    // printf("ola\n");
+
+
+    // while(aux != NULL && strcmp(buffer,"\n") == 0){
+    //    aux = fgets(buffer,MAX_SIZE,file);
+    //    puts(buffer);
+    //        printf("ola1\n");
+    // }
 
         printf("ola2\n");
-    if( aux == NULL)
-        fim = 0;
+    // if( aux == NULL)
+    //     fim = 0;
 
     return fim;
 }

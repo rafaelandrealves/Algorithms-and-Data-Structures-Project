@@ -18,11 +18,13 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <stdbool.h>
+
 
 
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
-UNICODE * Read_File(FILE * fp);
+UNICODE * Read_File(FILE * fp, bool *end_of_file);
 char * OutPutFileName(char * nome_inicial);
 int analisa_ficheiro(FILE *file);
 
