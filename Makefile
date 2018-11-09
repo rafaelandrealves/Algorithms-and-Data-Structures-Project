@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler Flags
-CFLAGS = -g -Wall -ansi -pedantic -std=c99
+CFLAGS = -Wall -std=c99 -g
 
 # Sources
 
