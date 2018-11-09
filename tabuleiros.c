@@ -17,11 +17,11 @@
 #include <string.h>
 
 
-#include "util.h"
 #include "defs.h"
+#include "util.h"
 #include "tabuleiros.h"
 
-#define MAX_SIZE 2048
+
 
 
 
@@ -50,6 +50,7 @@ UNICODE * Read_File(FILE * fp)
         i++;
     }
     i = 0;
+
     while(i < new->tabu.size_x)
     {
         fgets(buffer,MAX_SIZE,fp);
@@ -94,21 +95,7 @@ char * OutPutFileName(char * nome_inicial)
     return novo;
 }
 
-int analisa_ficheiro( FILE * file )
-{ 
-    int fim = 1;
-    char buffer[MAX_SIZE] = {'\0'};
 
-
-    if( fgets(buffer,MAX_SIZE,file) != EOF){
-        fim=0;
-    }
-    while(strcmp(buffer,"\n") == 0){
-        fgets(buffer,MAX_SIZE,file);
-    }
-
-    return fim;
-}
 
 
 

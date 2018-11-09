@@ -10,7 +10,7 @@ SOURCES = main.c util.c util.h defs.h tabuleiros.h
 
 # Objects
 
-OBJECTS = util.o
+OBJECTS = util.o tabuleiros.o main.o
 
 %.o: %.c
 
@@ -28,4 +28,4 @@ tabuleiros.o: tabuleiros.c defs.h util.h
 
 
 clean::
-	rm -f *.o core a.out tuktuk *~
+	rm -f *.o core tuktuk *~

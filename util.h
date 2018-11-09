@@ -28,6 +28,8 @@ FILE * checkArguments(int _argc, char ** _argv);
 
 void FreeAll(UNICODE * turista);
 
+int check_EOF( FILE * file );
+
 
 
 #endif

@@ -18,8 +18,8 @@
 #include <math.h>
 #include <string.h>
 
-#include "util.h"
 #include "defs.h"
+#include "util.h"
 #include "tabuleiros.h"
 
 
@@ -82,3 +82,19 @@ void FreeAll(UNICODE * turista)
     free(turista->tabu.tab);
 }
 
+
+int check_EOF( FILE * file )
+{ 
+    int fim = 1;
+    char buffer[MAX_SIZE] = {'\0'};
+    char *aux;
+
+
+    while(strcmp(buffer,"\n") == 0)
+        aux = fgets(buffer,MAX_SIZE,file);
+
+    if( aux == NULL)
+        fim = 0;
+
+    return fim;
+}

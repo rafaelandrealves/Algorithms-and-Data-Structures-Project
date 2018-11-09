@@ -5,6 +5,9 @@
 #define _DEFS_H
 
 
+#define MAX_SIZE 2048
+
+
 typedef struct point
 {
     int x;
@@ -32,7 +35,7 @@ typedef struct UNICODE // estrutura principal do programa
     tabuleiro tabu; // tabuleiro
     caminho passadeira_vermelha; // conjunto de pontos que o utilizador coloca
     caminho * para_preguicosos;  // caminhos que podem ser a solução ótima
-}UNICODE;
+} UNICODE;
 
 
 
