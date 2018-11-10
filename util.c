@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * File Name: util.c
- 
+
  * Author:    Rafael Cordeiro & Rodrigo Figueiredo
  * Revision:  27 Oct 2018
  *
@@ -18,10 +18,14 @@
 #include "tabuleiros.h"
 #include "points.h"
 
-
-void * Checked_Malloc(size_t size)
+/**
+ * Allocs memory (with calloc) and checks if the memory was correctly allocated
+ * @param  size [size of memory to be allocated]
+ * @return      [returns void * to the memory allocation]
+ */
+Item Checked_Malloc(size_t size)
 {
-    void * mem = calloc(1, size);
+    Item mem = calloc(1, size);
     if(mem == NULL)
     {
         printf("Error alocating memory. Exiting\n");
@@ -30,7 +34,12 @@ void * Checked_Malloc(size_t size)
     return mem;
 }
 
-
+/**
+ * Opens a file and checks if was correctly opened
+ * @param  file_name [name of the file to be opened]
+ * @param  mode      [mode to open the file]
+ * @return           [file pointer]
+ */
 FILE * Open_File(char * file_name, char * mode)
 {
     FILE * fp = NULL;
@@ -45,6 +54,12 @@ FILE * Open_File(char * file_name, char * mode)
 }
 
 
+/**
+ * Checks the argv arguments to the main program run
+ * @param  _argc [number of argv arguments]
+ * @param  _argv [char ** vector with the imput arguments]
+ * @return       [returns the file pointer if all arguments are valids]
+ */
 FILE * checkArguments(int _argc, char ** _argv)
 {
     char * tok = NULL;
@@ -56,7 +71,7 @@ FILE * checkArguments(int _argc, char ** _argv)
     if(_argc > 2){
         printf("ERRO! NUMERO ELEVADO DE ELEMENTOS");
         exit(0);
-    }    
+    }
 
     if(strstr(_argv[1],".cities") == NULL)
     {
@@ -73,7 +88,10 @@ FILE * checkArguments(int _argc, char ** _argv)
     return Open_File(backup, "r");
 }
 
-
+/**
+ * Free all memory from one struct
+ * @param turista [struct to be freed]
+ */
 void FreeAll(UNICODE * turista)
 {
     // fazer free do caminho lido do ficheiro
@@ -87,7 +105,10 @@ void FreeAll(UNICODE * turista)
     free(turista);
 }
 
-
+/**
+ * Prints all the info of one struct the way it was read
+ * @param turista [struct to be printed]
+ */
 void PrintMainStruct(UNICODE * turista)
 {
     printf("%d %d %c %d\n", turista->tabu.size_y, turista->tabu.size_x, turista->modo_jogo, turista->passadeira_vermelha.num_pontos);
@@ -106,9 +127,16 @@ void PrintMainStruct(UNICODE * turista)
 
 }
 
+
+/**
+ * Generates the output file name based on the imput file name
+ * @param  nome_inicial [name of the imput file]
+ * @return              [returns a char * to the output file name]
+ */
 char * OutPutFileName(char * nome_inicial)
 {
     int i = 0;
+
     //descobrir qual é a posição do '.' no ficheiro original
     for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
 

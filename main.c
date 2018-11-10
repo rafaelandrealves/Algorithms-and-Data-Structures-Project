@@ -29,6 +29,7 @@ int main (int argc, char ** argv)
             PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
         */
 
+
         /*
             LIBERTA A MEMÓRIA DESTA ITERAÇÃO
         */
