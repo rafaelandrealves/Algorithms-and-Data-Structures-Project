@@ -11,18 +11,13 @@
 */
 
 
-// #include <stdlib.h>
-// #include <stdio.h>
-// #include <math.h>
-// #include <string.h>
-
 
 #include "defs.h"
 #include "util.h"
 #include "tabuleiros.h"
 #include "points.h"
 
-
+#define PrintStructs 0
 
 
 
@@ -32,12 +27,11 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
 
 
 
-    if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) < 4)
+    if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) != 4)
     {
         *end_of_file = true;
-        return NULL;
+        return new;
     }
-    printf("%d %d %c %d\n", new->tabu.size_y, new->tabu.size_x, new->modo_jogo, new->passadeira_vermelha.num_pontos);
 
     new->tabu.tab = (int **) Checked_Malloc(new->tabu.size_y * sizeof(int*));
     for(int i = 0; i < new->tabu.size_y; i++)
@@ -47,10 +41,7 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
 
 
     for(int i = 0; i < new->passadeira_vermelha.num_pontos; i++)
-    {
         fscanf(fp, "%d %d", &new->passadeira_vermelha.points[i].x, &new->passadeira_vermelha.points[i].y);
-        printf("%d %d \n \a", new->passadeira_vermelha.points[i].x, new->passadeira_vermelha.points[i].y);
-    }
 
     
     for(int yy = 0; yy < new->tabu.size_y; yy++)
@@ -59,43 +50,25 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
            fscanf(fp, "%d ", &new->tabu.tab[yy][xx]);
     }
 
+    #if PrintStructs == 1
+        PrintMainStruct(new);
+    #endif
 
     return new;
 }
 
 
 
-char * OutPutFileName(char * nome_inicial)
+
+bool check_Point_Inside_Table(tabuleiro table, point ponto)
 {
-    int i = 0;
-    //descobrir qual é a posição do '.' no ficheiro original
-    for( i = 0; i < strlen(nome_inicial); i++)
-    {
-        if(nome_inicial[i] ==  '.')
-        break;
-    }
+    int x = get_X_From_Point(ponto);
 
-    char * novo = (char *) malloc((strlen(".walks") + i)*sizeof(char));
+    int y = get_Y_From_Point(ponto);
 
-    // copiar todos os caracteres até ao '.'
-    for (int j = 0; j < i; j++)
-        novo[j] = nome_inicial[j];
+    if(x < table.size_x && y < table.size_y)
+        return true;
 
-    strcat(novo, ".walks"); // juntar as duas strings
+    return false;
 
-    return novo;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

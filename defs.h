@@ -8,6 +8,8 @@
 #define MAX_SIZE 2048
 
 
+typedef void * Item;
+
 typedef struct point
 {
     int x;
