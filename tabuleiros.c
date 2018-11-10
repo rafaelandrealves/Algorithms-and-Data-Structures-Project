@@ -11,19 +11,13 @@
 */
 
 
-// #include <stdlib.h>
-// #include <stdio.h>
-// #include <math.h>
-// #include <string.h>
-
 
 #include "defs.h"
 #include "util.h"
 #include "tabuleiros.h"
 #include "points.h"
 
-
-
+#define PrintStructs 0
 
 
 UNICODE * Read_File(FILE * fp, bool *end_of_file)
@@ -31,11 +25,13 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
     UNICODE * new = (UNICODE *) Checked_Malloc(sizeof(UNICODE));
 
 
-
-    if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) < 4)
+    if (fp == NULL)
+        printf("é null crl\n\n");
+    
+    if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) != 4)
     {
         *end_of_file = true;
-        return NULL;
+        return new;
     }
 
     new->tabu.tab = (int **) Checked_Malloc(new->tabu.size_y * sizeof(int*));
@@ -55,8 +51,10 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
            fscanf(fp, "%d ", &new->tabu.tab[yy][xx]);
     }
 
-    PrintMainStruct(new);
-
+    #if PrintStructs == 1
+        PrintMainStruct(new);
+    #endif
+    
     return new;
 }
 

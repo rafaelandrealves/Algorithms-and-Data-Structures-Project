@@ -13,12 +13,6 @@
 
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <stdbool.h>
-
 #include "defs.h"
 #include "util.h"
 #include "tabuleiros.h"
@@ -27,7 +21,7 @@
 
 void * Checked_Malloc(size_t size)
 {
-    void * mem = malloc(size);
+    void * mem = calloc(1, size);
     if(mem == NULL)
     {
         printf("Error alocating memory. Exiting\n");
@@ -114,15 +108,12 @@ void PrintMainStruct(UNICODE * turista)
 
 char * OutPutFileName(char * nome_inicial)
 {
-    int i = 0;
-    //descobrir qual é a posição do '.' no ficheiro original
-    for( i = 0; i < strlen(nome_inicial); i++)
-    {
-        if(nome_inicial[i] ==  '.')
-        break;
-    }
+    int i = 0; // o i tem que ser inicializado fora do for para que a variável seja conservada fora do for
 
-    char * novo = (char *) malloc((strlen(".walks") + i)*sizeof(char));
+    //descobrir qual é a posição do '.' no ficheiro original
+    for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
+
+    char * novo = Checked_Malloc(strlen(".walks") + i*sizeof(char));
 
     // copiar todos os caracteres até ao '.'
     for (int j = 0; j < i; j++)
