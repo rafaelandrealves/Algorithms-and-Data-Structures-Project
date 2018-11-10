@@ -51,3 +51,27 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Folders
+Prob_9Anoes_e_1Branca (Var_A_1)
+Prob_aldeias_e_metropoles (Cidades_Pequenas_Medias_Grandes)
+Prob_anoes_em_passeio (Var_B_1)
+Prob_corredor_estreito (Var_A_2)
+Prob_efeito_do_alcool (Var_B_Conducoes_Acidentadas)
+Prob_passeios_moderados (Var_B_2)
+Prob_passeios_moderados2 (Var_B_Pontos_Inacessíveis)
+Prob_qualquer_nome
+Prob_terramotos_e_furacoes (Var_A_B_1)
+Sol_9Anoes_e_1Branca (Var_A_1)
+Sol_aldeias_e_metropoles (Cidades_Pequenas_Medias_Grandes)
+Sol_anoes_em_passeio (Var_B_1)
+Sol_corredor_estreito (Var_A_2)
+Sol_efeito_do_alcool (Var_B_Conducoes_Acidentadas)
+Sol_passeios_moderados (Var_B_2)
+Sol_passeios_moderados2 (Var_B_Pontos_Inacessíveis)
+Sol_qualquer_nome
+Sol_terramotos_e_furacoes (Var_A_B_1)
+
+# Files
+*.cities
+*.valid
