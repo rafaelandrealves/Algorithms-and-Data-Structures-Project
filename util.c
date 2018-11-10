@@ -48,22 +48,22 @@ FILE * Open_File(char * file_name, char * mode)
 FILE * checkArguments(int _argc, char ** _argv)
 {
     char * tok = NULL;
-    char backup[40] ={'\0'};
+    char backup[40] = {'\0'};
 
 
-    strcpy(backup,_argv[1]);
+    strcpy(backup, _argv[1]);
 
     if(_argc > 2){
-        printf("ERRO NUMERO ELEVADO DE ELEMENTOS");
+        printf("ERRO! NUMERO ELEVADO DE ELEMENTOS");
         exit(0);
     }    
 
-    if(strstr(_argv[1],".cities")==NULL)
+    if(strstr(_argv[1],".cities") == NULL)
     {
         printf("ERROR-HAS TO BE A .cities file");
         exit (0);
     }
-    tok = strtok(_argv[1],".");
+    tok = strtok(_argv[1], ".");
     tok = strtok(NULL, "\0");
     if( strcmp(tok,"cities") != 0 ){
         printf("ERROR, TRYING THAT DOESNT WORK");
@@ -99,7 +99,7 @@ void PrintMainStruct(UNICODE * turista)
     {
         printf("\t");
         for(int xx = 0; xx < turista->tabu.size_x; xx++)
-        printf("%d ", turista->tabu.tab[yy][xx]);
+            printf("%d ", turista->tabu.tab[yy][xx]);
 
         printf("\n");
     }
@@ -113,7 +113,7 @@ char * OutPutFileName(char * nome_inicial)
     //descobrir qual é a posição do '.' no ficheiro original
     for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
 
-    char * novo = Checked_Malloc(strlen(".walks") + i*sizeof(char));
+    char * novo = (char *) Checked_Malloc((strlen(".walks") + i)*sizeof(char));
 
     // copiar todos os caracteres até ao '.'
     for (int j = 0; j < i; j++)

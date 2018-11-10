@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> demux
 
 
 #include "defs.h"
@@ -35,9 +38,7 @@ int main (int argc, char ** argv)
         */
 
         FreeAll(cavaleiro);
-        
     }
-
 
     fclose(fp_in);
     return (0);

@@ -25,9 +25,6 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
     UNICODE * new = (UNICODE *) Checked_Malloc(sizeof(UNICODE));
 
 
-    if (fp == NULL)
-        printf("é null crl\n\n");
-    
     if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) != 4)
     {
         *end_of_file = true;
