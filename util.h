@@ -14,10 +14,11 @@
 #define _UTIL_H
 
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 void * Checked_Malloc(size_t size);
@@ -28,7 +29,10 @@ FILE * checkArguments(int _argc, char ** _argv);
 
 void FreeAll(UNICODE * turista);
 
-int check_EOF( FILE * file );
+void PrintMainStruct(UNICODE * turista);
+
+char * OutPutFileName(char * nome_inicial);
+
 
 
 

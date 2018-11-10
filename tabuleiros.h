@@ -25,8 +25,10 @@
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
 UNICODE * Read_File(FILE * fp, bool *end_of_file);
-char * OutPutFileName(char * nome_inicial);
+
 int analisa_ficheiro(FILE *file);
+
+bool check_Point_Inside_Table(tabuleiro table, point ponto);
 
 
 #endif

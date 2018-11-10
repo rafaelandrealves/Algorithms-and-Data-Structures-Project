@@ -1,7 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
+
 
 
 #include "defs.h"
@@ -10,4 +7,14 @@
 #include "points.h"
 
 
+int get_X_From_Point(point ponto)
+{
+    return ponto.x;
+}
+
+
+int get_Y_From_Point(point ponto)
+{
+    return ponto.y;
+}
 

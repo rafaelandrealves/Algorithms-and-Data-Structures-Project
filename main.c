@@ -23,12 +23,13 @@ int main (int argc, char ** argv)
     bool end_of_file = false;
 
 
-    do
+    while(!end_of_file)
     {
         /*
             LEITURA DO FICHEIRO
         */
         cavaleiro = Read_File(fp_in, &end_of_file);
+
 
         /*
             PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
@@ -38,10 +39,13 @@ int main (int argc, char ** argv)
             LIBERTA A MEMÓRIA DESTA ITERAÇÃO
         */
 
-        // FreeAll(cavaleiro);
+        if(!end_of_file)
+            FreeAll(cavaleiro);
+
+        //TODO: Dá SF quando faz free da ultima iteracao
         
     //}while( num < 10 && !check_EOF(fp_in));
-    }while(!end_of_file);
+    }
 
     printf("Fiz %d vezes\n", num);
 
