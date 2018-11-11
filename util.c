@@ -70,19 +70,16 @@ FILE * checkArguments(int _argc, char ** _argv)
     strcpy(backup, _argv[1]);
 
     if(_argc > 2){
-        printf("ERRO! NUMERO ELEVADO DE ELEMENTOS");
         exit(0);
     }
 
     if(strstr(_argv[1],".cities") == NULL)
     {
-        printf("ERROR-HAS TO BE A .cities file");
         exit (0);
     }
     tok = strtok(_argv[1], ".");
     tok = strtok(NULL, "\0");
     if( strcmp(tok,"cities") != 0 ){
-        printf("ERROR, TRYING THAT DOESNT WORK");
         exit(0);
     }
 
