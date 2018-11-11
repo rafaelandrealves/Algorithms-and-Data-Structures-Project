@@ -7,6 +7,7 @@
 
 
 
+bool CheckAllPoints(UNICODE * turist);
 
 
 
