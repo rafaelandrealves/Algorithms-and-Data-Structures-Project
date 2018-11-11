@@ -8,21 +8,22 @@
 
 //se for para baixo é movimento -1 , para cima é 1
 
-void MovesLowRight( UNICODE *new , int xmax , int ymax , int x, int y ){
+void MovesLowRight( UNICODE *new , int xmax , int ymax , int x, int y, int jog[8] ){
     int soma=0;
 
         soma+=new->tabu.tab[x][y];
         for(int j=0;j<3;j++)
         {
-            if( (x - 1) > 0 && (y+j) < ymax){
+            if( (x - 1) >= 0 && (y+j) < ymax){
                 soma+=new->tabu.tab[x-1][y+j];
             }
             else
             {
                 soma=0;
+                break;
             }
         }
-        new->para_preguicosos[6].custo_total=soma;   
+        jog[6]=soma;   
         soma=0;
         soma+=new->tabu.tab[x][y]; 
         for(int j=0;j<3;j++)
@@ -33,106 +34,119 @@ void MovesLowRight( UNICODE *new , int xmax , int ymax , int x, int y ){
             else
             {
                 soma=0;
+                break;
             }
         }
-        new->para_preguicosos[7].custo_total=soma;    
+        jog[7]=soma;    
 
     
 }
 
-void MovesLowLeft( UNICODE *new , int xmax , int ymax , int x, int y ){
+void MovesLowLeft( UNICODE *new , int xmax , int ymax , int x, int y , int jog[8] ){
     int soma=0;
-
     soma+=new->tabu.tab[x][y];
     for(int j=0;j<3;j++)
     {
-        if((x - 1) > 0 && (y-j) > 0){
+        if((x - 1) >= 0 && (y-j) >= 0){
             soma+=new->tabu.tab[x-1][y-j];
         }
         else
         {
             soma=0;
+            break;
         }    
     }
-    new->para_preguicosos[4].custo_total=soma;    
+    jog[4]=soma;    
     soma=0;
     soma+=new->tabu.tab[x][y];
     for(int j=0;j<3;j++)
     {
-        if((x + 1) < xmax && (y-j) > 0)
+        if((x + 1) < xmax && (y-j) >= 0)
         {
             soma+=new->tabu.tab[x+1][y-j];
         }
         else
         {
             soma=0;
+            break;
         }
     }
-    new->para_preguicosos[5].custo_total=soma;    
+    jog[5]=soma;    
 }
 
 
 
 //menos -1 esquerda e 1 direita
-void MovesHigh( UNICODE *new , int xmax , int ymax , int x, int y ){
-    int j=0,soma=0;
+void MovesHigh( UNICODE *new , int xmax , int ymax , int x, int y, int jog[8] ){
+    int j=0,soma=0,sinal=1;
 
     for(j=0;j<3;j++)
     {
-        if((x-j) > 0){
+        if((x-j) >= 0){
             soma+=new->tabu.tab[x-j][y];
         }
         else
         {
             soma=0;
+            sinal=0;
+            break;
         }
     }
-    if(y+1 < ymax)
+    if(sinal==1 && y+1 < ymax)
     {
-        soma+=new->tabu.tab[x-j][y+1];
+        soma+=new->tabu.tab[x-j+1][y+1];
     }
     else
     {
         soma=0;
     }  
-    new->para_preguicosos[2].custo_total=soma;    
+    jog[2]=soma;  
+    printf("= 1 valor é %d \n",jog[2]);  
     soma=0;
+    sinal=1;
     for(j=0;j<3;j++){
-        if( (x-j) > 0)
+        if( (x-j) >= 0)
         {
             soma+=new->tabu.tab[x-j][y];
+  
         }
         else
         {
             soma=0;
+            sinal=0;
+            break;
         }
     } 
-    if(y-1 > 0)
+    if( sinal==1 && y-1 >= 0)
     {
-        soma+=new->tabu.tab[x-j][y-1];
+        soma+=new->tabu.tab[x-j+1][y-1];
     }
     else
     {
         soma=0;
     }
-    new->para_preguicosos[3].custo_total=soma;    
+    jog[3]=soma;    
 }
 
 //menos -1 esquerda e 1 direita
-void MovesLow( UNICODE *new , int xmax , int ymax , int x, int y ){
-    int j=0,soma=0;
+void MovesLow( UNICODE *new , int xmax , int ymax , int x, int y, int jog[8] ){
+    int j=0,soma=0,sinal=1;
     for(j=0;j<3;j++)
     {
         if((x+j) < xmax)
         {
             soma+=new->tabu.tab[x+j][y];
         }
+
         else
         {
             soma=0;
+            sinal=0;
+            break;
         }
     }
-    if(y+1 < ymax)
+
+    if(sinal==1 && y+1 < ymax)
     {
         soma+=new->tabu.tab[x+j-1][y+1];
     }
@@ -140,8 +154,9 @@ void MovesLow( UNICODE *new , int xmax , int ymax , int x, int y ){
     {
         soma=0;
     }
-    new->para_preguicosos[0].custo_total=soma;    
+    jog[0]=soma;  
     soma=0;
+    sinal=1;
     for(j=0;j<3;j++){
         if((x+j) < xmax)
         {
@@ -150,38 +165,42 @@ void MovesLow( UNICODE *new , int xmax , int ymax , int x, int y ){
         else
         {
             soma=0;
+            sinal=0;
+            break;
         }
     }
-    if(y-1 > 0){
-        soma+=new->tabu.tab[x+j][y-1];
+    if(sinal==1 && y-1 > 0){
+        soma+=new->tabu.tab[x+j-1][y-1];
     }
     else
     {
-        soma=0;
-    } 
-    new->para_preguicosos[1].custo_total=soma;
+        soma=0; 
+    }    
+    jog[1]=soma;
+    printf("O valor é %d \n",jog[0]);  
+
 }
 
 
 
-int  analisa_jogadas(UNICODE *new){
+int  analisa_jogadas(UNICODE *new, int jog[8]){
     int soma_min=1000;
     for(int i=0 ; i < 8 ; i++)
-    {
-        if(soma_min > new->para_preguicosos[i].custo_total)
+    {   printf("%d\n",jog[i]);
+        if(soma_min > jog[i] && jog[i] != 0)
         {
-            soma_min = new->para_preguicosos[i].custo_total;
+            soma_min = jog[i];
         }
 
     }
     return soma_min;
 }
 
-void movimentos(UNICODE *new){
-    MovesLow(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y);
-    MovesLowLeft(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y);
-    MovesLowRight(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y);
-    MovesHigh(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y);
+void movimentos(UNICODE *new, int jog[8]){
+    MovesLow(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y,jog);
+    MovesLowLeft(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y,jog);
+    MovesLowRight(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y,jog);
+    MovesHigh(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x,new->passadeira_vermelha.points[0].y,jog);
 }
 
 
