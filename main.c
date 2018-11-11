@@ -16,15 +16,10 @@ int main (int argc, char ** argv)
     UNICODE * cavaleiro;
     bool end_of_file = false;
 
-
-    while(!end_of_file)
-    {
         /*
             LEITURA DO FICHEIRO
         */
         cavaleiro = Read_File(fp_in, &end_of_file);
-
-
         /*
             PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
         */
@@ -34,7 +29,7 @@ int main (int argc, char ** argv)
         */
 
         FreeAll(cavaleiro);
-    }
+
 
     fclose(fp_in);
     return (0);
