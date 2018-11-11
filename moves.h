@@ -7,7 +7,9 @@
 
 
 
+bool CheckAllPoints(UNICODE * turist);
 
+void Execute_B_Variant(UNICODE * turist, FILE * fp_out);
 
 
 

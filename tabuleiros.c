@@ -74,7 +74,6 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
 bool check_Point_Inside_Table(tabuleiro table, point ponto)
 {
     int x = get_X_From_Point(ponto);
-
     int y = get_Y_From_Point(ponto);
 
     if(x < table.size_x && y < table.size_y)
@@ -82,4 +81,15 @@ bool check_Point_Inside_Table(tabuleiro table, point ponto)
 
     return false;
 
+}
+
+/**
+ * Returns the cost of one given point
+ * @param  table [table matrix]
+ * @param  ponto [point to get the cost]
+ * @return       [cost of that point]
+ */
+int GetPointCost(tabuleiro table, point ponto)
+{
+    return (table.tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
 }

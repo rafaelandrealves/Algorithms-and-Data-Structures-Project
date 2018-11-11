@@ -13,7 +13,6 @@
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
-    // FILE * fp_in = fopen(argv[1], "r");
     UNICODE * cavaleiro;
     bool end_of_file = false;
 
@@ -25,11 +24,11 @@ int main (int argc, char ** argv)
         */
         cavaleiro = Read_File(fp_in, &end_of_file);
 
-
         /*
             PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
         */
-
+        if(cavaleiro->modo_jogo == 'B')
+            Execute_B_Variant(cavaleiro, NULL);
 
         /*
             LIBERTA A MEMÓRIA DESTA ITERAÇÃO

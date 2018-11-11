@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * File Name: leitura_fich.h
- 
+
  * Author:    Rafael Cordeiro & Rodrigo Figueiredo
  * Revision:  27 Oct 2018
  *
@@ -29,6 +29,8 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file);
 int analisa_ficheiro(FILE *file);
 
 bool check_Point_Inside_Table(tabuleiro table, point ponto);
+
+int GetPointCost(tabuleiro table, point ponto);
 
 
 #endif

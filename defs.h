@@ -20,23 +20,23 @@ typedef struct point
 typedef struct caminho
 {
     int num_pontos;
-    point * points; // ou por uma lista
+    point * points;
     int custo_total;
-}caminho;
+} caminho;
 
 typedef struct tabuleiro
 {
-    int size_x; // dimensões do tabuleiro
+    int size_x; // sizes of the table
     int size_y;
-    int ** tab; // matriz do tabuleiro
+    int ** tab; // table matrix
 } tabuleiro;
 
-typedef struct UNICODE // estrutura principal do programa
+typedef struct UNICODE // main struct of the program
 {
-    char modo_jogo; // ou char
-    tabuleiro tabu; // tabuleiro
-    caminho passadeira_vermelha; // conjunto de pontos que o utilizador coloca
-    caminho * para_preguicosos;  // caminhos que podem ser a solução ótima
+    char modo_jogo; // problem mode
+    tabuleiro tabu; // table
+    caminho passadeira_vermelha; // move that ir read from the file
+    caminho * para_preguicosos;  // possible ways to be the optimal soluction
 } UNICODE;
 
 
