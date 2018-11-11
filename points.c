@@ -5,6 +5,7 @@
 #include "util.h"
 #include "tabuleiros.h"
 #include "points.h"
+#include "moves.h"
 
 
 /**

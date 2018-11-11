@@ -17,6 +17,7 @@
 #include "util.h"
 #include "tabuleiros.h"
 #include "points.h"
+#include "moves.h"
 
 /**
  * Allocs memory (with calloc) and checks if the memory was correctly allocated
