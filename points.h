@@ -11,10 +11,7 @@
 int get_X_From_Point(point ponto);
 
 int get_Y_From_Point(point ponto);
-void MovesLowRight( UNICODE *new , int xmax , int ymax , int x, int y , int jog[8]);
-void MovesLowLeft( UNICODE *new , int xmax , int ymax , int x, int y, int jog[8]);
-void MovesHigh( UNICODE *new , int xmax , int ymax , int x, int y , int jog[8]);
-void MovesLow( UNICODE *new , int xmax , int ymax , int x, int y, int jog[8]);
-void movimentos(UNICODE *new, int jog[8]);
-int  analisa_jogadas(UNICODE *new, int jog[8]);
-
+int analisa_pontos(UNICODE *new);
+void movimentos(UNICODE *new, int *soma_min);
+//int  analisa_jogadas(UNICODE *new, int jog[8]);
+void movimentos_num_ponto(UNICODE *new,int xmax, int ymax, int x , int y , char condicao, int *soma_min);
