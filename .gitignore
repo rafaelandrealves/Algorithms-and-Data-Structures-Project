@@ -56,5 +56,9 @@ dkms.conf
 Probs
 Sols
 
+# Files
+*.cities
+*.valid
+
 # Other
 .vscode
