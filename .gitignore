@@ -55,11 +55,11 @@ dkms.conf
 # Folders
 Probs
 Sols
-Var_A_1
-Var_A_2
-Var_B_1
-Vars_A_B
 
 # Files
 *.cities
 *.valid
+*.swp
+
+# Other
+.vscode

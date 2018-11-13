@@ -6,7 +6,9 @@ CFLAGS = -Wall -std=c99 -g
 
 # Sources
 
-SOURCES = main.c util.c util.h defs.h tabuleiros.h
+SOURCES = main.c util.c util.h defs.h tabuleiros.h moves.h
+HSOURCES = defs.h util.h tabuleiros.h points.h moves.h
+OSOURCES = main.o util.o tabuleiros.o points.o moves.o
 
 # Objects
 
@@ -14,20 +16,23 @@ OBJECTS = util.o tabuleiros.o main.o
 
 %.o: %.c
 
-tuktuk: main.o util.o tabuleiros.o points.o
-	$(CC) $(CFLAGS) -o tuktuk main.o util.o tabuleiros.o points.o
+tuktuk: $(OSOURCES)
+	$(CC) $(CFLAGS) -o tuktuk $(OSOURCES)
 
-main.o: main.c util.h defs.h tabuleiros.h points.h
+main.o: main.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) main.c
 
-util.o: util.c util.h defs.h tabuleiros.h points.h
+util.o: util.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) util.c
 
-tabuleiros.o: tabuleiros.c defs.h util.h points.h
+tabuleiros.o: tabuleiros.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) tabuleiros.c
 
-points.o: points.c defs.h util.h points.h
+points.o: points.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) points.c
+
+moves.o: moves.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) moves.c
 
 
 clean::
