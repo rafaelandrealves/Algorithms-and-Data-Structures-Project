@@ -76,7 +76,7 @@ bool check_Point_Inside_Table(tabuleiro table, point ponto)
     int x = get_X_From_Point(ponto);
     int y = get_Y_From_Point(ponto);
 
-    if(x < table.size_x && y < table.size_y)
+    if((x < table.size_x) && (x >= 0) && (y < table.size_y) && (y >= 0))
         return true;
 
     return false;

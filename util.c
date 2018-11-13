@@ -48,7 +48,7 @@ FILE * Open_File(char * file_name, char * mode)
     fp = fopen(file_name, mode);
     if(fp == NULL)
     {
-        printf("rfrError opening file %s. Exiting.\n", file_name);
+        printf("Error opening file %s. Exiting.\n", file_name);
         exit(0);
     }
     return fp;

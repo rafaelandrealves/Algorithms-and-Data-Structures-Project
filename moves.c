@@ -17,8 +17,8 @@ bool CheckAllPoints(UNICODE * turist)
 {
 	for(int i = 0; i < turist->passadeira_vermelha.num_pontos; i++)
 	{
-		if((check_Point_Inside_Table(turist->tabu, turist->passadeira_vermelha.points[i]) == false) ||
-		(GetPointCost(turist->tabu, turist->passadeira_vermelha.points[i]) == 0))
+			if((check_Point_Inside_Table(turist->tabu, turist->passadeira_vermelha.points[i]) == false) ||
+			(GetPointCost(turist->tabu, turist->passadeira_vermelha.points[i]) == 0))
 			return false;
 	}
 
@@ -45,12 +45,10 @@ void Execute_B_Variant(UNICODE * turist, FILE * fp_out)
 			if(CheckHorseJump(turist->passadeira_vermelha.points[i-1], turist->passadeira_vermelha.points[i]))
 			{
 				turist->passadeira_vermelha.custo_total += GetPointCost(turist->tabu, turist->passadeira_vermelha.points[i]);
-				// printf("saltinho\n");
 			}
 			else
 			{
 				// write file with failure because one (or more) point(s) does not have the horse jump move
-				// will return
 				printf("%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
 				return;
 			}
@@ -59,7 +57,6 @@ void Execute_B_Variant(UNICODE * turist, FILE * fp_out)
 	else
 	{
 		// write file with failure because one (or more) point(s) aren't inside the matrix or are
-		// will return
 		printf("%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
 		return;
 	}
