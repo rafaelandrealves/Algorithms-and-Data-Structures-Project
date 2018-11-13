@@ -59,6 +59,7 @@ Sols
 # Files
 *.cities
 *.valid
+*.swp
 
 # Other
 .vscode
