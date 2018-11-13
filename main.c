@@ -12,10 +12,10 @@
 
 int main (int argc, char ** argv)
 {
-    FILE * fp_in = checkArguments(argc, argv);
+    // FILE * fp_in = checkArguments(argc, argv);
+    FILE * fp_in = fopen("t4011.cities", "r");
     UNICODE * cavaleiro;
     bool end_of_file = false;
-
 
     while(!end_of_file)
     {

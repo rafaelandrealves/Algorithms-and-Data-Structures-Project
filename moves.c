@@ -33,15 +33,39 @@ bool CheckAllPoints(UNICODE * turist)
  */
 void Execute_B_Variant(UNICODE * turist, FILE * fp_out)
 {
-	int validity = 0;
+	bool validity = false;
 
 	// means that one or more points aren't inside the table or are inaccessible
-	if(!CheckAllPoints(turist))
-		validity = -1;
+	validity = CheckAllPoints(turist);
 
-	if(validity) // if all points are valid program will check if all make horse jumps
+	if(validity == true) // if all points are valid program will check if all make horse jumps
 	{
-		
+		for(int i = 1; i < turist->passadeira_vermelha.num_pontos; i++)
+		{
+			if(CheckHorseJump(turist->passadeira_vermelha.points[i-1], turist->passadeira_vermelha.points[i]))
+			{
+				turist->passadeira_vermelha.custo_total += GetPointCost(turist->tabu, turist->passadeira_vermelha.points[i]);
+				// printf("saltinho\n");
+			}
+			else
+			{
+				// write file with failure because one (or more) point(s) does not have the horse jump move
+				// will return
+				printf("%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
+				return;
+			}
+		}
 	}
+	else
+	{
+		// write file with failure because one (or more) point(s) aren't inside the matrix or are
+		// will return
+		printf("%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
+		return;
+	}
+
+	// write file with success with the cost of the movement
+	printf("%d %d %c %d 1 %d\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos, turist->passadeira_vermelha.custo_total);
+
 
 }

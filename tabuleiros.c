@@ -47,7 +47,7 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
 
 
     for(int i = 0; i < new->passadeira_vermelha.num_pontos; i++)
-        fscanf(fp, "%d %d", &new->passadeira_vermelha.points[i].x, &new->passadeira_vermelha.points[i].y);
+        fscanf(fp, "%d %d", &new->passadeira_vermelha.points[i].y, &new->passadeira_vermelha.points[i].x);
 
 
     for(int yy = 0; yy < new->tabu.size_y; yy++)
