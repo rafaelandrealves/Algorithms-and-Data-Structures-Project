@@ -1,71 +1,77 @@
 
 
+
 #include "defs.h"
-#include "util.h"
-#include "tabuleiros.h"
-#include "points.h"
 #include "moves.h"
+#include "util.h"
+#include "points.h"
+#include "tabuleiros.h"
 
 
+
+
+
+
+/**
+ * Reads and saves the information of one problem in the input file
+ * @param  fp          [file pointer to the reading file]
+ * @param  end_of_file [variable that checks if reached the end of file]
+ * @return             [returns the main struct of the program with the new data (or empty in case of EOF)]
+ */
+Problema * Read_File(FILE * fp)
+{
+    int sizey, sizex, points_num;
+    char game_mode;
+    short pontox, pontoy, cost;
+
+    if(fscanf(fp, "%d %d %c %d", &sizey, &sizex, &game_mode, &points_num) != 4)
+        return NULL;
+
+    Problema * new ;
+    new = Alloc_Problema(sizey, sizex, game_mode, points_num);
+
+
+    for(int i = 0; i < getNumPontos(new); i = i + 1)
+        if(fscanf(fp, "%d %d", &pontoy, &pontox) == 2)
+            Aux_Set_Point(new, pontox, pontoy, i);
+
+
+    for(int yy = 0; yy < getYSize(getTabuleiro(new)); yy = yy + 1)
+    {
+        for(int xx = 0; xx < getXSize(getTabuleiro(new)); xx = xx + 1)
+            if(fscanf(fp, "%hd ", &cost) == 1)
+                Aux_Set_Matrix_Element(new, cost, yy, xx);
+    }
+
+    #if PrintStructs == 1
+        PrintMainStruct(new);
+    #endif
+
+    return new;
+}
 
 
 
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
-    FILE *fp_out = OutPutFileName(argv[1]);
-    // FILE * fp_in = fopen(argv[1], "r");
-    UNICODE * cavaleiro;
-    bool end_of_file = false;
-    int soma_min=10000;
-    int sinal=0;
-        /*
-            LEITURA DO FICHEIRO
-        */
-    while(!end_of_file)
+    FILE * fp_out = OutPutFileName(argv[1]);
+    Problema * cavaleiro;
+
+
+    while(cavaleiro == NULL)
     {
-        cavaleiro = Read_File(fp_in, &end_of_file);
-        if( cavaleiro -> modo_jogo == 'A'){
-            //movimentos(cavaleiro,jogadas);
-            //soma=analisa_jogadas(cavaleiro,jogadas);
-            sinal=analisa_pontos(cavaleiro);
-            if(sinal==-1)
-            {
-                printf("O PONTO NÃO É VÁLIDO \n");
-                soma_min = -1;
-                 printf(" A SOMA é %d \n",soma_min);
+        cavaleiro = Read_File(fp_in);
+        if(cavaleiro == NULL)
+            break;
 
-            }
-            else
-            {
-                movimentos(cavaleiro,&soma_min);
-                if(soma_min==10000)
-                {
-                    printf("NÃO EXISTEM JOGADAS POSSIVEIS\n");
-                    FreeAll(cavaleiro);
-                    sinal=0;
-                    continue;
-                }
-
-            fprintf(fp_out, " A SOMA é %d \n",soma_min);
-
-        /*
-            PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO
-        */
-        if(cavaleiro->modo_jogo == 'B' && end_of_file == false)
+        if( GetModoJogo(cavaleiro) == 'A')
+            Execute_A_Variant(cavaleiro, fp_out);
+        else if(GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_out);
-        else if(end_of_file == true);
         else
             WriteFileWithFailure(cavaleiro, fp_out);
 
-        /*
-            LIBERTA A MEMÓRIA DESTA ITERAÇÃO
-        */
-                soma_min=10000;
-
-            }
-            sinal=0;
-        }
         FreeAll(cavaleiro);
     }
 

@@ -63,67 +63,17 @@ FILE * Open_File(char * file_name, char * mode)
  */
 FILE * checkArguments(int _argc, char ** _argv)
 {
-    char * tok = NULL;
-    char backup[40] = {'\0'};
+    char * aux = NULL;
 
-
-    strcpy(backup, _argv[1]);
-
-    if(_argc > 2){
+    if((aux = strstr(_argv[1], ".cities")) == NULL)
         exit(0);
-    }
-
-    if(strstr(_argv[1],".cities") == NULL)
-    {
-        exit (0);
-    }
-    tok = strtok(backup, ".");
-    tok = strtok(NULL, "\0");
-    if( strcmp(tok,"cities") != 0 ){
+    if(*(aux + 7) != '\0')
         exit(0);
-    }
 
     return Open_File(_argv[1], "r");
 }
 
-/**
- * Free all memory from one struct
- * @param turista [struct to be freed]
- */
-void FreeAll(UNICODE * turista)
-{
-    // fazer free do caminho lido do ficheiro
-    free(turista->passadeira_vermelha.points);
 
-    for(int i = 0; i < turista->tabu.size_y; i++)
-        free(turista->tabu.tab[i]);
-
-    free(turista->tabu.tab);
-
-    free(turista);
-}
-
-/**
- * Prints all the info of one struct the way it was read
- * @param turista [struct to be printed]
- */
-void PrintMainStruct(UNICODE * turista)
-{
-    printf("%d %d %c %d\n", turista->tabu.size_y, turista->tabu.size_x, turista->modo_jogo, turista->passadeira_vermelha.num_pontos);
-
-    for(int i = 0; i < turista->passadeira_vermelha.num_pontos; i++)
-        printf("%d %d\n", get_Y_From_Point(turista->passadeira_vermelha.points[i]), get_X_From_Point(turista->passadeira_vermelha.points[i]));
-
-    for(int yy = 0; yy < turista->tabu.size_y; yy++)
-    {
-        printf("\t");
-        for(int xx = 0; xx < turista->tabu.size_x; xx++)
-            printf("%d ", turista->tabu.tab[yy][xx]);
-
-        printf("\n");
-    }
-
-}
 
 
 /**
@@ -138,7 +88,7 @@ FILE * OutPutFileName(char * nome_inicial)
     //descobrir qual é a posição do '.' no ficheiro original
     for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
 
-    char * novo = (char *) Checked_Malloc((strlen(".valid") + i)*sizeof(char));
+    char * novo = (char *) Checked_Malloc((strlen(".valid") + i + 1) * sizeof(char));
 
     // copiar todos os caracteres até ao '.'
     for (int j = 0; j < i; j++)
@@ -146,5 +96,8 @@ FILE * OutPutFileName(char * nome_inicial)
 
     strcat(novo, ".valid"); // juntar as duas strings
 
-    return Open_File(novo, "w");
+    FILE * fp = Open_File(novo, "w");
+    free(novo);
+
+    return fp;
 }

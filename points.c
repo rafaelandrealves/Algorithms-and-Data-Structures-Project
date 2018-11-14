@@ -7,25 +7,16 @@
 #include "points.h"
 #include "moves.h"
 
+struct point_t
+{
+    int x;
+    int y;
+};
 
-//Função encarregue de fazer os movimentos para todos os lados possiveis e ver qual é que é mais barato
-/*
- PARAM:
-  -> NEW: Matriz com os dados da matriz
-  -> soma_min : soma minima total
-*/
-void movimentos(UNICODE *new, int *soma_min){
-    char variavelx = 'x';
-    char variavely = 'y';
-    printf("---->%d\n",new->tabu.tab[new->passadeira_vermelha.points[0].y][new->passadeira_vermelha.points[0].x]);
-    movimentos_num_ponto(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x ,(new->passadeira_vermelha.points[0].y - 2),variavelx,soma_min);//move_HIGH
-    movimentos_num_ponto(new,new->tabu.size_x,new->tabu.size_y,new->passadeira_vermelha.points[0].x ,(new->passadeira_vermelha.points[0].y + 2),variavelx,soma_min);//move_LOW
-    movimentos_num_ponto(new,new->tabu.size_x,new->tabu.size_y,(new->passadeira_vermelha.points[0].x + 2) ,new->passadeira_vermelha.points[0].y,variavely,soma_min);//move_low_right
-    movimentos_num_ponto(new,new->tabu.size_x,new->tabu.size_y,(new->passadeira_vermelha.points[0].x -2) ,new->passadeira_vermelha.points[0].y,variavely,soma_min);//move_low_left
-}
 
-//Função que tem como variáveis uma condição, que pode ser x ou y, por exemplo, se for x, quer dizer que é o x que varia entre 1 ou -1 enquanto a outro váriavel mantêm-se fixa,
-// esta função tem por base o facto de que em todos os movimentos existe sempre uma variavel que varia -2 ou +2, mas mantêm-se, enquanto a outro varia entre -1 e 1
+
+//Função que tem como variáveis uma condição,  que pode ser x ou y,  por exemplo,  se for x,  quer dizer que é o x que varia entre 1 ou -1 enquanto a outro váriavel mantêm-se fixa,
+// esta função tem por base o facto de que em todos os movimentos existe sempre uma variavel que varia -2 ou +2,  mas mantêm-se,  enquanto a outro varia entre -1 e 1
 // PARAM:
 /*
     new ->matriz com os dados do ficheiro
@@ -33,15 +24,13 @@ void movimentos(UNICODE *new, int *soma_min){
     x e y-> ponto de partida
     condição -> Se a variável que oscila entre 1 e -1 é a x ou y
     soma_min ->  soma mínima das operaçoes
-
-
 */
-void movimentos_num_ponto(UNICODE *new,int xmax, int ymax, int x , int y , char condicao, int *soma_min)
-{   int soma2=0,soma1=0;
+void movimentos_num_ponto(Problema *new, int xmax, int ymax, int x, int y, char condicao, int *soma_min)
+{
+    int soma2=0, soma1=0;
 
-
-
-    if(condicao == 'y'){
+    if(condicao == 'y')
+    {
         if(x < xmax && (y+1) < ymax && x >= 0)
         {
             soma1 = new->tabu.tab[y+1][x];
@@ -57,7 +46,8 @@ void movimentos_num_ponto(UNICODE *new,int xmax, int ymax, int x , int y , char 
             *soma_min=soma2;
         }
     }
-    if(condicao == 'x'){
+    else
+    {
         if((x+1) < xmax && y < ymax && y >= 0)
         {
             soma1 = new->tabu.tab[y][x + 1];
@@ -76,27 +66,15 @@ void movimentos_num_ponto(UNICODE *new,int xmax, int ymax, int x , int y , char 
         }
     }
 }
-// analisa se o ponto dado está ou não dentro da matriz
 
-int analisa_pontos(UNICODE *new)
-{
-    if(new->tabu.size_x > new->passadeira_vermelha.points[0].x && new->tabu.size_y > new->passadeira_vermelha.points[0].y && new->passadeira_vermelha.points[0].x >=0 && new-> passadeira_vermelha.points[0].y >= 0 )
-    {
-        return 1;
-
-    }
-    else
-    {
-        return -1;
-    }
-}
-
-
-
+/**
+ * Access the x coordinate of one point
+ * @param  ponto [point to see the x coordinte]
+ * @return       [x coordinate from point]
+ */
 int get_X_From_Point(point ponto)
 {
     return ponto.x;
-
 }
 
 
@@ -117,7 +95,7 @@ int get_Y_From_Point(point ponto)
  * @param  ponto2 [point 2]
  * @return        [true in case of being the same point]
  */
-bool SamePoint(point ponto1, point ponto2)
+bool SamePoint(point ponto1,  point ponto2)
 {
     if(get_X_From_Point(ponto1) == get_X_From_Point(ponto2) && get_Y_From_Point(ponto1) == get_Y_From_Point(ponto2))
         return true;
@@ -131,9 +109,9 @@ bool SamePoint(point ponto1, point ponto2)
  * @param  ponto2 [description]
  * @return        [description]
  */
-bool CheckHorseJump(point ponto1, point ponto2)
+bool CheckHorseJump(point ponto1,  point ponto2)
 {
-    if (SamePoint(ponto1, ponto2))
+    if (SamePoint(ponto1,  ponto2))
         return false;
 
     // the point2 is 2 cells above the point1 or the point2 it 2 cells under point1
@@ -153,4 +131,11 @@ bool CheckHorseJump(point ponto1, point ponto2)
 
 
     return false;
+}
+
+point * SetPoint(point * ponto, short x, short y)
+{
+    ponto->x = x;
+    ponto->y = y;
+    return ponto;
 }

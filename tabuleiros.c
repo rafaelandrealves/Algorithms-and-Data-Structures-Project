@@ -18,52 +18,25 @@
 #include "points.h"
 #include "moves.h"
 
-#define PrintStructs 1
+#define PrintStructs 0
 
-
-/**
- * Reads and saves the information of one problem in the input file
- * @param  fp          [file pointer to the reading file]
- * @param  end_of_file [variable that checks if reached the end of file]
- * @return             [returns the main struct of the program with the new data (or empty in case of EOF)]
- */
-UNICODE * Read_File(FILE * fp, bool *end_of_file)
+struct tabuleiro_t
 {
-    UNICODE * new = (UNICODE *) Checked_Malloc(sizeof(UNICODE));
+    int size_x; // sizes of the table
+    int size_y;
+    short ** tab; // table matrix
+};
 
 
-
-    if((fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos)) != 4)
-    {
-        *end_of_file = true;
-        return new;
-    }
-
-
-    new->tabu.tab = (int **) Checked_Malloc(new->tabu.size_y * sizeof(int*));
-    for(int i = 0; i < new->tabu.size_y; i++)
-        new->tabu.tab[i] = (int *) Checked_Malloc(new->tabu.size_x * sizeof(int));
-
-    new->passadeira_vermelha.points = (point *) Checked_Malloc( new->passadeira_vermelha.num_pontos * sizeof(point));
-
-
-    for(int i = 0; i < new->passadeira_vermelha.num_pontos; i++)
-        fscanf(fp, "%d %d", &new->passadeira_vermelha.points[i].y, &new->passadeira_vermelha.points[i].x);
-
-
-    for(int yy = 0; yy < new->tabu.size_y; yy++)
-    {
-        for(int xx = 0; xx < new->tabu.size_x; xx++)
-            fscanf(fp, "%d ", &new->tabu.tab[yy][xx]);
-    }
-
-    #if PrintStructs == 1
-        PrintMainStruct(new);
-    #endif
-
-    return new;
+int getXSize(tabuleiro table)
+{
+    return table.size_x;
 }
 
+int getYSize(tabuleiro table)
+{
+    return table.size_y;
+}
 
 
 /**
@@ -90,9 +63,14 @@ bool check_Point_Inside_Table(tabuleiro table, point ponto)
  * @param  ponto [point to get the cost]
  * @return       [cost of that point]
  */
-int GetPointCost(tabuleiro table, point ponto)
+int GetPointCostFromPoint(tabuleiro table, point ponto)
 {
-    return (table.tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
+    return (int)(table.tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
+}
+
+int GetPointCostFromCoord(tabuleiro table, int yy, int xx)
+{
+    return (int)(table.tab[yy][xx]);
 }
 
 /**
@@ -100,7 +78,7 @@ int GetPointCost(tabuleiro table, point ponto)
  * @param cavaleiro [main struct]
  * @param NULL      [file pointer]
  */
-void WriteFileWithFailure(UNICODE * turist, FILE * fp_out)
+void WriteFileWithFailure(Problema * turist, FILE * fp_out)
 {
     fprintf(fp_out, "%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
 }
@@ -110,7 +88,23 @@ void WriteFileWithFailure(UNICODE * turist, FILE * fp_out)
  * @param turist [main struct]
  * @param fp_out [file pointer]
  */
-void WriteFileWithSuccess(UNICODE * turist, FILE * fp_out)
+void WriteFileWithSuccess(Problema * turist, FILE * fp_out)
 {
     fprintf(fp_out, "%d %d %c %d 1 %d\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos, turist->passadeira_vermelha.custo_total);
+}
+
+tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
+{
+    table->size_x = sizex;
+    table->size_y = sizey;
+    new->tab = (short **) Checked_Malloc(sizey * sizeof(short*));
+    for(int i = 0; i < sizey; i++)
+        new->tab[i] = (short *) Checked_Malloc(sizex * sizeof(short));
+
+    return table;
+}
+
+void SetMatrixElement(tabuleiro * table, short cost, int yy, int xx)
+{
+    table->tab[yy][xx] = cost;
 }

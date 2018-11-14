@@ -20,19 +20,31 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "points.h"
 
+
+typedef struct tabuleiro_t tabuleiro;
 
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
-UNICODE * Read_File(FILE * fp, bool *end_of_file);
+
+int getXSize(tabuleiro table);
+
+int getYSize(tabuleiro table);
 
 bool check_Point_Inside_Table(tabuleiro table, point ponto);
 
 int GetPointCost(tabuleiro table, point ponto);
 
-void WriteFileWithFailure(UNICODE * turist, FILE * fp_out);
+int GetPointCostFromCoord(tabuleiro table, int yy, int xx);
 
-void WriteFileWithSuccess(UNICODE * turist, FILE * fp_out);
+void WriteFileWithFailure(Problema * turist, FILE * fp_out);
+
+void WriteFileWithSuccess(Problema * turist, FILE * fp_out);
+
+tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex);
+
+void SetMatrixElement(tabuleiro * table, short cost, int yy, int xx);
 
 
 #endif

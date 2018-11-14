@@ -21,15 +21,12 @@
 #include <stdbool.h>
 
 
+
 void * Checked_Malloc(size_t size);
 
 FILE * Open_File(char * file_name, char * mode);
 
 FILE * checkArguments(int _argc, char ** _argv);
-
-void FreeAll(UNICODE * turista);
-
-void PrintMainStruct(UNICODE * turista);
 
 FILE * OutPutFileName(char * nome_inicial);
 
