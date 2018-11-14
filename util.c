@@ -112,7 +112,7 @@ void PrintMainStruct(UNICODE * turista)
     printf("%d %d %c %d\n", turista->tabu.size_y, turista->tabu.size_x, turista->modo_jogo, turista->passadeira_vermelha.num_pontos);
 
     for(int i = 0; i < turista->passadeira_vermelha.num_pontos; i++)
-        printf("%d %d\n", get_X_From_Point(turista->passadeira_vermelha.points[i]), get_Y_From_Point(turista->passadeira_vermelha.points[i]));
+        printf("%d %d\n", get_Y_From_Point(turista->passadeira_vermelha.points[i]), get_X_From_Point(turista->passadeira_vermelha.points[i]));
 
     for(int yy = 0; yy < turista->tabu.size_y; yy++)
     {

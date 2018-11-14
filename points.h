@@ -13,10 +13,10 @@
 int get_X_From_Point(point ponto);
 
 int get_Y_From_Point(point ponto);
-
-bool SamePoint(point ponto1, point ponto2);
-
-bool CheckHorseJump(point ponto1, point ponto2);
+int analisa_pontos(UNICODE *new);
+void movimentos(UNICODE *new, int *soma_min);
+//int  analisa_jogadas(UNICODE *new, int jog[8]);
+void movimentos_num_ponto(UNICODE *new,int xmax, int ymax, int x , int y , char condicao, int *soma_min);
 
 
 #endif
