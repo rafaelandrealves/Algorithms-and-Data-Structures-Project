@@ -77,13 +77,13 @@ FILE * checkArguments(int _argc, char ** _argv)
     {
         exit (0);
     }
-    tok = strtok(_argv[1], ".");
+    tok = strtok(backup, ".");
     tok = strtok(NULL, "\0");
     if( strcmp(tok,"cities") != 0 ){
         exit(0);
     }
 
-    return Open_File(backup, "r");
+    return Open_File(_argv[1], "r");
 }
 
 /**
@@ -129,22 +129,22 @@ void PrintMainStruct(UNICODE * turista)
 /**
  * Generates the output file name based on the imput file name
  * @param  nome_inicial [name of the imput file]
- * @return              [returns a char * to the output file name]
+ * @return              [returns the file pointer to the output file]
  */
-char * OutPutFileName(char * nome_inicial)
+FILE * OutPutFileName(char * nome_inicial)
 {
     int i = 0;
 
     //descobrir qual é a posição do '.' no ficheiro original
     for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
 
-    char * novo = (char *) Checked_Malloc((strlen(".walks") + i)*sizeof(char));
+    char * novo = (char *) Checked_Malloc((strlen(".valid") + i)*sizeof(char));
 
     // copiar todos os caracteres até ao '.'
     for (int j = 0; j < i; j++)
         novo[j] = nome_inicial[j];
 
-    strcat(novo, ".walks"); // juntar as duas strings
+    strcat(novo, ".valid"); // juntar as duas strings
 
-    return novo;
+    return Open_File(novo, "w");
 }

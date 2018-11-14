@@ -49,7 +49,7 @@ void Execute_B_Variant(UNICODE * turist, FILE * fp_out)
 			else
 			{
 				// write file with failure because one (or more) point(s) does not have the horse jump move
-				printf("%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
+				WriteFileWithFailure(turist, fp_out);
 				return;
 			}
 		}
@@ -57,12 +57,12 @@ void Execute_B_Variant(UNICODE * turist, FILE * fp_out)
 	else
 	{
 		// write file with failure because one (or more) point(s) aren't inside the matrix or are
-		printf("%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
+		WriteFileWithFailure(turist, fp_out);
 		return;
 	}
 
 	// write file with success with the cost of the movement
-	printf("%d %d %c %d 1 %d\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos, turist->passadeira_vermelha.custo_total);
+	WriteFileWithSuccess(turist, fp_out);
 
 
 }

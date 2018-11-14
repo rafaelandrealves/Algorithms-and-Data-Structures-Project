@@ -33,7 +33,7 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
 
 
 
-    if(fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos) != 4)
+    if((fscanf(fp, "%d %d %c %d", &new->tabu.size_y, &new->tabu.size_x, &new->modo_jogo, &new->passadeira_vermelha.num_pontos)) != 4)
     {
         *end_of_file = true;
         return new;
@@ -52,8 +52,8 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
 
     for(int yy = 0; yy < new->tabu.size_y; yy++)
     {
-       for(int xx = 0; xx < new->tabu.size_x; xx++)
-           fscanf(fp, "%d ", &new->tabu.tab[yy][xx]);
+        for(int xx = 0; xx < new->tabu.size_x; xx++)
+            fscanf(fp, "%d ", &new->tabu.tab[yy][xx]);
     }
 
     #if PrintStructs == 1
@@ -92,4 +92,24 @@ bool check_Point_Inside_Table(tabuleiro table, point ponto)
 int GetPointCost(tabuleiro table, point ponto)
 {
     return (table.tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
+}
+
+/**
+ * Writes the file with the failure
+ * @param cavaleiro [main struct]
+ * @param NULL      [file pointer]
+ */
+void WriteFileWithFailure(UNICODE * turist, FILE * fp_out)
+{
+    fprintf(fp_out, "%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
+}
+
+/**
+ * Wirtes the file with success
+ * @param turist [main struct]
+ * @param fp_out [file pointer]
+ */
+void WriteFileWithSuccess(UNICODE * turist, FILE * fp_out)
+{
+    fprintf(fp_out, "%d %d %c %d 1 %d\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos, turist->passadeira_vermelha.custo_total);
 }

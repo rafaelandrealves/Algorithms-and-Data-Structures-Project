@@ -32,5 +32,9 @@ bool check_Point_Inside_Table(tabuleiro table, point ponto);
 
 int GetPointCost(tabuleiro table, point ponto);
 
+void WriteFileWithFailure(UNICODE * turist, FILE * fp_out);
+
+void WriteFileWithSuccess(UNICODE * turist, FILE * fp_out);
+
 
 #endif
