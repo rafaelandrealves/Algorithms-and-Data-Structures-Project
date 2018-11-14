@@ -31,7 +31,7 @@ void FreeAll(UNICODE * turista);
 
 void PrintMainStruct(UNICODE * turista);
 
-char * OutPutFileName(char * nome_inicial);
+FILE * OutPutFileName(char * nome_inicial);
 
 
 

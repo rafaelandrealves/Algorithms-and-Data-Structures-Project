@@ -32,6 +32,7 @@ UNICODE * Read_File(FILE * fp, bool *end_of_file)
         *end_of_file = true;
         return new;
     }
+    
 
     new->tabu.tab = (int **) Checked_Malloc(new->tabu.size_y * sizeof(int*));
     for(int i = 0; i < new->tabu.size_y; i++)

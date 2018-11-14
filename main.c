@@ -12,6 +12,7 @@
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
+    FILE *fp_out = OutPutFileName(argv[1]); 
     // FILE * fp_in = fopen(argv[1], "r");
     UNICODE * cavaleiro;
     bool end_of_file = false;
@@ -30,6 +31,8 @@ int main (int argc, char ** argv)
             if(sinal==-1)
             {
                 printf("O PONTO NÃO É VÁLIDO \n");
+                soma_min = -1;
+                 printf(" A SOMA é %d \n",soma_min);
 
             }
             else
@@ -43,7 +46,7 @@ int main (int argc, char ** argv)
                     continue;
                 }
 
-                printf(" A SOMA é %d \n",soma_min);
+            fprintf(fp_out, " A SOMA é %d \n",soma_min);
         
         /*
             PROCESSA INFORMAÇÃO E TALVEZ ESCREVA FICHEIRO

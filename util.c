@@ -63,14 +63,14 @@ FILE * checkArguments(int _argc, char ** _argv)
         printf("ERROR-HAS TO BE A .cities file");
         exit (0);
     }
-    tok = strtok(_argv[1], ".");
+    tok = strtok(backup, ".");
     tok = strtok(NULL, "\0");
     if( strcmp(tok,"cities") != 0 ){
         printf("ERROR, TRYING THAT DOESNT WORK");
         exit(0);
     }
 
-    return Open_File(backup, "r");
+    return Open_File(_argv[1], "r");
 }
 
 
@@ -106,19 +106,19 @@ void PrintMainStruct(UNICODE * turista)
 
 }
 
-char * OutPutFileName(char * nome_inicial)
+FILE * OutPutFileName(char * nome_inicial)
 {
     int i = 0;
     //descobrir qual é a posição do '.' no ficheiro original
     for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
 
-    char * novo = (char *) Checked_Malloc((strlen(".walks") + i)*sizeof(char));
+    char * novo = (char *) Checked_Malloc((strlen(".valid") + i)*sizeof(char));
 
     // copiar todos os caracteres até ao '.'
     for (int j = 0; j < i; j++)
         novo[j] = nome_inicial[j];
 
-    strcat(novo, ".walks"); // juntar as duas strings
+    strcat(novo, ".valid"); // juntar as duas strings
 
-    return novo;
+    return Open_File(novo, "w");
 }

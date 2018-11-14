@@ -6,200 +6,13 @@
 #include "tabuleiros.h"
 #include "points.h"
 
-//se for para baixo é movimento -1 , para cima é 1
+
+//Função encarregue de fazer os movimentos para todos os lados possiveis e ver qual é que é mais barato
 /*
-void MovesLowRight( UNICODE *new , int xmax , int ymax , int x, int y, int jog[8] ){
-    int soma=0;
-
-        soma+=new->tabu.tab[x][y];
-        for(int j=0;j<3;j++)
-        {
-            if( (x - 1) >= 0 && (y+j) < ymax){
-                soma+=new->tabu.tab[x-1][y+j];
-            }
-            else
-            {
-                soma=0;
-                break;
-            }
-        }
-        jog[6]=soma;   
-        soma=0;
-        soma+=new->tabu.tab[x][y]; 
-        for(int j=0;j<3;j++)
-        {
-            if((x+1) < xmax && (y+j) < ymax){
-                soma+=new->tabu.tab[x+1][y+j];
-            }
-            else
-            {
-                soma=0;
-                break;
-            }
-        }
-        jog[7]=soma;    
-
-    
-}
+ PARAM:
+  -> NEW: Matriz com os dados da matriz
+  -> soma_min : soma minima total
 */
-/*
-void MovesLowLeft( UNICODE *new , int xmax , int ymax , int x, int y , int *soma_min ){
-    int soma=0;
-    for(int j=0;j<3;j++)
-    {
-        if((x - 1) >= 0 && (y-j) >= 0){
-            continue;
-        }
-        else
-        {
-            soma=0;
-            break;
-        }    
-    }
-    if( (y-j+1) >= 0)
-    {
-        soma+=new->tabu.tab[x-j+1][y-j+1];
-    }
-    analisa_jogadas(soma_min,soma);  
-    soma=0;
-    for(int j=0;j<3;j++)
-    {
-        if((x + 1) < xmax && (y-j) >= 0)
-        {
-            continue;
-        }
-        else
-        {
-            soma=0;
-            break;
-        }
-    }
-     if( (y-j+1) >= 0)
-        {
-            soma+=new->tabu.tab[x-j+1][y-j+1];
-        }
-    jog[5]=soma;    
-}
-
-
-
-//menos -1 esquerda e 1 direita
-void MovesHigh( UNICODE *new , int xmax , int ymax , int x, int y, int *soma_min ){
-    int j=0,soma=0,sinal=1;
-
-    for(j=0;j<3;j++)
-    {
-        if((x-j) >= 0){
-            continue;
-        }
-        else
-        {
-            soma=0;
-            sinal=0;
-            break;
-        }
-    }
-    if(sinal==1 && y+1 < ymax)
-    {
-        soma+=new->tabu.tab[x-j+1][y+1];
-    }
-    else
-    {
-        soma=0;
-    }  
-    analisa_jogadas(soma_min,soma);  
-    soma=0;
-    sinal=1;
-    for(j=0;j<3;j++){
-        if( (x-j) >= 0)
-        {
-            continue;
-  
-        }
-        else
-        {
-            soma=0;
-            sinal=0;
-            break;
-        }
-    } 
-    if( sinal==1 && y-1 >= 0)
-    {
-        soma+=new->tabu.tab[x-j+1][y-1];
-    }
-    else
-    {
-        soma=0;
-    }
-    analisa_jogadas(soma_min,soma);  
-}
-
-//menos -1 esquerda e 1 direita
-void MovesLow( UNICODE *new , int xmax , int ymax , int x, int y, int *soma_min ){
-    int j=0,soma=0,sinal=1;
-    for(j=0;j<3;j++)
-    {
-        if((x+j) < xmax)
-        {
-            continue;
-        }
-
-        else
-        {
-            soma=0;
-            sinal=0;
-            break;
-        }
-    }
-
-    if(sinal==1 && y+1 < ymax)
-    {
-        soma+=new->tabu.tab[x+j-1][y+1];
-    }
-    else
-    {
-        soma=0;
-    }
-    analisa_jogadas(soma_min,soma);
-    soma=0;
-    sinal=1;
-    for(j=0;j<3;j++){
-        if((x+j) < xmax)
-        {
-            continue;
-        }
-        else
-        {
-            soma=0;
-            sinal=0;
-            break;
-        }
-    }
-    if(sinal==1 && y-1 > 0){
-        soma+=new->tabu.tab[x+j-1][y-1];
-    }
-    else
-    {
-        soma=0; 
-    }    
-    analisa_jogadas(soma_min,soma);
-
-}
-*/
-
-/*
-void  analisa_jogadas(int *soma_min, int soma){
-    int aux=soma_min;
-        if(aux > soma && soma != 0)
-        {
-            aux = soma;
-        }
-
-    *soma_min = &soma;
-}
-*/
-
-//FUnção encarregue de fazer os movimentos para todos os lados possiveis e ver qual é que é mais barato
 void movimentos(UNICODE *new, int *soma_min){
     char variavelx = 'x';
     char variavely = 'y';
@@ -212,6 +25,16 @@ void movimentos(UNICODE *new, int *soma_min){
 
 //Função que tem como variáveis uma condição, que pode ser x ou y, por exemplo, se for x, quer dizer que é o x que varia entre 1 ou -1 enquanto a outro váriavel mantêm-se fixa, 
 // esta função tem por base o facto de que em todos os movimentos existe sempre uma variavel que varia -2 ou +2, mas mantêm-se, enquanto a outro varia entre -1 e 1
+// PARAM: 
+/*
+    new ->matriz com os dados do ficheiro
+    xmax e ymax -> dimensões da matriz
+    x e y-> ponto de partida
+    condição -> Se a variável que oscila entre 1 e -1 é a x ou y 
+    soma_min ->  soma mínima das operaçoes 
+
+
+*/
 void movimentos_num_ponto(UNICODE *new,int xmax, int ymax, int x , int y , char condicao, int *soma_min)
 {   int soma2=0,soma1=0;
     
