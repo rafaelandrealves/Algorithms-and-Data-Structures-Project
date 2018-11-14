@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * File Name: util.h
- 
+
  * Author:    Rafael Cordeiro & Rodrigo Figueiredo
  * Revision:  27 Oct 2018
  *
@@ -31,7 +31,7 @@ void FreeAll(UNICODE * turista);
 
 void PrintMainStruct(UNICODE * turista);
 
-char * OutPutFileName(char * nome_inicial);
+FILE * OutPutFileName(char * nome_inicial);
 
 
 
