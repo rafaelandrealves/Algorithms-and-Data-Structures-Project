@@ -22,25 +22,26 @@
 
 #include "points.h"
 
-
 typedef struct tabuleiro_t tabuleiro;
 
 
 // função para ler o ficheiro e colocar a informação na estrutura WAY
 
-int getXSize(tabuleiro table);
+int getXSize(tabuleiro * table);
 
-int getYSize(tabuleiro table);
+int getYSize(tabuleiro * table);
 
-bool check_Point_Inside_Table(tabuleiro table, point ponto);
+short ** getMatrixPointer(tabuleiro * table);
 
-int GetPointCost(tabuleiro table, point ponto);
+short * getMatrixLinePointer(tabuleiro * table, int i);
 
-int GetPointCostFromCoord(tabuleiro table, int yy, int xx);
+size_t getSizeOfTabuleiro();
 
-void WriteFileWithFailure(Problema * turist, FILE * fp_out);
+bool check_Point_Inside_Table(tabuleiro * table, point * ponto);
 
-void WriteFileWithSuccess(Problema * turist, FILE * fp_out);
+int GetPointCostFromPoint(tabuleiro * table, point * ponto);
+
+int GetPointCostFromCoord(tabuleiro * table, int yy, int xx);
 
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex);
 

@@ -6,9 +6,9 @@ CFLAGS = -Wall -std=c99 -g
 
 # Sources
 
-SOURCES = main.c util.c util.h defs.h tabuleiros.h moves.h
-HSOURCES = defs.h util.h tabuleiros.h points.h moves.h
-OSOURCES = main.o util.o tabuleiros.o points.o moves.o
+SOURCES =  util.c util.h defs.h tabuleiros.h moves.h main.c
+HSOURCES = util.h points.h tabuleiros.h moves.h defs.h
+OSOURCES = util.o points.o tabuleiros.o moves.o main.o
 
 # Objects
 

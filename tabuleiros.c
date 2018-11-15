@@ -14,11 +14,8 @@
 
 #include "defs.h"
 #include "util.h"
-#include "tabuleiros.h"
 #include "points.h"
-#include "moves.h"
 
-#define PrintStructs 0
 
 struct tabuleiro_t
 {
@@ -27,30 +24,44 @@ struct tabuleiro_t
     short ** tab; // table matrix
 };
 
+#include "tabuleiros.h"
 
-int getXSize(tabuleiro table)
+int getXSize(tabuleiro * table)
 {
-    return table.size_x;
+    return table->size_x;
 }
 
-int getYSize(tabuleiro table)
+int getYSize(tabuleiro * table)
 {
-    return table.size_y;
+    return table->size_y;
 }
 
+short ** getMatrixPointer(tabuleiro * table)
+{
+    return table->tab;
+}
 
+short * getMatrixLinePointer(tabuleiro * table, int i)
+{
+    return table->tab[i];
+}
+
+size_t getSizeOfTabuleiro()
+{
+    return sizeof(tabuleiro);
+}
 /**
  * Checks if one point is inside the table
  * @param  table [city map]
  * @param  ponto [point to check if is inside the table]
  * @return       [returns true is is inside the table]
  */
-bool check_Point_Inside_Table(tabuleiro table, point ponto)
+bool check_Point_Inside_Table(tabuleiro * table, point * ponto)
 {
     int x = get_X_From_Point(ponto);
     int y = get_Y_From_Point(ponto);
 
-    if((x < table.size_x) && (x >= 0) && (y < table.size_y) && (y >= 0))
+    if((x < table->size_x) && (x >= 0) && (y < table->size_y) && (y >= 0))
         return true;
 
     return false;
@@ -63,43 +74,24 @@ bool check_Point_Inside_Table(tabuleiro table, point ponto)
  * @param  ponto [point to get the cost]
  * @return       [cost of that point]
  */
-int GetPointCostFromPoint(tabuleiro table, point ponto)
+int GetPointCostFromPoint(tabuleiro * table, point * ponto)
 {
-    return (int)(table.tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
+    return (int)(table->tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
 }
 
-int GetPointCostFromCoord(tabuleiro table, int yy, int xx)
+int GetPointCostFromCoord(tabuleiro * table, int yy, int xx)
 {
-    return (int)(table.tab[yy][xx]);
+    return (int)(table->tab[yy][xx]);
 }
 
-/**
- * Writes the file with the failure
- * @param cavaleiro [main struct]
- * @param NULL      [file pointer]
- */
-void WriteFileWithFailure(Problema * turist, FILE * fp_out)
-{
-    fprintf(fp_out, "%d %d %c %d -1 0\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos);
-}
-
-/**
- * Wirtes the file with success
- * @param turist [main struct]
- * @param fp_out [file pointer]
- */
-void WriteFileWithSuccess(Problema * turist, FILE * fp_out)
-{
-    fprintf(fp_out, "%d %d %c %d 1 %d\n\n", turist->tabu.size_y, turist->tabu.size_x, turist->modo_jogo, turist->passadeira_vermelha.num_pontos, turist->passadeira_vermelha.custo_total);
-}
 
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
 {
     table->size_x = sizex;
     table->size_y = sizey;
-    new->tab = (short **) Checked_Malloc(sizey * sizeof(short*));
+    table->tab = (short **) Checked_Malloc(sizey * sizeof(short*));
     for(int i = 0; i < sizey; i++)
-        new->tab[i] = (short *) Checked_Malloc(sizex * sizeof(short));
+        table->tab[i] = (short *) Checked_Malloc(sizex * sizeof(short));
 
     return table;
 }

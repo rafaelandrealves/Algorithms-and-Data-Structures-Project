@@ -15,22 +15,22 @@ typedef void * Item;
 //     short x;
 //     short y;
 // } point;
-
-
+//
+//
 // typedef struct caminho
 // {
 //     int num_pontos;
 //     point * points;
 //     int custo_total;
 // } caminho;
-
+//
 // typedef struct tabuleiro
 // {
 //     int size_x; // sizes of the table
 //     int size_y;
 //     short ** tab; // table matrix
 // } tabuleiro;
-
+//
 // typedef struct Problema // main struct of the program
 // {
 //     char modo_jogo; // problem mode

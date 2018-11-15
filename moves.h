@@ -10,9 +10,9 @@
 typedef struct caminho_t caminho;
 typedef struct Problema_t Problema;
 
-tabuleiro getTabuleiro(Problema * turist);
+tabuleiro * getTabuleiro(Problema * turist);
 
-caminho getCaminho(Problema * turist);
+caminho * getCaminho(Problema * turist);
 
 int getCustoTotal(Problema * turist);
 
@@ -37,6 +37,12 @@ void FreeAll(Problema * turista);
 void PrintMainStruct(Problema * turista);
 
 void movimentos(Problema *new);
+
+void WriteFileWithFailure(Problema * turist, FILE * fp_out);
+
+void WriteFileWithSuccess(Problema * turist, FILE * fp_out);
+
+void movimentos_num_ponto(Problema * new, int xmax, int ymax, int x , int y , char condicao);
 
 
 #endif

@@ -5,45 +5,44 @@
 #include "util.h"
 #include "tabuleiros.h"
 #include "points.h"
-#include "moves.h"
-
 
 
 struct caminho_t
 {
     int num_pontos;
-    point * points;
+    point ** points; // points pointer vector
     int custo_total;
 };
 
 struct Problema_t // main struct of the program
 {
     char modo_jogo; // problem mode
-    tabuleiro tabu; // table
-    caminho passadeira_vermelha; // move that ir read from the file
+    tabuleiro * tabu; // table
+    struct caminho_t passeio; // move that ir read from the file
     // caminho * para_preguicosos;  // possible ways to be the optimal soluction
 };
 
-tabuleiro getTabuleiro(Problema * turist)
+#include "moves.h"
+
+tabuleiro * getTabuleiro(Problema * turist)
 {
-	return turist->tabu;
+	return (turist->tabu);
 }
 
-
-caminho getCaminho(Problema * turist)
+caminho * getCaminho(Problema * turist)
 {
-	return turist->passadeira_vermelha;
+	return &(turist->passeio);
 }
 
 int getCustoTotal(Problema * turist)
 {
-	return getCaminho(turist).custo_total;
+	return getCaminho(turist)->custo_total;
 }
 
 
 int getNumPontos(Problema * turist)
 {
-	return getCaminho(turist).num_pontos;
+	return getCaminho(turist)->num_pontos;
 }
 
 
@@ -54,10 +53,10 @@ int getNumPontos(Problema * turist)
  */
 bool CheckAllPoints(Problema * turist)
 {
-	for(int i = 0; i < turist->passadeira_vermelha.num_pontos; i++)
+	for(int i = 0; i < getNumPontos(turist); i++)
 	{
-			if((check_Point_Inside_Table(turist->tabu, turist->passadeira_vermelha.points[i]) == false) ||
-			(GetPointCost(turist->tabu, turist->passadeira_vermelha.points[i]) == 0))
+			if((check_Point_Inside_Table(turist->tabu, turist->passeio.points[i]) == false) ||
+			(GetPointCostFromPoint(turist->tabu, turist->passeio.points[i]) == 0))
 			return false;
 	}
 
@@ -79,11 +78,11 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 
 	if(validity == true) // if all points are valid program will check if all make horse jumps
 	{
-		for(int i = 1; i < turist->passadeira_vermelha.num_pontos; i++)
+		for(int i = 1; i < turist->passeio.num_pontos; i++)
 		{
-			if(CheckHorseJump(turist->passadeira_vermelha.points[i-1], turist->passadeira_vermelha.points[i]))
+			if(CheckHorseJump(turist->passeio.points[i-1], turist->passeio.points[i]))
 			{
-				turist->passadeira_vermelha.custo_total += GetPointCost(turist->tabu, turist->passadeira_vermelha.points[i]);
+				turist->passeio.custo_total += GetPointCostFromPoint(turist->tabu, turist->passeio.points[i]);
 			}
 			else
 			{
@@ -119,7 +118,7 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
 	else
 	{
 		movimentos(turist);
-		if(turist->passadeira_vermelha.custo_total != 0)
+		if(turist->passeio.custo_total != 0)
 			WriteFileWithSuccess(turist, fp_out);
 		else
 			WriteFileWithFailure(turist, fp_out);
@@ -130,29 +129,30 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
 
 Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
 {
-	Problema * new = (Problema *) Checked_Malloc(sizeof(Problema));
-	turist->tabu = Set_Lenght_Width(&(turist->tabu), sizey, sizex);
-	turist->passadeira_vermelha.points = (point *) Checked_Malloc( new->passadeira_vermelha.num_pontos * sizeof(point));
-	turist->modo_jogo = game_mode;
-
-	turist->passadeira_vermelha.num_pontos = points_num;
+	Problema * turist = (Problema *) Checked_Malloc(sizeof(Problema));
+    turist->tabu = (tabuleiro *) Checked_Malloc(getSizeOfTabuleiro());
+	turist->tabu = Set_Lenght_Width(turist->tabu, sizey, sizex);
+    turist->passeio.num_pontos = points_num;
+	turist->passeio.points = (point **) Checked_Malloc( getNumPontos(turist) * getSizeOfPointAst());
+    turist->modo_jogo = game_mode;
 
 	return turist;
 }
 
 void Aux_Set_Point(Problema * turist, int x, int y, int i)
 {
-	SetPoint(&(turist->passadeira_vermelha.points[i]), x, y, i);
+    turist->passeio.points[i] = (point *) Checked_Malloc(getSizeOfPoint());
+    SetPoint(turist->passeio.points[i], x, y);
 }
 
 void Aux_Set_Matrix_Element(Problema * turist, short cost, int yy, int xx)
 {
-	SetMatrixElement(&(turist->tabu.tab), cost, yy, xx);
+	SetMatrixElement(turist->tabu, cost, yy, xx);
 }
 
 char GetModoJogo(Problema * turist)
 {
-	return turist->game_mode;
+	return (turist->modo_jogo);
 }
 
 
@@ -163,12 +163,12 @@ char GetModoJogo(Problema * turist)
 void FreeAll(Problema * turista)
 {
     // fazer free do caminho lido do ficheiro
-    free(turista->passadeira_vermelha.points);
+    free(turista->passeio.points);
 
-    for(int i = 0; i < turista->tabu.size_y; i = i + 1)
-        free(turista->tabu.tab[i]);
+    for(int i = 0; i < getYSize(turista->tabu); i = i + 1)
+        free(getMatrixLinePointer(turista->tabu, i));
 
-    free(turista->tabu.tab);
+    free(getMatrixPointer(turista->tabu));
 
     free(turista);
 }
@@ -180,16 +180,16 @@ void FreeAll(Problema * turista)
  */
 void PrintMainStruct(Problema * turista)
 {
-    printf("%d %d %c %d\n", turista->tabu.size_y, turista->tabu.size_x, turista->modo_jogo, turista->passadeira_vermelha.num_pontos);
+    printf("%d %d %c %d\n", getYSize(turista->tabu), getXSize(turista->tabu), GetModoJogo(turista), getNumPontos(turista));
 
-    for(int i = 0; i < turista->passadeira_vermelha.num_pontos; i = i + 1)
-        printf("%d %d\n", get_Y_From_Point(turista->passadeira_vermelha.points[i]), get_X_From_Point(turista->passadeira_vermelha.points[i]));
+    for(int i = 0; i < getNumPontos(turista); i = i + 1)
+        printf("%d %d\n", get_Y_From_Point(turista->passeio.points[i]), get_X_From_Point(turista->passeio.points[i]));
 
-    for(int yy = 0; yy < turista->tabu.size_y; yy = yy + 1)
+    for(int yy = 0; yy < getYSize(turista->tabu); yy = yy + 1)
     {
         printf("\t");
-        for(int xx = 0; xx < turista->tabu.size_x; xx = xx + 1)
-            printf("%d ", GetPointCostFromCoord(yy, xx));
+        for(int xx = 0; xx < getXSize(turista->tabu); xx = xx + 1)
+            printf("%d ", GetPointCostFromCoord(turista->tabu, yy, xx));
 
         printf("\n");
     }
@@ -205,20 +205,86 @@ void movimentos(Problema *new)
 {
     char variavelx = 'x';
     char variavely = 'y';
-    new->passadeira_vermelha.custo_total = 10000;
+    new->passeio.custo_total = 10000;
 
-    movimentos_num_ponto(new, new->tabu.size_x, new->tabu.size_y, get_X_From_Point(new->passadeira_vermelha.points[0]),
-        get_Y_From_Point(new->passadeira_vermelha.points[0]) - 2, variavelx, &(new->passadeira_vermelha.custo_total)); //move_HIGH
+    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]),
+        get_Y_From_Point(new->passeio.points[0]) - 2, variavelx); //move_HIGH
 
-    movimentos_num_ponto(new, new->tabu.size_x, new->tabu.size_y, get_X_From_Point(new->passadeira_vermelha.points[0]),
-        get_Y_From_Point(new->passadeira_vermelha.points[0]) + 2, variavelx, &(new->passadeira_vermelha.custo_total)); //move_LOW
+    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]),
+        get_Y_From_Point(new->passeio.points[0]) + 2, variavelx); //move_LOW
 
-    movimentos_num_ponto(new, new->tabu.size_x, new->tabu.size_y, get_X_From_Point(new->passadeira_vermelha.points[0]) + 2,
-        get_Y_From_Point(new->passadeira_vermelha.points[0]), variavely, &(new->passadeira_vermelha.custo_total)); //move_low_right
+    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]) + 2,
+        get_Y_From_Point(new->passeio.points[0]), variavely); //move_low_right
 
-    movimentos_num_ponto(new, new->tabu.size_x, new->tabu.size_y, get_X_From_Point(new->passadeira_vermelha.points[0]) - 2,
-        get_Y_From_Point(new->passadeira_vermelha.points[0]), variavely, &(new->passadeira_vermelha.custo_total)); //move_low_left
+    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]) - 2,
+        get_Y_From_Point(new->passeio.points[0]), variavely); //move_low_left
 
-    if(new->passadeira_vermelha.custo_total == 10000)
-        new->passadeira_vermelha.custo_total = 0;
+    if(new->passeio.custo_total == 10000)
+        new->passeio.custo_total = 0;
+}
+
+/**
+ * Writes the file with the failure
+ * @param cavaleiro [main struct]
+ * @param NULL      [file pointer]
+ */
+void WriteFileWithFailure(Problema * turist, FILE * fp_out)
+{
+    fprintf(fp_out, "%d %d %c %d -1 0\n\n", getYSize(turist->tabu), getXSize(turist->tabu), GetModoJogo(turist), getNumPontos(turist));
+}
+
+/**
+ * Wirtes the file with success
+ * @param turist [main struct]
+ * @param fp_out [file pointer]
+ */
+void WriteFileWithSuccess(Problema * turist, FILE * fp_out)
+{
+    fprintf(fp_out, "%d %d %c %d 1 %d\n\n", getYSize(turist->tabu), getXSize(turist->tabu), GetModoJogo(turist), getNumPontos(turist), getCustoTotal(turist));
+}
+
+
+//Função que tem como variáveis uma condição,  que pode ser x ou y,  por exemplo,  se for x,  quer dizer que é o x que varia entre 1 ou -1 enquanto a outro váriavel mantêm-se fixa,
+// esta função tem por base o facto de que em todos os movimentos existe sempre uma variavel que varia -2 ou +2,  mas mantêm-se,  enquanto a outro varia entre -1 e 1
+// PARAM:
+/*
+    new ->matriz com os dados do ficheiro
+    xmax e ymax -> dimensões da matriz
+    x e y-> ponto de partida
+    condição -> Se a variável que oscila entre 1 e -1 é a x ou y
+    soma_min ->  soma mínima das operaçoes
+*/
+void movimentos_num_ponto(Problema *new, int xmax, int ymax, int x, int y, char condicao)
+{
+    int soma2 = 0, soma1 = 0;
+
+    if(condicao == 'y')
+    {
+        if(x < xmax && (y + 1) < ymax && x >= 0)
+            soma1 = GetPointCostFromCoord(new->tabu, y + 1, x);
+
+        if(x < xmax && x >= 0 && (y - 1) >= 0)
+            soma2 = GetPointCostFromCoord(new->tabu, y - 1, x);
+
+        if( soma1 <= new->passeio.custo_total && soma1 != 0)
+            new->passeio.custo_total = soma1;
+
+        if( soma2 <= new->passeio.custo_total && soma2 != 0)
+            new->passeio.custo_total = soma2;
+    }
+    else
+    {
+        if((x + 1) < xmax && y < ymax && y >= 0)
+            soma1 = GetPointCostFromCoord(new->tabu, y, x + 1);
+
+        if( y < ymax && (x - 1) >= 0 && y >= 0)
+            soma2 = GetPointCostFromCoord(new->tabu, y, x - 1);
+
+        if( soma1 <= new->passeio.custo_total && soma1 != 0)
+            new->passeio.custo_total = soma1;
+
+        if( soma2 <= new->passeio.custo_total && soma2 != 0)
+            new->passeio.custo_total = soma2;
+
+    }
 }

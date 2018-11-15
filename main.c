@@ -4,10 +4,10 @@
 #include "defs.h"
 #include "moves.h"
 #include "util.h"
-#include "points.h"
-#include "tabuleiros.h"
+// #include "points.h"
+// #include "tabuleiros.h"
 
-
+#define PrintStructs 0
 
 
 
@@ -22,12 +22,14 @@ Problema * Read_File(FILE * fp)
 {
     int sizey, sizex, points_num;
     char game_mode;
-    short pontox, pontoy, cost;
+    int pontox, pontoy;
+    short cost;
 
     if(fscanf(fp, "%d %d %c %d", &sizey, &sizex, &game_mode, &points_num) != 4)
         return NULL;
 
     Problema * new ;
+
     new = Alloc_Problema(sizey, sizex, game_mode, points_num);
 
 
@@ -55,17 +57,19 @@ Problema * Read_File(FILE * fp)
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
+    // FILE * fp_in = fopen("t1011.cities", "r");
     FILE * fp_out = OutPutFileName(argv[1]);
+    // FILE * fp_out = fopen("t1011.valid", "w");
     Problema * cavaleiro;
 
 
-    while(cavaleiro == NULL)
+    while(cavaleiro != NULL)
     {
         cavaleiro = Read_File(fp_in);
         if(cavaleiro == NULL)
             break;
 
-        if( GetModoJogo(cavaleiro) == 'A')
+        if(GetModoJogo(cavaleiro) == 'A')
             Execute_A_Variant(cavaleiro, fp_out);
         else if(GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_out);
