@@ -21,7 +21,7 @@ struct tabuleiro_t
 {
     int size_x; // sizes of the table
     int size_y;
-    short ** tab; // table matrix
+    int ** tab; // table matrix
 };
 
 #include "tabuleiros.h"
@@ -36,12 +36,12 @@ int getYSize(tabuleiro * table)
     return table->size_y;
 }
 
-short ** getMatrixPointer(tabuleiro * table)
+int ** getMatrixPointer(tabuleiro * table)
 {
     return table->tab;
 }
 
-short * getMatrixLinePointer(tabuleiro * table, int i)
+int * getMatrixLinePointer(tabuleiro * table, int i)
 {
     return table->tab[i];
 }
@@ -89,14 +89,14 @@ tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
 {
     table->size_x = sizex;
     table->size_y = sizey;
-    table->tab = (short **) Checked_Malloc(sizey * sizeof(short*));
+    table->tab = (int **) Checked_Malloc(sizey * sizeof(int*));
     for(int i = 0; i < sizey; i++)
-        table->tab[i] = (short *) Checked_Malloc(sizex * sizeof(short));
+        table->tab[i] = (int *) Checked_Malloc(sizex * sizeof(int));
 
     return table;
 }
 
-void SetMatrixElement(tabuleiro * table, short cost, int yy, int xx)
+void SetMatrixElement(tabuleiro * table, int cost, int yy, int xx)
 {
     table->tab[yy][xx] = cost;
 }

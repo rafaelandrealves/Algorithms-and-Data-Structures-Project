@@ -31,9 +31,9 @@ int getXSize(tabuleiro * table);
 
 int getYSize(tabuleiro * table);
 
-short ** getMatrixPointer(tabuleiro * table);
+int ** getMatrixPointer(tabuleiro * table);
 
-short * getMatrixLinePointer(tabuleiro * table, int i);
+int * getMatrixLinePointer(tabuleiro * table, int i);
 
 size_t getSizeOfTabuleiro();
 
@@ -45,7 +45,7 @@ int GetPointCostFromCoord(tabuleiro * table, int yy, int xx);
 
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex);
 
-void SetMatrixElement(tabuleiro * table, short cost, int yy, int xx);
+void SetMatrixElement(tabuleiro * table, int cost, int yy, int xx);
 
 
 #endif
