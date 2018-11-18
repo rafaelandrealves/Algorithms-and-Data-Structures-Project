@@ -18,7 +18,7 @@
  * @param  end_of_file [variable that checks if reached the end of file]
  * @return             [returns the main struct of the program with the new data (or empty in case of EOF)]
  */
-Problema * Read_File(FILE * fp)
+Problema * Read_File(FILE * fp, int *sinal)
 {
     int sizey, sizex, points_num;
     char game_mode;
@@ -26,22 +26,25 @@ Problema * Read_File(FILE * fp)
     short cost;
 
     if(fscanf(fp, "%d %d %c %d", &sizey, &sizex, &game_mode, &points_num) != 4)
+    {
+        *sinal = 1;
         return NULL;
-
+    }
+    //deva otimizar também para os casos em que dão um ponto inválido????
     Problema * new ;
+    if(*sinal == 0 )
+        new = Alloc_Problema(sizey, sizex, game_mode, points_num);
 
-    new = Alloc_Problema(sizey, sizex, game_mode, points_num);
 
-
-    for(int i = 0; i < getNumPontos(new); i = i + 1)
-        if(fscanf(fp, "%d %d", &pontoy, &pontox) == 2)
+    for(int i = 0; i < points_num ; i = i + 1)
+        if(fscanf(fp, "%d %d", &pontoy, &pontox) == 2 && *sinal == 0)
             Aux_Set_Point(new, pontox, pontoy, i);
 
 
-    for(int yy = 0; yy < getYSize(getTabuleiro(new)); yy = yy + 1)
+    for(int yy = 0; yy < sizey; yy = yy + 1)
     {
-        for(int xx = 0; xx < getXSize(getTabuleiro(new)); xx = xx + 1)
-            if(fscanf(fp, "%hd ", &cost) == 1)
+        for(int xx = 0; xx < sizex; xx = xx + 1)
+            if(fscanf(fp, "%hd ", &cost) == 1 && *sinal == 0)
                 Aux_Set_Matrix_Element(new, cost, yy, xx);
     }
 
@@ -60,24 +63,25 @@ int main (int argc, char ** argv)
     // FILE * fp_in = fopen("t1011.cities", "r");
     FILE * fp_out = OutPutFileName(argv[1]);
     // FILE * fp_out = fopen("t1011.valid", "w");
-    Problema * cavaleiro;
-
-
-    while(cavaleiro != NULL)
+    Problema * cavaleiro=(Problema*)NULL;
+    int sinal=0;
+    do
     {
-        cavaleiro = Read_File(fp_in);
+        cavaleiro = Read_File(fp_in, &sinal);
         if(cavaleiro == NULL)
             break;
-
-        if(GetModoJogo(cavaleiro) == 'A')
+        if (sinal == 1)
+            WriteFileWithFailure(cavaleiro, fp_out);    
+        else if(GetModoJogo(cavaleiro) == 'A')
             Execute_A_Variant(cavaleiro, fp_out);
         else if(GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_out);
         else
             WriteFileWithFailure(cavaleiro, fp_out);
 
+        sinal=0;
         FreeAll(cavaleiro);
-    }
+    }while(cavaleiro != NULL);
 
     fclose(fp_in);
     fclose(fp_out);
