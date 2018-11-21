@@ -4,8 +4,6 @@
 #include "defs.h"
 #include "moves.h"
 #include "util.h"
-// #include "points.h"
-// #include "tabuleiros.h"
 
 #define PrintStructs 0
 
@@ -23,7 +21,7 @@ Problema * Read_File(FILE * fp)
     int sizey, sizex, points_num;
     char game_mode;
     int pontox, pontoy;
-    short cost;
+    int cost;
 
     if(fscanf(fp, "%d %d %c %d", &sizey, &sizex, &game_mode, &points_num) != 4)
         return NULL;
@@ -41,7 +39,7 @@ Problema * Read_File(FILE * fp)
     for(int yy = 0; yy < getYSize(getTabuleiro(new)); yy = yy + 1)
     {
         for(int xx = 0; xx < getXSize(getTabuleiro(new)); xx = xx + 1)
-            if(fscanf(fp, "%hd ", &cost) == 1)
+            if(fscanf(fp, "%d ", &cost) == 1)
                 Aux_Set_Matrix_Element(new, cost, yy, xx);
     }
 
