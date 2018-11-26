@@ -55,6 +55,8 @@ dkms.conf
 # Folders
 Probs
 Sols
+Part1
+Part2
 
 # Files
 *.cities
