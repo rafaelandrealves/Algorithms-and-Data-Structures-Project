@@ -5,6 +5,7 @@
 #ifndef _MOVES_H
 #define _MOVES_H
 
+#include "defs.h"
 #include "tabuleiros.h"
 
 typedef struct caminho_t caminho;
@@ -17,6 +18,8 @@ caminho * getCaminho(Problema * turist);
 int getCustoTotal(Problema * turist);
 
 int getNumPontos(Problema * turist);
+
+point * getIpoint(Problema * turist, int i);
 
 bool CheckAllPoints(Problema * turist);
 

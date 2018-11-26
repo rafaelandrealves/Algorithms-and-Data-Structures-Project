@@ -5,11 +5,7 @@
 #define POINTS_H
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdbool.h>
+#include "defs.h"
 
 
 typedef struct point_t point;
@@ -25,8 +21,7 @@ size_t getSizeOfPointAst();
 
 bool CheckHorseJump(point * ponto1, point * ponto2);
 
-point * SetPoint(point * ponto, short x, short y);
-
+point * SetPoint(point * ponto, int x, int y);
 
 
 #endif

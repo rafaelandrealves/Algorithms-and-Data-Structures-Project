@@ -5,14 +5,9 @@ CC = gcc
 CFLAGS = -Wall -std=c99 -g
 
 # Sources
-
-SOURCES =  util.c util.h defs.h tabuleiros.h moves.h main.c
-HSOURCES = util.h points.h tabuleiros.h moves.h defs.h
-OSOURCES = util.o points.o tabuleiros.o moves.o main.o
-
-# Objects
-
-OBJECTS = util.o tabuleiros.o main.o
+#
+HSOURCES = util.h points.h tabuleiros.h acervo.h dijkstra.h moves.h defs.h
+OSOURCES = util.o points.o tabuleiros.o acervo.o dijkstra.o moves.o main.o
 
 %.o: %.c
 
@@ -33,6 +28,12 @@ points.o: points.c $(HSOURCES)
 
 moves.o: moves.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) moves.c
+
+acervo.o: acervo.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) acervo.c
+
+dijkstra.o: dijkstra.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) dijkstra.c
 
 
 clean::

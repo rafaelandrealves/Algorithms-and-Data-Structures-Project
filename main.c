@@ -2,8 +2,8 @@
 
 
 #include "defs.h"
-#include "moves.h"
 #include "util.h"
+#include "moves.h"
 
 #define PrintStructs 0
 
@@ -71,6 +71,8 @@ int main (int argc, char ** argv)
             Execute_A_Variant(cavaleiro, fp_out);
         else if(GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_out);
+        else if(GetModoJogo(cavaleiro) == 'C')
+            printf("Not done yet\n");
         else
             WriteFileWithFailure(cavaleiro, fp_out);
 
