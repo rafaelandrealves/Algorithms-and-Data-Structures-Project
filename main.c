@@ -2,10 +2,8 @@
 
 
 #include "defs.h"
-#include "moves.h"
 #include "util.h"
-// #include "points.h"
-// #include "tabuleiros.h"
+#include "moves.h"
 
 #define PrintStructs 0
 
@@ -23,7 +21,7 @@ Problema * Read_File(FILE * fp, int *sinal)
     int sizey, sizex, points_num;
     char game_mode;
     int pontox, pontoy;
-    short cost;
+    int cost;
 
     if(fscanf(fp, "%d %d %c %d", &sizey, &sizex, &game_mode, &points_num) != 4)
     {
@@ -43,8 +41,8 @@ Problema * Read_File(FILE * fp, int *sinal)
 
     for(int yy = 0; yy < sizey; yy = yy + 1)
     {
-        for(int xx = 0; xx < sizex; xx = xx + 1)
-            if(fscanf(fp, "%hd ", &cost) == 1 && *sinal == 0)
+        for(int xx = 0; xx < getXSize(getTabuleiro(new)); xx = xx + 1)
+            if(fscanf(fp, "%d ", &cost) == 1)
                 Aux_Set_Matrix_Element(new, cost, yy, xx);
     }
 
@@ -71,11 +69,13 @@ int main (int argc, char ** argv)
         if(cavaleiro == NULL)
             break;
         if (sinal == 1)
-            WriteFileWithFailure(cavaleiro, fp_out);    
+            WriteFileWithFailure(cavaleiro, fp_out);
         else if(GetModoJogo(cavaleiro) == 'A')
             Execute_A_Variant(cavaleiro, fp_out);
         else if(GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_out);
+        else if(GetModoJogo(cavaleiro) == 'C')
+            printf("Not done yet\n");
         else
             WriteFileWithFailure(cavaleiro, fp_out);
 

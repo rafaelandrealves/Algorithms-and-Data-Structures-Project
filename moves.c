@@ -5,6 +5,7 @@
 #include "util.h"
 #include "tabuleiros.h"
 #include "points.h"
+#include "dijkstra.h"
 
 
 struct caminho_t
@@ -19,7 +20,6 @@ struct Problema_t // main struct of the program
     char modo_jogo; // problem mode
     tabuleiro * tabu; // table
     struct caminho_t passeio; // move that ir read from the file
-    // caminho * para_preguicosos;  // possible ways to be the optimal soluction
 };
 
 #include "moves.h"
@@ -43,6 +43,11 @@ int getCustoTotal(Problema * turist)
 int getNumPontos(Problema * turist)
 {
 	return getCaminho(turist)->num_pontos;
+}
+
+point * getIpoint(Problema * turist, int i)
+{
+    return getCaminho(turist)->points[i];
 }
 
 
@@ -117,13 +122,15 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
 		WriteFileWithFailure(turist, fp_out);
 	else
 	{
-		movimentos(turist);
-		if(turist->passeio.custo_total != 0)
-			WriteFileWithSuccess(turist, fp_out);
-		else
-			WriteFileWithFailure(turist, fp_out);
+        DijkstraAlgoritm(turist);
+        // movimentos(turist);
+		// if(turist->passeio.custo_total != 0)
+		// 	WriteFileWithSuccess(turist, fp_out);
+		// else
+		// 	WriteFileWithFailure(turist, fp_out);
+        //
+		// sign = false;
 
-		sign = false;
 	}
 }
 

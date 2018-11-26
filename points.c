@@ -1,11 +1,14 @@
 
 
+#include "defs.h"
+
 struct point_t
 {
     int x;
     int y;
 };
 
+#include "util.h"
 #include "points.h"
 
 
@@ -81,11 +84,10 @@ bool CheckHorseJump(point * ponto1,  point * ponto2)
             return true;
     }
 
-
     return false;
 }
 
-point * SetPoint(point * ponto, short x, short y)
+point * SetPoint(point * ponto, int x, int y)
 {
     ponto->x = x;
     ponto->y = y;
