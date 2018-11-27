@@ -19,6 +19,8 @@ size_t getSizeOfPoint(void);
 
 size_t getSizeOfPointAst();
 
+bool SamePoint(point * ponto1,  point * ponto2);
+
 bool CheckHorseJump(point * ponto1, point * ponto2);
 
 point * SetPoint(point * ponto, int x, int y);

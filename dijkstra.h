@@ -18,6 +18,8 @@ DijkMatrix Problema2Dijk(Problema * turist);
 
 point ** Possible_Jump_Points(tabuleiro * tab, point * ponto, DijkMatrix aux);
 
+void Free_Possible_Jump_Points(point ** vect);
+
 void DijkstraAlgoritm(Problema * turist);
 
 

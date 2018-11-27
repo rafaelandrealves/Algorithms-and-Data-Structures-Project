@@ -55,17 +55,16 @@ Problema * Read_File(FILE * fp)
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
-    // FILE * fp_in = fopen("t1011.cities", "r");
+    // FILE * fp_in = fopen("narrow_city01.cities", "r");
     FILE * fp_out = OutPutFileName(argv[1]);
+    // FILE * fp_out = NULL;
     // FILE * fp_out = fopen("t1011.valid", "w");
-    Problema * cavaleiro;
+
+    Problema * cavaleiro = Read_File(fp_in);
 
 
     while(cavaleiro != NULL)
     {
-        cavaleiro = Read_File(fp_in);
-        if(cavaleiro == NULL)
-            break;
 
         if(GetModoJogo(cavaleiro) == 'A')
             Execute_A_Variant(cavaleiro, fp_out);
@@ -77,6 +76,8 @@ int main (int argc, char ** argv)
             WriteFileWithFailure(cavaleiro, fp_out);
 
         FreeAll(cavaleiro);
+
+        cavaleiro = Read_File(fp_in);
     }
 
     fclose(fp_in);

@@ -69,6 +69,23 @@ bool check_Point_Inside_Table(tabuleiro * table, point * ponto)
 }
 
 /**
+ * Checks if a point is accessable which means that it is inside the matrix and has a cost != 0
+ * @param  table [table of problem]
+ * @param  ponto [point to be checked]
+ * @return       [true if valid]
+ */
+bool check_Point_Acessibility(tabuleiro * table, point * ponto)
+{
+    int x = get_X_From_Point(ponto);
+    int y = get_Y_From_Point(ponto);
+
+    if((x < table->size_x) && (x >= 0) && (y < table->size_y) && (y >= 0) && (GetPointCostFromCoord(table, y, x) != 0))
+        return true;
+
+    return false;
+}
+
+/**
  * Returns the cost of one given point
  * @param  table [table matrix]
  * @param  ponto [point to get the cost]

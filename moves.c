@@ -170,12 +170,16 @@ char GetModoJogo(Problema * turist)
 void FreeAll(Problema * turista)
 {
     // fazer free do caminho lido do ficheiro
+    for(int j = 0; j < getNumPontos(turista); j++)
+        free(turista->passeio.points[j]);
+
     free(turista->passeio.points);
 
     for(int i = 0; i < getYSize(turista->tabu); i = i + 1)
         free(getMatrixLinePointer(turista->tabu, i));
 
     free(getMatrixPointer(turista->tabu));
+    free(getTabuleiro(turista));
 
     free(turista);
 }
