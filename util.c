@@ -92,7 +92,7 @@ FILE * OutPutFileName(char * nome_inicial)
     for (int j = 0; j < i; j++)
         novo[j] = nome_inicial[j];
 
-    strcat(novo, ".valid"); // juntar as duas strings
+    strcat(novo, ".walks"); // juntar as duas strings
 
     FILE * fp = Open_File(novo, "w");
     free(novo);

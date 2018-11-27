@@ -58,19 +58,18 @@ Problema * Read_File(FILE * fp, int *sinal)
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
-    // FILE * fp_in = fopen("t1011.cities", "r");
+    // FILE * fp_in = fopen("narrow_city01.cities", "r");
     FILE * fp_out = OutPutFileName(argv[1]);
+    // FILE * fp_out = NULL;
     // FILE * fp_out = fopen("t1011.valid", "w");
-    Problema * cavaleiro=(Problema*)NULL;
-    int sinal=0;
-    do
+
+    Problema * cavaleiro = Read_File(fp_in);
+
+
+    while(cavaleiro != NULL)
     {
-        cavaleiro = Read_File(fp_in, &sinal);
-        if(cavaleiro == NULL)
-            break;
-        if (sinal == 1)
-            WriteFileWithFailure(cavaleiro, fp_out);
-        else if(GetModoJogo(cavaleiro) == 'A')
+
+        if(GetModoJogo(cavaleiro) == 'A')
             Execute_A_Variant(cavaleiro, fp_out);
         else if(GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_out);
@@ -78,10 +77,10 @@ int main (int argc, char ** argv)
             printf("Not done yet\n");
         else
             WriteFileWithFailure(cavaleiro, fp_out);
-
-        sinal=0;
         FreeAll(cavaleiro);
-    }while(cavaleiro != NULL);
+
+        cavaleiro = Read_File(fp_in);
+    }
 
     fclose(fp_in);
     fclose(fp_out);

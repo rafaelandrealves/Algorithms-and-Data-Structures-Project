@@ -39,6 +39,8 @@ size_t getSizeOfTabuleiro();
 
 bool check_Point_Inside_Table(tabuleiro * table, point * ponto);
 
+bool check_Point_Acessibility(tabuleiro * table, point * ponto);
+
 int GetPointCostFromPoint(tabuleiro * table, point * ponto);
 
 int GetPointCostFromCoord(tabuleiro * table, int yy, int xx);

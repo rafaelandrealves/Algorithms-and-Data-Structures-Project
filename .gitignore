@@ -62,6 +62,8 @@ Part2
 *.cities
 *.valid
 *.swp
+*.walks
+*.check
 
 # Other
 .vscode

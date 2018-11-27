@@ -19,6 +19,22 @@ struct acervoStruct
 #define exch(A, B) {Item t = A; A = B; B = t; }
 
 
+int getFree(Acervo * new)
+{
+    return new->free;
+}
+
+point * getIPointFromHeap(Acervo * new, int i)
+{
+    return new->heap[i];
+}
+
+void FreeAcervo(Acervo * old)
+{
+    free(old->heap);
+    free(old);
+}
+
 Acervo * InitAcervo()
 {
     Acervo * new = (Acervo *) Checked_Malloc(sizeof(Acervo));
