@@ -168,6 +168,15 @@ void Free_Possible_Jump_Points(point ** vect)
             free(vect[i]);
 }
 
+bool  EmptyHeap(Acervo * aux)
+{
+    for( int i=0, i < 8, i++)
+    {
+        
+    }
+
+
+}
 
 void DijkstraAlgoritm(Problema * turist)
 {
@@ -191,11 +200,13 @@ void DijkstraAlgoritm(Problema * turist)
 
 
     matrix[get_Y_From_Point(ORIGIN_POINT)][get_X_From_Point(ORIGIN_POINT)].acum_cost = 0;
+    
 
-    while(SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) == false)
+    while(getIPointFromHeap(heap_tree,0) != NULL)
     {
+        printf("ola\n");
         point * min = HeapDeleteMaxPoint(matrix, heap_tree);
-        if( matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost != INF)
+        if(min != NULL && matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost != INF)
         {
             for(int i = 0; i < 8; i++)
             {
@@ -206,6 +217,7 @@ void DijkstraAlgoritm(Problema * turist)
                                                             matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost))
                     {
                         matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost = aux;
+                        FixDown(matrix,heap_tree,i,getFree(heap_tree)- 1);
                         matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].pai = min;
 
                     }

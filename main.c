@@ -60,10 +60,9 @@ int main (int argc, char ** argv)
     FILE * fp_in = checkArguments(argc, argv);
     // FILE * fp_in = fopen("narrow_city01.cities", "r");
     FILE * fp_out = OutPutFileName(argv[1]);
-    // FILE * fp_out = NULL;
     // FILE * fp_out = fopen("t1011.valid", "w");
-
-    Problema * cavaleiro = Read_File(fp_in);
+    int sinal = 0;
+    Problema * cavaleiro = Read_File(fp_in,&sinal);
 
 
     while(cavaleiro != NULL)
@@ -79,7 +78,7 @@ int main (int argc, char ** argv)
             WriteFileWithFailure(cavaleiro, fp_out);
         FreeAll(cavaleiro);
 
-        cavaleiro = Read_File(fp_in);
+        cavaleiro = Read_File(fp_in, &sinal);
     }
 
     fclose(fp_in);

@@ -52,7 +52,7 @@ size_t getSizeOfPointAst()
  */
 bool SamePoint(point * ponto1,  point * ponto2)
 {
-    if(get_X_From_Point(ponto1) == get_X_From_Point(ponto2) && get_Y_From_Point(ponto1) == get_Y_From_Point(ponto2))
+    if( get_X_From_Point(ponto1) == get_X_From_Point(ponto2) && get_Y_From_Point(ponto1) == get_Y_From_Point(ponto2))
         return true;
     else
         return false;
