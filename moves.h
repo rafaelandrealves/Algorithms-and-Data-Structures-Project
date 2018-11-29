@@ -25,7 +25,7 @@ bool CheckAllPoints(Problema * turist);
 
 void Execute_B_Variant(Problema * turist, FILE * fp_out);
 
-void Execute_A_Variant(Problema * turist, FILE * fp_out);
+void Execute_A_Variant(Problema * turist, FILE * fp_out, char *argv);
 
 Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num);
 

@@ -113,7 +113,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
  * @param turist [main struct]
  * @param fp_out [output file pointer to]
  */
-void Execute_A_Variant(Problema * turist, FILE * fp_out)
+void Execute_A_Variant(Problema * turist, FILE * fp_out, char *argv)
 {
  	bool sign = false;
 	sign = CheckAllPoints(turist);
@@ -122,7 +122,7 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
 		WriteFileWithFailure(turist, fp_out);
 	else
 	{
-        DijkstraAlgoritm(turist);
+        DijkstraAlgoritm(turist, argv,fp_out);
         // movimentos(turist);
 		// if(turist->passeio.custo_total != 0)
 		// 	WriteFileWithSuccess(turist, fp_out);

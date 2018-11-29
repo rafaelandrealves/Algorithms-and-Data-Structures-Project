@@ -20,9 +20,9 @@ point ** Possible_Jump_Points(tabuleiro * tab, point * ponto, DijkMatrix aux);
 
 void Free_Possible_Jump_Points(point ** vect);
 
-void DijkstraAlgoritm(Problema * turist);
+void DijkstraAlgoritm(Problema * turist,char * argv,FILE * fp_out);
 
-
+point ** get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out);
 
 
 #endif

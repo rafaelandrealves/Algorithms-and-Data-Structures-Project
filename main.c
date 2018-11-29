@@ -59,7 +59,7 @@ int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
     // FILE * fp_in = fopen("narrow_city01.cities", "r");
-    FILE * fp_out = OutPutFileName(argv[1]);
+    FILE * fp_output = OutPutFileName(argv[1]);
     // FILE * fp_out = fopen("t1011.valid", "w");
     int sinal = 0;
     Problema * cavaleiro = Read_File(fp_in,&sinal);
@@ -69,19 +69,19 @@ int main (int argc, char ** argv)
     {
 
         if(GetModoJogo(cavaleiro) == 'A')
-            Execute_A_Variant(cavaleiro, fp_out);
+            Execute_A_Variant(cavaleiro, fp_output,argv[1]);
         else if(GetModoJogo(cavaleiro) == 'B')
-            Execute_B_Variant(cavaleiro, fp_out);
+            Execute_B_Variant(cavaleiro, fp_output);
         else if(GetModoJogo(cavaleiro) == 'C')
             printf("Not done yet\n");
         else
-            WriteFileWithFailure(cavaleiro, fp_out);
+            WriteFileWithFailure(cavaleiro, fp_output);
         FreeAll(cavaleiro);
 
         cavaleiro = Read_File(fp_in, &sinal);
     }
 
     fclose(fp_in);
-    fclose(fp_out);
+    fclose(fp_output);
     return (0);
 }

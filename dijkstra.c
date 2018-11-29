@@ -168,13 +168,38 @@ void Free_Possible_Jump_Points(point ** vect)
             free(vect[i]);
 }
 
+point ** get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out)
+{
+    int num = 0;
+    point * min = end;
+
+    for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
+
+    point ** vect = (point **) Checked_Malloc(num * sizeof(point *));
+
+    min = end;
+    for(int i = 0; i < num; i++)
+    {
+        vect[num - i - 1] = min;
+        min = get_Father(matrix, min);
+    }
+    fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist), get_Acum_Cost(matrix,end),num);
+    for (int i = 0 ; i < num; i++)
+    {
+        fprintf(fp_out,"%d %d %d \n", get_Y_From_Point(vect[i]), get_X_From_Point(vect[i]), GetPointCostFromPoint(getTabuleiro(turist), vect[i]));
+    }
+    fprintf(fp_out,"\n");
+
+    return vect;
+
+}
 
 
-void DijkstraAlgoritm(Problema * turist)
+
+void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
 {
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo();
-    int sinal = 0;
 
     point * ORIGIN_POINT = getIpoint(turist, 0);
     point * DESTINY_POINT = getIpoint(turist, 1);
@@ -192,15 +217,17 @@ void DijkstraAlgoritm(Problema * turist)
         {
             point ** ppoints = Possible_Jump_Points(getTabuleiro(turist),min,matrix);
 
-            printf("%d %d \n",get_Y_From_Point(min),get_X_From_Point(min));
+            //printf("%d %d \n",get_Y_From_Point(min),get_X_From_Point(min));
+            //printf("papa - %d %d \n",get_Y_From_Point(get_Father(matrix,min)),get_X_From_Point(get_Father(matrix,min)));
             for(int i = 0; i < 8; i++)
             {
                 if(ppoints[i] != NULL)
                 {
-                    printf("\tola1\n");
-                    printf("\tacum from origin-%d-------pointcost-%d----acumulated point cost-%d\n",matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost,
+                    //printf("\tola1\n");
+                    /*printf("\tacum from origin-%d-------pointcost-%d----acumulated point cost-%d\n",matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost,
                                                                             GetPointCostFromPoint(getTabuleiro(turist), ppoints[i])
                                                                             , matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost);
+                    */
                     if(matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost > 
                         (matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]) ))
                     {
@@ -216,8 +243,13 @@ void DijkstraAlgoritm(Problema * turist)
 
     }
     min = HeapDeleteMaxPoint(matrix, heap_tree);
-    printf("%d %d \n",get_Y_From_Point(min),get_X_From_Point(min));
-    printf("Acum cost- %d\n",get_Acum_Cost(matrix,min));
+    //OutputSource(turist,matrix,min,ORIGIN_POINT,argv);
+    //printf("%d %d \n",get_Y_From_Point(min),get_X_From_Point(min));
+    //printf("papa - %d %d \n",get_Y_From_Point(get_Father(matrix,min)),get_X_From_Point(get_Father(matrix,min)));
+    //printf("Acum cost- %d\n",get_Acum_Cost(matrix,min));
+    get_Move_Vector(matrix,min,ORIGIN_POINT,turist,fp_out);
+
+
 
 
 
