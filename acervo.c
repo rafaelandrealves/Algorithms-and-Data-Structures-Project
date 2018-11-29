@@ -98,3 +98,9 @@ point * HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
 
     return aux->heap[--(aux->free)];
 }
+
+int  EmptyHeap(Acervo * aux)
+{
+    return aux->free;
+
+}

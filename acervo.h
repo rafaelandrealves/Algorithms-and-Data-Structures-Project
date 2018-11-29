@@ -24,5 +24,6 @@ void FixUp(DijkMatrix matrix, Acervo * aux, int Idx);
 
 point * HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux);
 
+int  EmptyHeap(Acervo * aux);
 
 #endif

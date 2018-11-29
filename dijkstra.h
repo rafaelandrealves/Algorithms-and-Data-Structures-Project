@@ -24,4 +24,5 @@ void DijkstraAlgoritm(Problema * turist);
 
 
 
+
 #endif

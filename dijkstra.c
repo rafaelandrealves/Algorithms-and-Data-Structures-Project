@@ -168,64 +168,56 @@ void Free_Possible_Jump_Points(point ** vect)
             free(vect[i]);
 }
 
-bool  EmptyHeap(Acervo * aux)
-{
-    for( int i=0, i < 8, i++)
-    {
-        
-    }
 
-
-}
 
 void DijkstraAlgoritm(Problema * turist)
 {
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo();
+    int sinal = 0;
 
     point * ORIGIN_POINT = getIpoint(turist, 0);
     point * DESTINY_POINT = getIpoint(turist, 1);
-
-    point ** ppoints = Possible_Jump_Points(getTabuleiro(turist), ORIGIN_POINT, matrix);
-
-
-    for(int i = 0; i < 8; i++)
-    {
-        if(ppoints[i] != NULL)
-        {
-            matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost = GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
-            HeapInsertPoint(matrix, heap_tree, ppoints[i]);
-        }
-    }
-
+    
+    point * min = ORIGIN_POINT;
 
     matrix[get_Y_From_Point(ORIGIN_POINT)][get_X_From_Point(ORIGIN_POINT)].acum_cost = 0;
     
+    HeapInsertPoint(matrix,heap_tree,ORIGIN_POINT);
 
-    while(getIPointFromHeap(heap_tree,0) != NULL)
-    {
-        printf("ola\n");
-        point * min = HeapDeleteMaxPoint(matrix, heap_tree);
-        if(min != NULL && matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost != INF)
+    while( !SamePoint(getIPointFromHeap(heap_tree,0),DESTINY_POINT) && EmptyHeap(heap_tree)!=0)
+    { 
+        min = HeapDeleteMaxPoint( matrix, heap_tree);
+        if( get_Acum_Cost(matrix,min) != INF)
         {
+            point ** ppoints = Possible_Jump_Points(getTabuleiro(turist),min,matrix);
+
+            printf("%d %d \n",get_Y_From_Point(min),get_X_From_Point(min));
             for(int i = 0; i < 8; i++)
             {
-                int aux = 0;
                 if(ppoints[i] != NULL)
                 {
-                    if((aux = (matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i])) <
-                                                            matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost))
+                    printf("\tola1\n");
+                    printf("\tacum from origin-%d-------pointcost-%d----acumulated point cost-%d\n",matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost,
+                                                                            GetPointCostFromPoint(getTabuleiro(turist), ppoints[i])
+                                                                            , matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost);
+                    if(matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost > 
+                        (matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]) ))
                     {
-                        matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost = aux;
-                        FixDown(matrix,heap_tree,i,getFree(heap_tree)- 1);
+                        matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost = matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
+                        //FixDown(matrix,heap_tree,i,getFree(heap_tree));
                         matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].pai = min;
+                        HeapInsertPoint(matrix,heap_tree,ppoints[i]);
 
                     }
-
                 }
             }
         }
+
     }
+    min = HeapDeleteMaxPoint(matrix, heap_tree);
+    printf("%d %d \n",get_Y_From_Point(min),get_X_From_Point(min));
+    printf("Acum cost- %d\n",get_Acum_Cost(matrix,min));
 
 
 
