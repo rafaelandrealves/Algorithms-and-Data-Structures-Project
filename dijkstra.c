@@ -168,7 +168,7 @@ void Free_Possible_Jump_Points(point ** vect)
             free(vect[i]);
 }
 
-point ** get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out)
+void get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out)
 {
     int num = 0;
     point * min = end;
@@ -190,7 +190,6 @@ point ** get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problem
     }
     fprintf(fp_out,"\n");
 
-    return vect;
 
 }
 
