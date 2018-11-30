@@ -203,12 +203,12 @@ void Free_Possible_Jump_Points(point ** vect)
 }
 
 /**
- * [get_Move_Vector description]
- * @param matrix [description]
- * @param end    [description]
- * @param ORIGIN [description]
- * @param turist [description]
- * @param fp_out [description]
+ * [Prints the vector of one move]
+ * @param matrix [Dijkstra Struct **]
+ * @param end    [pointer to the last point of the move]
+ * @param ORIGIN [origin point]
+ * @param turist [struct with the info read from the file]
+ * @param fp_out [pointer to the output file]
  */
 void get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out)
 {
@@ -232,6 +232,7 @@ void get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * 
     }
     fprintf(fp_out,"\n");
 
+    free(vect);
 
 }
 
@@ -256,7 +257,7 @@ void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
 
     HeapInsertPoint(matrix,heap_tree,ORIGIN_POINT);
 
-    while( !SamePoint(getIPointFromHeap(heap_tree,0),DESTINY_POINT) && EmptyHeap(heap_tree)!=0)
+    while( !SamePoint(getIPointFromHeap(heap_tree,0),DESTINY_POINT) && EmptyHeap(heap_tree) != 0)
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
         if( get_Acum_Cost(matrix,min) != INF)
@@ -269,7 +270,8 @@ void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
                     if(matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost >
                         (matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]) ))
                     {
-                        matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost = matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
+                        matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost =
+                            matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
                         //FixDown(matrix,heap_tree,i,getFree(heap_tree));
                         matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].pai = min;
                         HeapInsertPoint(matrix,heap_tree,ppoints[i]);
@@ -281,7 +283,7 @@ void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
 
     }
     min = HeapDeleteMaxPoint(matrix, heap_tree);
-    get_Move_Vector(matrix,min,ORIGIN_POINT,turist,fp_out);
+    get_Move_Vector(matrix,min, ORIGIN_POINT, turist, fp_out);
 
 
 
