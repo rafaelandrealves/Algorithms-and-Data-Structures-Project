@@ -25,9 +25,9 @@ struct Problema_t // main struct of the program
 #include "moves.h"
 
 /**
- * [getTabuleiro description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains a struct tabuleiro of a struct Problema
+ * @param  turist [Struct Problema]
+ * @return        [Pointer to struct tabuleiro]
  */
 tabuleiro * getTabuleiro(Problema * turist)
 {
@@ -35,9 +35,9 @@ tabuleiro * getTabuleiro(Problema * turist)
 }
 
 /**
- * [getCaminho description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains a pointer to a struct caminho from struct Problema
+ * @param  turist [Struct Problema]
+ * @return        [Pointer to struct caminho]
  */
 caminho * getCaminho(Problema * turist)
 {
@@ -45,9 +45,9 @@ caminho * getCaminho(Problema * turist)
 }
 
 /**
- * [getCustoTotal description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains the total cost of a certain struct Caminho
+ * @param  turist [Struct Problema]
+ * @return        [Value of the total cost of a struct caminho]
  */
 int getCustoTotal(Problema * turist)
 {
@@ -55,9 +55,9 @@ int getCustoTotal(Problema * turist)
 }
 
 /**
- * [getNumPontos description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains the total number of points of a struct caminho
+ * @param  turist [Struct problema]
+ * @return        [Total number of points]
  */
 int getNumPontos(Problema * turist)
 {
@@ -65,10 +65,10 @@ int getNumPontos(Problema * turist)
 }
 
 /**
- * [getIpoint description]
- * @param  turist [description]
- * @param  i      [description]
- * @return        [description]
+ * Function that gets the i point of a certain path
+ * @param  turist [Main struct Problema]
+ * @param  i      [Index]
+ * @return        [Pointer to point searched]
  */
 point * getIpoint(Problema * turist, int i)
 {
@@ -172,11 +172,11 @@ Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
 }
 
 /**
- * [Aux_Set_Point description]
- * @param turist [description]
- * @param x      [description]
- * @param y      [description]
- * @param i      [description]
+ * Function that allocates memory for a point to be added in the path
+ * @param turist [Struct Problema]
+ * @param x      [x of point to be added]
+ * @param y      [y of point to be added]
+ * @param i      [Index]
  */
 void Aux_Set_Point(Problema * turist, int x, int y, int i)
 {
@@ -197,9 +197,9 @@ void Aux_Set_Matrix_Element(Problema * turist, short cost, int yy, int xx)
 }
 
 /**
- * [GetModoJogo description]
- * @param  turist [description]
- * @return        [description]
+ * Function that gets the mode of a certain problem
+ * @param  turist [Main struct Problema]
+ * @return        [Game mode]
  */
 char GetModoJogo(Problema * turist)
 {

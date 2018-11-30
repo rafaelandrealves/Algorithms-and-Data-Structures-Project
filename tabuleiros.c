@@ -28,9 +28,9 @@ struct tabuleiro_t
 #include "tabuleiros.h"
 
 /**
- * [getXSize description]
- * @param  table [description]
- * @return       [description]
+ * Funtion that gets the size of the matrix in terms of columns
+ * @param  table [matrix given by the initial problem]
+ * @return [Size of the matrix]      
  */
 int getXSize(tabuleiro * table)
 {
@@ -38,9 +38,9 @@ int getXSize(tabuleiro * table)
 }
 
 /**
- * [getYSize description]
- * @param  table [description]
- * @return       [description]
+ * Funtion that gets the size of the matrix in terms o lines
+ * @param  table [matrix given by the initial problem]
+ * @return Size of the matrix      
  */
 int getYSize(tabuleiro * table)
 {
@@ -48,9 +48,9 @@ int getYSize(tabuleiro * table)
 }
 
 /**
- * [getMatrixPointer description]
- * @param  table [description]
- * @return       [description]
+ * Function that gets the pointer to a matrix 
+ * @param  table [pointer to a struct cointaining the matrix wanted]
+ * @return       [pointer to the matrix wanted]
  */
 int ** getMatrixPointer(tabuleiro * table)
 {
@@ -58,10 +58,10 @@ int ** getMatrixPointer(tabuleiro * table)
 }
 
 /**
- * [getMatrixLinePointer description]
- * @param  table [description]
- * @param  i     [description]
- * @return       [description]
+ * Funciton that gets a pointer to a certain line of the matrix provided
+ * @param  table [Matrix containing the line needed]
+ * @param  i     [Index of de line wanted]
+ * @return       [Pointer to matrix line]
  */
 int * getMatrixLinePointer(tabuleiro * table, int i)
 {
@@ -123,11 +123,11 @@ int GetPointCostFromPoint(tabuleiro * table, point * ponto)
 }
 
 /**
- * [GetPointCostFromCoord description]
- * @param  table [description]
- * @param  yy    [description]
- * @param  xx    [description]
- * @return       [description]
+ * Function that obtains the point cost from a coordinate given
+ * @param  table [Matrix given by the initial file]
+ * @param  yy    [Line of the point]
+ * @param  xx    [Column of the point]
+ * @return       [Point cost of a certain point]
  */
 int GetPointCostFromCoord(tabuleiro * table, int yy, int xx)
 {
@@ -135,11 +135,11 @@ int GetPointCostFromCoord(tabuleiro * table, int yy, int xx)
 }
 
 /**
- * [Set_Lenght_Width description]
- * @param  table [description]
- * @param  sizey [description]
- * @param  sizex [description]
- * @return       [description]
+ * [Allocates initial matrix identical to the one given by the initial file]
+ * @param  table [Struct pointer to contain the matrix]
+ * @param  sizey [Number of lines]
+ * @param  sizex [Number of columns]
+ * @return       [Pointer to matrix created]
  */
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
 {
@@ -153,11 +153,11 @@ tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
 }
 
 /**
- * [SetMatrixElement description]
- * @param table [description]
- * @param cost  [description]
- * @param yy    [description]
- * @param xx    [description]
+ * Establish a certain cost to a position of the matrix
+ * @param table [Struct with the matrix with the position to change]
+ * @param cost  [Cost to switch]
+ * @param yy    [Line]
+ * @param xx    [Column]
  */
 void SetMatrixElement(tabuleiro * table, int cost, int yy, int xx)
 {
