@@ -14,6 +14,7 @@ OSOURCES = util.o points.o tabuleiros.o acervo.o dijkstra.o moves.o main.o
 tuktuk: $(OSOURCES)
 	$(CC) $(CFLAGS) -o tuktuk $(OSOURCES)
 	clear
+	@echo ./tuktuk ready to execute!!
 
 main.o: src/main.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) src/main.c
@@ -40,3 +41,5 @@ dijkstra.o: src/dijkstra.c $(HSOURCES)
 clean::
 	@echo Cleaning...
 	rm -f *.o core tuktuk *~
+	clear
+	@echo Cleaned!!
