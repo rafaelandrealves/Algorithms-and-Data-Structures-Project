@@ -33,11 +33,19 @@ int get_Y_From_Point(point * ponto)
     return ponto->y;
 }
 
+/**
+ * [getSizeOfPoint description]
+ * @return [description]
+ */
 size_t getSizeOfPoint()
 {
     return sizeof(point );
 }
 
+/**
+ * [getSizeOfPointAst description]
+ * @return [description]
+ */
 size_t getSizeOfPointAst()
 {
     return sizeof(point *);
@@ -87,6 +95,13 @@ bool CheckHorseJump(point * ponto1,  point * ponto2)
     return false;
 }
 
+/**
+ * [SetPoint description]
+ * @param  ponto [description]
+ * @param  x     [description]
+ * @param  y     [description]
+ * @return       [description]
+ */
 point * SetPoint(point * ponto, int x, int y)
 {
     ponto->x = x;

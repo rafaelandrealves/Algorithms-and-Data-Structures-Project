@@ -27,26 +27,51 @@ struct tabuleiro_t
 
 #include "tabuleiros.h"
 
+/**
+ * [getXSize description]
+ * @param  table [description]
+ * @return       [description]
+ */
 int getXSize(tabuleiro * table)
 {
     return table->size_x;
 }
 
+/**
+ * [getYSize description]
+ * @param  table [description]
+ * @return       [description]
+ */
 int getYSize(tabuleiro * table)
 {
     return table->size_y;
 }
 
+/**
+ * [getMatrixPointer description]
+ * @param  table [description]
+ * @return       [description]
+ */
 int ** getMatrixPointer(tabuleiro * table)
 {
     return table->tab;
 }
 
+/**
+ * [getMatrixLinePointer description]
+ * @param  table [description]
+ * @param  i     [description]
+ * @return       [description]
+ */
 int * getMatrixLinePointer(tabuleiro * table, int i)
 {
     return table->tab[i];
 }
 
+/**
+ * [getSizeOfTabuleiro description]
+ * @return [description]
+ */
 size_t getSizeOfTabuleiro()
 {
     return sizeof(tabuleiro);
@@ -97,12 +122,25 @@ int GetPointCostFromPoint(tabuleiro * table, point * ponto)
     return (int)(table->tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
 }
 
+/**
+ * [GetPointCostFromCoord description]
+ * @param  table [description]
+ * @param  yy    [description]
+ * @param  xx    [description]
+ * @return       [description]
+ */
 int GetPointCostFromCoord(tabuleiro * table, int yy, int xx)
 {
     return (int)(table->tab[yy][xx]);
 }
 
-
+/**
+ * [Set_Lenght_Width description]
+ * @param  table [description]
+ * @param  sizey [description]
+ * @param  sizex [description]
+ * @return       [description]
+ */
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
 {
     table->size_x = sizex;
@@ -114,6 +152,13 @@ tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
     return table;
 }
 
+/**
+ * [SetMatrixElement description]
+ * @param table [description]
+ * @param cost  [description]
+ * @param yy    [description]
+ * @param xx    [description]
+ */
 void SetMatrixElement(tabuleiro * table, int cost, int yy, int xx)
 {
     table->tab[yy][xx] = cost;

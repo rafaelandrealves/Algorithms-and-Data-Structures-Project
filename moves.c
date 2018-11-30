@@ -24,27 +24,52 @@ struct Problema_t // main struct of the program
 
 #include "moves.h"
 
+/**
+ * [getTabuleiro description]
+ * @param  turist [description]
+ * @return        [description]
+ */
 tabuleiro * getTabuleiro(Problema * turist)
 {
 	return (turist->tabu);
 }
 
+/**
+ * [getCaminho description]
+ * @param  turist [description]
+ * @return        [description]
+ */
 caminho * getCaminho(Problema * turist)
 {
 	return &(turist->passeio);
 }
 
+/**
+ * [getCustoTotal description]
+ * @param  turist [description]
+ * @return        [description]
+ */
 int getCustoTotal(Problema * turist)
 {
 	return getCaminho(turist)->custo_total;
 }
 
-
+/**
+ * [getNumPontos description]
+ * @param  turist [description]
+ * @return        [description]
+ */
 int getNumPontos(Problema * turist)
 {
 	return getCaminho(turist)->num_pontos;
 }
 
+/**
+ * [getIpoint description]
+ * @param  turist [description]
+ * @param  i      [description]
+ * @return        [description]
+ */
 point * getIpoint(Problema * turist, int i)
 {
     return getCaminho(turist)->points[i];
@@ -146,17 +171,36 @@ Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
 	return turist;
 }
 
+/**
+ * [Aux_Set_Point description]
+ * @param turist [description]
+ * @param x      [description]
+ * @param y      [description]
+ * @param i      [description]
+ */
 void Aux_Set_Point(Problema * turist, int x, int y, int i)
 {
     turist->passeio.points[i] = (point *) Checked_Malloc(getSizeOfPoint());
     SetPoint(turist->passeio.points[i], x, y);
 }
 
+/**
+ * [Aux_Set_Matrix_Element description]
+ * @param turist [description]
+ * @param cost   [description]
+ * @param yy     [description]
+ * @param xx     [description]
+ */
 void Aux_Set_Matrix_Element(Problema * turist, short cost, int yy, int xx)
 {
 	SetMatrixElement(turist->tabu, cost, yy, xx);
 }
 
+/**
+ * [GetModoJogo description]
+ * @param  turist [description]
+ * @return        [description]
+ */
 char GetModoJogo(Problema * turist)
 {
 	return (turist->modo_jogo);

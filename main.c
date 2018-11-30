@@ -28,7 +28,6 @@ Problema * Read_File(FILE * fp, int *sinal)
         *sinal = 1;
         return NULL;
     }
-    //deva otimizar também para os casos em que dão um ponto inválido????
     Problema * new ;
     if(*sinal == 0 )
         new = Alloc_Problema(sizey, sizex, game_mode, points_num);
@@ -62,7 +61,7 @@ int main (int argc, char ** argv)
     FILE * fp_output = OutPutFileName(argv[1]);
     // FILE * fp_out = fopen("t1011.valid", "w");
     int sinal = 0;
-    Problema * cavaleiro = Read_File(fp_in,&sinal);
+    Problema * cavaleiro = Read_File(fp_in, &sinal);
 
 
     while(cavaleiro != NULL)

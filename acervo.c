@@ -20,22 +20,41 @@ struct acervoStruct
 #define exch(A, B) {Item t = A; A = B; B = t; }
 
 
+/**
+ * [getFree description]
+ * @param  new [description]
+ * @return     [description]
+ */
 int getFree(Acervo * new)
 {
     return new->free;
 }
 
+/**
+ * [getIPointFromHeap description]
+ * @param  new [description]
+ * @param  i   [description]
+ * @return     [description]
+ */
 point * getIPointFromHeap(Acervo * new, int i)
 {
     return new->heap[i];
 }
 
+/**
+ * [FreeAcervo description]
+ * @param old [description]
+ */
 void FreeAcervo(Acervo * old)
 {
     free(old->heap);
     free(old);
 }
 
+/**
+ * [InitAcervo description]
+ * @return [description]
+ */
 Acervo * InitAcervo()
 {
     Acervo * new = (Acervo *) Checked_Malloc(sizeof(Acervo));
@@ -44,8 +63,12 @@ Acervo * InitAcervo()
     return new;
 }
 
-
-
+/**
+ * [HeapInsertPoint description]
+ * @param matrix [description]
+ * @param new    [description]
+ * @param I      [description]
+ */
 void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point * I)
 {
     // Insere novo elemento no fim e restabelece ordenação com FixUp
@@ -57,9 +80,12 @@ void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point * I)
     FixUp(matrix, new, new->free - 1);
 }
 
-
-// Usando isto, adiciona-se o conceito de HEAPSORT para ser um acervo
-
+/**
+ * [FixUp description]
+ * @param matrix [description]
+ * @param aux    [description]
+ * @param Idx    [description]
+ */
 void FixUp(DijkMatrix matrix, Acervo * aux, int Idx)
 {
     if(Idx == 0) return; // in this case the heap only have one point
@@ -71,7 +97,13 @@ void FixUp(DijkMatrix matrix, Acervo * aux, int Idx)
     }
 }
 
-
+/**
+ * [FixDown description]
+ * @param matrix [description]
+ * @param aux    [description]
+ * @param Idx    [description]
+ * @param N      [description]
+ */
 void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N)
 {
     int Child; /* índice de um nó descendente */
@@ -89,7 +121,12 @@ void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N)
     }
 }
 
-
+/**
+ * [HeapDeleteMaxPoint description]
+ * @param  matrix [description]
+ * @param  aux    [description]
+ * @return        [description]
+ */
 point * HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
 {
     exch(aux->heap[0], aux->heap[aux->free - 1]);
@@ -99,6 +136,11 @@ point * HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
     return aux->heap[--(aux->free)];
 }
 
+/**
+ * [EmptyHeap description]
+ * @param  aux [description]
+ * @return     [description]
+ */
 int  EmptyHeap(Acervo * aux)
 {
     return aux->free;
