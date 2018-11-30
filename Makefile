@@ -6,35 +6,37 @@ CFLAGS = -Wall -std=c99 -g
 
 # Sources
 #
-HSOURCES = util.h points.h tabuleiros.h acervo.h dijkstra.h moves.h defs.h
+HSOURCES = src/util.h src/points.h src/tabuleiros.h src/acervo.h src/dijkstra.h src/moves.h src/defs.h
 OSOURCES = util.o points.o tabuleiros.o acervo.o dijkstra.o moves.o main.o
 
 %.o: %.c
 
 tuktuk: $(OSOURCES)
 	$(CC) $(CFLAGS) -o tuktuk $(OSOURCES)
+	clear
 
-main.o: main.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) main.c
+main.o: src/main.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/main.c
 
-util.o: util.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) util.c
+util.o: src/util.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/util.c
 
-tabuleiros.o: tabuleiros.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) tabuleiros.c
+tabuleiros.o: src/tabuleiros.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/tabuleiros.c
 
-points.o: points.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) points.c
+points.o: src/points.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/points.c
 
-moves.o: moves.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) moves.c
+moves.o: src/moves.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/moves.c
 
-acervo.o: acervo.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) acervo.c
+acervo.o: src/acervo.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/acervo.c
 
-dijkstra.o: dijkstra.c $(HSOURCES)
-	$(CC) -c $(CFLAGS) dijkstra.c
+dijkstra.o: src/dijkstra.c $(HSOURCES)
+	$(CC) -c $(CFLAGS) src/dijkstra.c
 
 
 clean::
+	@echo Cleaning...
 	rm -f *.o core tuktuk *~
