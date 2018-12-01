@@ -102,24 +102,20 @@ bool CheckAllPoints(Problema * turist)
 void Execute_B_Variant(Problema * turist, FILE * fp_out)
 {
 	bool validity = false;
+    int index = 0;
+    int custo_total_acumulado = 0;
+    int pontos_atuais = 0;
+    point ** vect_out =(point **) Checked_Malloc(300 * sizeof(point *));
+    
 
 	// means that one or more points aren't inside the table or are inaccessible
 	validity = CheckAllPoints(turist);
 
 	if(validity == true) // if all points are valid program will check if all make horse jumps
 	{
-		for(int i = 1; i < turist->passeio.num_pontos; i++)
+		for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
 		{
-			if(CheckHorseJump(turist->passeio.points[i-1], turist->passeio.points[i]))
-			{
-				turist->passeio.custo_total += GetPointCostFromPoint(turist->tabu, turist->passeio.points[i]);
-			}
-			else
-			{
-				// write file with failure because one (or more) point(s) does not have the horse jump move
-				WriteFileWithFailure(turist, fp_out);
-				return;
-			}
+            DijkstraAlgoritm(turist,fp_out,turist->passeio.points[i],turist->passeio.points[i+1],&custo_total_acumulado,&index,&pontos_atuais,vect_out, turist->passeio.num_pontos);
 		}
 	}
 	else
@@ -130,7 +126,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	}
 
 	// write file with success with the cost of the movement
-	WriteFileWithSuccess(turist, fp_out);
+	//WriteFileWithSuccess(turist, fp_out);
 }
 
 /**
@@ -142,12 +138,16 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out, char *argv)
 {
  	bool sign = false;
 	sign = CheckAllPoints(turist);
+    int index = 0;
+    int custo_total_acumulado = 0;
+    int pontos_atuais = 0;
+    point ** vect_out = (point **)Checked_Malloc(sizeof(point*));
 
 	if(sign == false)
 		WriteFileWithFailure(turist, fp_out);
 	else
 	{
-        DijkstraAlgoritm(turist, argv,fp_out);
+        DijkstraAlgoritm(turist,fp_out,turist->passeio.points[0],turist->passeio.points[1],&custo_total_acumulado,&index,&pontos_atuais,vect_out,turist->passeio.num_pontos);
         // movimentos(turist);
 		// if(turist->passeio.custo_total != 0)
 		// 	WriteFileWithSuccess(turist, fp_out);
