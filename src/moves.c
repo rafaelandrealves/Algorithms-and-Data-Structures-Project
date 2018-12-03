@@ -25,9 +25,9 @@ struct Problema_t // main struct of the program
 #include "moves.h"
 
 /**
- * [getTabuleiro description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains a struct tabuleiro of a struct Problema
+ * @param  turist [Struct Problema]
+ * @return        [Pointer to struct tabuleiro]
  */
 tabuleiro * getTabuleiro(Problema * turist)
 {
@@ -35,9 +35,9 @@ tabuleiro * getTabuleiro(Problema * turist)
 }
 
 /**
- * [getCaminho description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains a pointer to a struct caminho from struct Problema
+ * @param  turist [Struct Problema]
+ * @return        [Pointer to struct caminho]
  */
 caminho * getCaminho(Problema * turist)
 {
@@ -45,19 +45,24 @@ caminho * getCaminho(Problema * turist)
 }
 
 /**
- * [getCustoTotal description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains the total cost of a certain struct Caminho
+ * @param  turist [Struct Problema]
+ * @return        [Value of the total cost of a struct caminho]
  */
-int getCustoTotal(Problema * turist)
+int getCustoTotalFromProb(Problema * turist)
 {
 	return getCaminho(turist)->custo_total;
 }
 
+int getCustoTotalFromCaminho(caminho * way)
+{
+    return way->custo_total;
+}
+
 /**
- * [getNumPontos description]
- * @param  turist [description]
- * @return        [description]
+ * Function that obtains the total number of points of a struct caminho
+ * @param  turist [Struct problema]
+ * @return        [Total number of points]
  */
 int getNumPontos(Problema * turist)
 {
@@ -65,16 +70,31 @@ int getNumPontos(Problema * turist)
 }
 
 /**
- * [getIpoint description]
- * @param  turist [description]
- * @param  i      [description]
- * @return        [description]
+ * Function that gets the i point of a certain path
+ * @param  turist [Main struct Problema]
+ * @param  i      [Index]
+ * @return        [Pointer to point searched]
  */
 point * getIpoint(Problema * turist, int i)
 {
     return getCaminho(turist)->points[i];
 }
 
+point * getIpointFromCaminho(caminho * way, int i)
+{
+    return way->points[i];
+}
+
+point ** get_point_vector(caminho * move)
+{
+    return move->points;
+}
+
+caminho * Set_Custo_Total(caminho *move, int value)
+{
+    move->custo_total = value;
+    return move;
+}
 
 /**
  * Checks all poits from a way to see if all are inside the table
@@ -102,24 +122,30 @@ bool CheckAllPoints(Problema * turist)
 void Execute_B_Variant(Problema * turist, FILE * fp_out)
 {
 	bool validity = false;
+    int index = 0;
+    int pontos_atuais = 0;
+    int numMalloc = 500;
+    point ** vect_out = (point **) Checked_Malloc(numMalloc * sizeof(point *));
+
+    caminho * move_struct = (caminho *) Checked_Malloc(sizeof(caminho));
+    move_struct->num_pontos = 0;
+    move_struct->points = vect_out;
+    move_struct->custo_total = 0;
+
 
 	// means that one or more points aren't inside the table or are inaccessible
 	validity = CheckAllPoints(turist);
 
 	if(validity == true) // if all points are valid program will check if all make horse jumps
 	{
-		for(int i = 1; i < turist->passeio.num_pontos; i++)
+		for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
 		{
-			if(CheckHorseJump(turist->passeio.points[i-1], turist->passeio.points[i]))
-			{
-				turist->passeio.custo_total += GetPointCostFromPoint(turist->tabu, turist->passeio.points[i]);
-			}
-			else
-			{
-				// write file with failure because one (or more) point(s) does not have the horse jump move
-				WriteFileWithFailure(turist, fp_out);
-				return;
-			}
+            if(index == numMalloc - 1)
+            {
+                numMalloc += 500;
+                move_struct->points = (point **) realloc(move_struct->points, numMalloc);
+            }
+            DijkstraAlgoritm_B(turist, fp_out, turist->passeio.points[i], turist->passeio.points[i + 1], &index, &pontos_atuais, move_struct);
 		}
 	}
 	else
@@ -129,8 +155,10 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 		return;
 	}
 
+    free(vect_out);
+
 	// write file with success with the cost of the movement
-	WriteFileWithSuccess(turist, fp_out);
+	//WriteFileWithSuccess(turist, fp_out);
 }
 
 /**
@@ -138,7 +166,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
  * @param turist [main struct]
  * @param fp_out [output file pointer to]
  */
-void Execute_A_Variant(Problema * turist, FILE * fp_out, char *argv)
+void Execute_A_Variant(Problema * turist, FILE * fp_out)
 {
  	bool sign = false;
 	sign = CheckAllPoints(turist);
@@ -146,19 +174,44 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out, char *argv)
 	if(sign == false)
 		WriteFileWithFailure(turist, fp_out);
 	else
-	{
-        DijkstraAlgoritm(turist, argv,fp_out);
-        // movimentos(turist);
-		// if(turist->passeio.custo_total != 0)
-		// 	WriteFileWithSuccess(turist, fp_out);
-		// else
-		// 	WriteFileWithFailure(turist, fp_out);
-        //
-		// sign = false;
+        DijkstraAlgoritm_A(turist, fp_out, turist->passeio.points[0], turist->passeio.points[1]);
 
-	}
 }
 
+/**
+ * [Given some points gets the cheapest move with arbitrary order od points]
+ * @param turist [main struct]
+ * @param fp_out [file pointer]
+ * @param argv   [description]
+ */
+void Execute_C_Variant(Problema * turist, FILE * fp_out)
+{
+    caminho * melhor_caminho = (caminho *) Checked_Malloc(sizeof(caminho));
+    melhor_caminho->custo_total = 0;
+    melhor_caminho->num_pontos = 0;
+    melhor_caminho->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
+
+    for(int i = 0; i < getNumPontos(turist); i++)
+    {
+        for(int j = 0; j < getNumPontos(turist); j++)
+        {
+            if(i != j)
+            {
+                // executa o dijkstra para os dois pontos dos for's
+            }
+        }
+    }
+}
+
+
+/**
+ * [Allocs memory for the Problema struct]
+ * @param  sizey      [y size of the board]
+ * @param  sizex      [x size of the board]
+ * @param  game_mode  [mode of game]
+ * @param  points_num [number of points from the move vector]
+ * @return            [returns the problem allocated]
+ */
 Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
 {
 	Problema * turist = (Problema *) Checked_Malloc(sizeof(Problema));
@@ -172,11 +225,11 @@ Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
 }
 
 /**
- * [Aux_Set_Point description]
- * @param turist [description]
- * @param x      [description]
- * @param y      [description]
- * @param i      [description]
+ * Function that allocates memory for a point to be added in the path
+ * @param turist [Struct Problema]
+ * @param x      [x of point to be added]
+ * @param y      [y of point to be added]
+ * @param i      [Index]
  */
 void Aux_Set_Point(Problema * turist, int x, int y, int i)
 {
@@ -197,9 +250,9 @@ void Aux_Set_Matrix_Element(Problema * turist, short cost, int yy, int xx)
 }
 
 /**
- * [GetModoJogo description]
- * @param  turist [description]
- * @return        [description]
+ * Function that gets the mode of a certain problem
+ * @param  turist [Main struct Problema]
+ * @return        [Game mode]
  */
 char GetModoJogo(Problema * turist)
 {
@@ -295,7 +348,7 @@ void WriteFileWithFailure(Problema * turist, FILE * fp_out)
  */
 void WriteFileWithSuccess(Problema * turist, FILE * fp_out)
 {
-    fprintf(fp_out, "%d %d %c %d 1 %d\n\n", getYSize(turist->tabu), getXSize(turist->tabu), GetModoJogo(turist), getNumPontos(turist), getCustoTotal(turist));
+    fprintf(fp_out, "%d %d %c %d 1 %d\n\n", getYSize(turist->tabu), getXSize(turist->tabu), GetModoJogo(turist), getNumPontos(turist), getCustoTotalFromProb(turist));
 }
 
 

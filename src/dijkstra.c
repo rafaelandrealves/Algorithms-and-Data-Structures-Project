@@ -17,10 +17,10 @@ struct Dijk_struct
 #include "dijkstra.h"
 
 /**
- * [get_Acum_Cost description]
- * @param  aux   [description]
- * @param  ponto [description]
- * @return       [description]
+ * Returns the Acumulated cost of a point given
+ * @param  aux   [Matrix with acumulated cost and father bond of each point]
+ * @param  ponto [point struct to consider]
+ * @return       [acumulated cost of point given]
  */
 int get_Acum_Cost(DijkMatrix aux, point * ponto)
 {
@@ -29,10 +29,10 @@ int get_Acum_Cost(DijkMatrix aux, point * ponto)
 
 
 /**
- * [get_Father description]
- * @param  aux   [description]
- * @param  ponto [description]
- * @return       [description]
+ * Returns the Father point of the point given
+ * @param  aux   [Matrix with acumulated cost and father bond of each point]
+ * @param  ponto [point struct to consider]
+ * @return       [father point]
  */
 point * get_Father(DijkMatrix aux, point * ponto)
 {
@@ -41,27 +41,34 @@ point * get_Father(DijkMatrix aux, point * ponto)
 
 
 /**
- * [AllocDijk description]
- * @param  ysize [description]
- * @param  xsize [description]
- * @return       [description]
+ * Allocs a matrix Matrix with acumulated cost and father bond of each point
+ * @param  ysize [max size of the lines on the matrix given]
+ * @param  xsize [max size of the columns on the matrix given]
+ * @return       [matrix allocated]
  */
 DijkMatrix AllocDijk(int ysize, int xsize)
 {
     DijkMatrix new = (DijkMatrix) Checked_Malloc(sizeof(Dijk *) * ysize);
 
     for(int i = 0; i < ysize; i++)
+    {
         new[i] = (Dijk *) Checked_Malloc(sizeof(Dijk) * xsize);
-
+    }
     return new;
 }
 
+point * GetDupPoint(point * ponto)
+{
+    point * aux = (point *) Checked_Malloc(sizeof(point *));
+    aux = SetPoint(aux, get_X_From_Point(ponto), get_Y_From_Point(ponto));
+    return aux;
+}
 
 /**
- * [FreeDijk description]
- * @param matrix [description]
- * @param ysize  [description]
- * @param xsize  [description]
+ * Free of Matrix with acumulated cost and father bond of each point
+ * @param matrix [Matrix with acumulated cost and father bond of each point]
+ * @param ysize  [max size of the lines on the matrix given]
+ * @param xsize  [max size of the columns on the matrix given]
  */
 void FreeDijk(DijkMatrix matrix, int ysize, int xsize)
 {
@@ -72,9 +79,9 @@ void FreeDijk(DijkMatrix matrix, int ysize, int xsize)
 }
 
 /**
- * [Problema2Dijk description]
- * @param  turist [description]
- * @return        [description]
+ * Initializes Matrix for Dijk Algorithm, used for the consecutive acumulated cost and and bond to the father point
+ * @param  turist [Struct that has the initial matrix given by the file]
+ * @return        [Matrix Initialized with Infinite acumulated cost(for it to be changed in the algorithm) and the ponits linked to the Origin point]
  */
 DijkMatrix Problema2Dijk(Problema * turist)
 {
@@ -95,11 +102,11 @@ DijkMatrix Problema2Dijk(Problema * turist)
 }
 
 /**
- * [Possible_Jump_Points description]
- * @param  tab   [description]
- * @param  ponto [description]
- * @param  aux   [description]
- * @return       [description]
+ * Function that calculates all the possible horse jump points
+ * @param  tab   [Map given by the file]
+ * @param  ponto [Point to check the horse jumps]
+ * @param  aux   [Matrix whith the acumulated cost and father bond of each point]
+ * @return vector whith pointers to each possible jump points
  */
 point ** Possible_Jump_Points(tabuleiro * tab, point * ponto, DijkMatrix aux)
 {
@@ -192,30 +199,34 @@ point ** Possible_Jump_Points(tabuleiro * tab, point * ponto, DijkMatrix aux)
 }
 
 /**
- * [Free_Possible_Jump_Points description]
- * @param vect [description]
+ * Function that frees the vector with jump point
+ * @param vect [vector with pointers to points to possibly jump]
  */
 void Free_Possible_Jump_Points(point ** vect)
 {
     for(int i = 0; i < 8; i++)
         if(vect[i] != NULL)
             free(vect[i]);
+
+    free(vect);
 }
 
 /**
- * [Prints the vector of one move]
- * @param matrix [Dijkstra Struct **]
- * @param end    [pointer to the last point of the move]
- * @param ORIGIN [origin point]
- * @param turist [struct with the info read from the file]
- * @param fp_out [pointer to the output file]
+ * [Funtion that prints the diferent points of the course to the destination on the exit file]
+ * @param matrix [matrix with the acumulated cost and father bond of each point]
+ * @param end    [Destiny point]
+ * @param ORIGIN [Origin point]
+ * @param turist [Struct with the matrix given by the initial file]
+ * @param fp_out [File to insert the output]
  */
-void get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out)
+void get_Move_Vector_A(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out)
 {
     int num = 0;
     point * min = end;
 
     for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
+
+    printf("%d\n", num);
 
     point ** vect = (point **) Checked_Malloc(num * sizeof(point *));
 
@@ -231,25 +242,132 @@ void get_Move_Vector(DijkMatrix matrix, point * end, point * ORIGIN, Problema * 
         fprintf(fp_out,"%d %d %d \n", get_Y_From_Point(vect[i]), get_X_From_Point(vect[i]), GetPointCostFromPoint(getTabuleiro(turist), vect[i]));
     }
     fprintf(fp_out,"\n");
-
     free(vect);
+}
+
+/**
+ * [Funtion that prints the diferent points of the course to the destination on the exit file]
+ * @param matrix [matrix with the acumulated cost and father bond of each point]
+ * @param end    [Destiny point]
+ * @param ORIGIN [Origin point]
+ * @param turist [Struct with the matrix given by the initial file]
+ * @param fp_out [File to insert the output]
+ */
+void get_Move_Vector_B(DijkMatrix matrix, point * end, point * ORIGIN, int *index, point ** vect)
+{
+    int num = 0;
+    point * min = end;
+
+    for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
+
+    min = end;
+    //printf("O index é %d e o num %d \n",*index,num);
+    for(int i = 0; i < num; i++)
+    {
+        vect[(num + *index) - i - 1] = min;
+        min = get_Father(matrix, min);
+        //printf("%d %d on pos- %d \n",get_Y_From_Point(vect[(num + * index) - i -1]), get_X_From_Point(vect[(num + *index) - i - 1]),((num + *index) - i -1));
+    }
+
+    *index = num + *index;
+}
+
+
+void OutPUT_B(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist, FILE * fp_out, int num, caminho * move_struct)
+{
+    fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
+        getCustoTotalFromCaminho(move_struct), num);
+    //printf("olaaa\n");
+    for (int i = 0 ; i < num; i++)
+    {
+        fprintf(fp_out,"%d %d %d \n", get_Y_From_Point(getIpointFromCaminho(move_struct, i)), get_X_From_Point(getIpointFromCaminho(move_struct, i)),
+                    GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(move_struct, i)));
+        //printf("%d %d \n",get_Y_From_Point(vect[i]), get_X_From_Point(vect[i]));
+    }
+    fprintf(fp_out,"\n");
+}
+
+
+
+void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point * begin, point *end)
+{
+    DijkMatrix matrix = Problema2Dijk(turist);
+    Acervo * heap_tree = InitAcervo();
+
+    point *ORIGIN_POINT = begin;
+    point *DESTINY_POINT = end;
+
+    point * aux = GetDupPoint(ORIGIN_POINT);
+    point * min = aux;
+
+    matrix[get_Y_From_Point(ORIGIN_POINT)][get_X_From_Point(ORIGIN_POINT)].acum_cost = 0;
+
+    HeapInsertPoint(matrix, heap_tree, min);
+
+    while( !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) && EmptyHeap(heap_tree) != 0)
+    {
+        min = HeapDeleteMaxPoint( matrix, heap_tree);
+        if( get_Acum_Cost(matrix, min) != INF)
+        {
+            point ** ppoints = Possible_Jump_Points(getTabuleiro(turist), min, matrix);
+            for(int i = 0; i < 8; i++)
+            {
+                if(ppoints[i] != NULL)
+                {
+                    if(matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost >
+                        (matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]) ))
+                    {
+                        matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost =
+                            matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
+
+                        // set the father point
+                        // free(matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].pai);
+                        matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].pai = GetDupPoint(min);
+
+                        // insert the point in the heap
+                        point * aux1 = GetDupPoint(ppoints[i]);
+                        HeapInsertPoint(matrix, heap_tree, aux1);
+                    }
+                }
+            }
+            Free_Possible_Jump_Points(ppoints);
+        }
+        free(min);
+    }
+
+    if(EmptyHeap(heap_tree) == 0)
+    {
+        WriteFileWithFailure(turist, fp_out);
+    }
+    else
+    {
+        min = HeapDeleteMaxPoint(matrix, heap_tree);
+        get_Move_Vector_A(matrix, min, ORIGIN_POINT, turist, fp_out);
+    }
+
+    FreeDijk(matrix, getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
+    FreeAcervo(heap_tree);
 
 }
 
 
 /**
- * [DijkstraAlgoritm description]
- * @param turist [description]
- * @param argv   [description]
- * @param fp_out [description]
+ * [Funtion that performs the DijkstraAlgorithm in order to find the cheapest course to a Destiny Point]
+ * @param turist [Struct that has the initial matrix given by the problem]
+ * @param argv   [Pointer to the name of the file]
+ * @param fp_out [Exit file to insert the data]
  */
-void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
+void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point * begin, point *end, int *index, int *ponto_atual, caminho * move_struct)
 {
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo();
+    int num_pontos = getNumPontos(turist);
 
-    point * ORIGIN_POINT = getIpoint(turist, 0);
-    point * DESTINY_POINT = getIpoint(turist, 1);
+    //point * ORIGIN_POINT = getIpoint(turist, 0);
+    //point * DESTINY_POINT = getIpoint(turist, 1);
+
+    point *ORIGIN_POINT = begin;
+    point *DESTINY_POINT = end;
 
     point * min = ORIGIN_POINT;
 
@@ -272,7 +390,6 @@ void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
                     {
                         matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].acum_cost =
                             matrix[get_Y_From_Point(min)][get_X_From_Point(min)].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
-                        //FixDown(matrix,heap_tree,i,getFree(heap_tree));
                         matrix[get_Y_From_Point(ppoints[i])][get_X_From_Point(ppoints[i])].pai = min;
                         HeapInsertPoint(matrix,heap_tree,ppoints[i]);
 
@@ -280,19 +397,32 @@ void DijkstraAlgoritm(Problema * turist, char *argv,FILE * fp_out)
                 }
             }
         }
+    }
+
+    if(EmptyHeap(heap_tree) == 0)
+    {
+        WriteFileWithFailure(turist,fp_out);
+    }
+    else
+    {
+        min = HeapDeleteMaxPoint(matrix, heap_tree);
+        move_struct = Set_Custo_Total(move_struct, getCustoTotalFromCaminho(move_struct) + get_Acum_Cost(matrix, min));
+        // *custo_total_acumulado = *custo_total_acumulado + get_Acum_Cost(matrix,min);
+        get_Move_Vector_B(matrix, min, ORIGIN_POINT, index, get_point_vector(move_struct));
+        *ponto_atual = *ponto_atual + 1;
+        if(*ponto_atual == num_pontos - 1)
+        {
+            // OutPUT_B(matrix,min,ORIGIN_POINT, turist, fp_out, *index, vect_out, getCustoTotalFromCaminho(move_struct));
+            OutPUT_B(matrix, min, ORIGIN_POINT, turist, fp_out, *index, move_struct);
+        }
+        //printf("Index-%d --- custo--%d-- ponto_atual %d--pontos %d\n",*index,*custo_total_acumulado,*ponto_atual,num_pontos);
 
     }
-    min = HeapDeleteMaxPoint(matrix, heap_tree);
-    get_Move_Vector(matrix,min, ORIGIN_POINT, turist, fp_out);
 
+     //Free_Possible_Jump_Points(pontos);
+     //free(pontos);
 
-
-
-
-    // Free_Possible_Jump_Points(pontos);
-    // free(pontos);
-
-    FreeDijk(matrix, getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
-    FreeAcervo(heap_tree);
+    //FreeDijk(matrix, getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
+    //FreeAcervo(heap_tree);
 
 }

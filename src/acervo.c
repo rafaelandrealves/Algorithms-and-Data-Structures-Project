@@ -19,6 +19,8 @@ struct acervoStruct
 #define lessPri(A, B) (A > B)
 #define exch(A, B) {Item t = A; A = B; B = t; }
 
+int num_elementos = 200;
+
 
 /**
  * [getFree description]
@@ -58,7 +60,7 @@ void FreeAcervo(Acervo * old)
 Acervo * InitAcervo()
 {
     Acervo * new = (Acervo *) Checked_Malloc(sizeof(Acervo));
-    new->heap = (point **) Checked_Malloc(sizeof(point *));
+    new->heap = (point **) Checked_Malloc(num_elementos * sizeof(point *));
     new->free = 0;
     return new;
 }
@@ -74,7 +76,11 @@ void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point * I)
     // Insere novo elemento no fim e restabelece ordenação com FixUp
     new->heap[new->free] = I;
     (new->free)++;
-    new->heap = (point **) realloc(new->heap, sizeof(point *) * (new->free + 1));
+    if(new->free == num_elementos - 1)
+    {
+        num_elementos *= 2;
+        new->heap = (point **) realloc(new->heap, sizeof(point *) * num_elementos);
+    }
     new->heap[new->free] = NULL;
 
     FixUp(matrix, new, new->free - 1);
