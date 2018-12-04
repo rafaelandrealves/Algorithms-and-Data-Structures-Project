@@ -99,3 +99,23 @@ FILE * OutPutFileName(char * nome_inicial)
 
     return fp;
 }
+
+int fact(int n)
+{
+    if(n == 1 || n == 0)
+        return 1;
+
+    return n * fact(n - 1);
+}
+
+void printMatrix(Item * matrix, int sizey, int sizex)
+{
+    for(int i = 0; i < sizey; i ++)
+    {
+        for(int j = 0; j < sizex; j++)
+        {
+            printf("%d ", ((int *)matrix[i])[j]);
+        }
+        printf("\n");
+    }
+}

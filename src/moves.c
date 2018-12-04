@@ -7,6 +7,7 @@
 #include "points.h"
 #include "dijkstra.h"
 
+#define PrintCombinMatrix 0
 
 struct caminho_t
 {
@@ -150,7 +151,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	}
 	else
 	{
-		// write file with failure because one (or more) point(s) aren't inside the matrix or are
+		// write file with failure because one (or more) point(s) aren't inside the matrix
 		WriteFileWithFailure(turist, fp_out);
 		return;
 	}
@@ -178,6 +179,72 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
 
 }
 
+
+void SetMatrix_Variant_C(int ** matriz, int * vetor, int num_ele, int num_linha)
+{
+    for(int i = 0; i < num_ele; i++)
+        matriz[num_linha][i] = vetor[i];
+}
+
+
+void troca_int(int * str, int p1, int p2)
+{
+  int tmp;
+  tmp = str[p1];
+  str[p1] = str[p2];
+  str[p2] = tmp;
+}
+
+
+void permutacao_recursiva(int * vetor, int ** matriz, int k, int num_ele, int *num_linha)
+{
+    int i;
+    int * copia_vetor = vetor;
+
+    if (k == num_ele)
+    {
+        SetMatrix_Variant_C(matriz, vetor, num_ele, *num_linha);
+        (*num_linha)++;
+        // print_vector(vetor, num_ele);
+    }
+
+    else
+    {
+        for (i = k; i < num_ele; i++)
+        {
+            troca_int(copia_vetor, k, i);
+            permutacao_recursiva(vetor, matriz, k + 1, num_ele, num_linha);
+            troca_int(copia_vetor, i, k);
+        }
+    }
+}
+
+
+int ** get_Matrix_Variant_C(int num_pontos)
+{
+    int num_linha = 0;
+    int ** matrix = (int **) Checked_Malloc(sizeof(int*) * fact(num_pontos));
+    for(int i = 0; i < fact(num_pontos); i++)
+        matrix[i] = (int *) Checked_Malloc(sizeof(int) * (num_pontos));
+
+    int * vetor = (int *) calloc(sizeof(int), (num_pontos));
+    for(int i = 0; i < num_pontos; i++)
+        vetor[i] = i + 1;
+
+    permutacao_recursiva(vetor, matrix, 0, num_pontos, &num_linha);
+
+    free(vetor);
+
+    return matrix;
+}
+
+void Free_Matrix_Variant_C(int ** matrix, int num_pontos)
+{
+    for(int i = 0; i < num_pontos; i++)
+        free(matrix[i]);
+
+    free(matrix);
+}
 /**
  * [Given some points gets the cheapest move with arbitrary order od points]
  * @param turist [main struct]
@@ -186,21 +253,71 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
  */
 void Execute_C_Variant(Problema * turist, FILE * fp_out)
 {
-    caminho * melhor_caminho = (caminho *) Checked_Malloc(sizeof(caminho));
-    melhor_caminho->custo_total = 0;
-    melhor_caminho->num_pontos = 0;
-    melhor_caminho->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
+    bool first_time = true;
 
-    for(int i = 0; i < getNumPontos(turist); i++)
+    point * inicial_point = NULL;
+
+    caminho * best = (caminho *) Checked_Malloc(sizeof(caminho));
+    best->custo_total = 0;
+    best->num_pontos = 0;
+    // best->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
+
+    caminho *atual = (caminho *) Checked_Malloc(sizeof(caminho));
+    atual->custo_total = 0;
+    atual->num_pontos = 0;
+
+    bool validity = CheckAllPoints(turist);
+    if(validity == false)
     {
-        for(int j = 0; j < getNumPontos(turist); j++)
+        WriteFileWithFailure(turist, fp_out);
+        free(best);
+        free(atual);
+        return;
+    }
+
+    int ** PermutMatrix = get_Matrix_Variant_C(getNumPontos(turist) - 1);
+    #if PrintCombinMatrix == 1
+        printMatrix((void **) PermutMatrix, fact(getNumPontos(turist) - 1), getNumPontos(turist) - 1);
+    #endif
+
+    for(int linha = 0; linha < fact(getNumPontos(turist) - 1); linha++)
+    {
+        atual->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
+        inicial_point = getIpoint(turist, 0);
+        for(int ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
         {
-            if(i != j)
+            point * final_point = getIpoint(turist, PermutMatrix[linha][ponto]);
+            DijkstraAlgoritm_C(turist, fp_out, inicial_point, final_point, atual);
+            inicial_point = final_point;
+        }
+        if(first_time == true)
+        {
+            best->num_pontos = atual->num_pontos;
+            best->custo_total = atual->custo_total;
+        	best->points = atual->points;
+            first_time = false;
+        }
+        else
+        {
+            if(atual->custo_total < best->custo_total)
             {
-                // executa o dijkstra para os dois pontos dos for's
+                best->custo_total = atual->custo_total;
+                best->num_pontos = atual->num_pontos;
+                // free(best->num_pontos = atual->points);
+                best->points = atual->points;
             }
         }
+        atual->custo_total = 0;
+        atual->num_pontos = 0;
+        free(atual->points);
+
     }
+
+
+
+    Free_Matrix_Variant_C(PermutMatrix, getNumPontos(turist) - 1);
+    free(atual);
+    free(best);
 }
 
 
