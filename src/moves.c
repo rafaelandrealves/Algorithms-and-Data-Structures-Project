@@ -114,6 +114,20 @@ bool CheckAllPoints(Problema * turist)
 	return true;
 }
 
+
+
+void Free_Point_Vec(int num, caminho * move_struct)
+{
+    //printf("olaaa\n");
+    for (int i = 0 ; i < num; i++)
+    {
+        free(getIpointFromCaminho(move_struct, i));
+    }
+    free(get_point_vector(move_struct));
+
+}
+
+
 /**
  * Given some points checks if it is a valid move which means if all points are valid
  * 	are accesible and only make horse jumps
@@ -125,7 +139,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	bool validity = false;
     int index = 0;
     int pontos_atuais = 0;
-    int numMalloc = 500;
+    int numMalloc = 2000;
     point ** vect_out = (point **) Checked_Malloc(numMalloc * sizeof(point *));
 
     caminho * move_struct = (caminho *) Checked_Malloc(sizeof(caminho));
@@ -141,10 +155,10 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	{
 		for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
 		{
-            if(index == numMalloc - 1)
+            if((numMalloc - index) <= 1000) // é necessário alocar mais memória
             {
-                numMalloc += 500;
-                move_struct->points = (point **) realloc(move_struct->points, numMalloc);
+                numMalloc *= 2;
+                move_struct->points = (point **) realloc(move_struct->points, numMalloc * sizeof(point *));
             }
             DijkstraAlgoritm_B(turist, fp_out, turist->passeio.points[i], turist->passeio.points[i + 1], &index, &pontos_atuais, move_struct);
 		}
@@ -153,13 +167,10 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	{
 		// write file with failure because one (or more) point(s) aren't inside the matrix
 		WriteFileWithFailure(turist, fp_out);
-		return;
 	}
 
+    Free_Point_Vec(index, move_struct);
     free(move_struct);
-
-	// write file with success with the cost of the movement
-	//WriteFileWithSuccess(turist, fp_out);
 }
 
 /**

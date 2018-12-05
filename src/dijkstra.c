@@ -290,15 +290,11 @@ void OutPUT_B(DijkMatrix matrix, point * end, point * ORIGIN, Problema * turist,
     {
         fprintf(fp_out,"%d %d %d \n", get_Y_From_Point(getIpointFromCaminho(move_struct, i)), get_X_From_Point(getIpointFromCaminho(move_struct, i)),
                     GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(move_struct, i)));
-        //printf("%d %d \n",get_Y_From_Point(vect[i]), get_X_From_Point(vect[i]));
-        free(getIpointFromCaminho(move_struct, i));
+        //printf("%d %d \n",get_Y_From_Point(getIpointFromCaminho(move_struct, i)), get_X_From_Point(getIpointFromCaminho(move_struct, i)));
     }
     fprintf(fp_out,"\n");
-    free(get_point_vector(move_struct));
 
 }
-
-
 
 void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point * begin, point *end)
 {
@@ -314,7 +310,7 @@ void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point * begin, point *e
 
     HeapInsertPoint(matrix, heap_tree, min);
 
-    while( !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) && EmptyHeap(heap_tree) != 0)
+    while(  EmptyHeap(heap_tree) != 0 &&  !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT))
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
         if( get_Acum_Cost(matrix, min) != INF)
@@ -384,7 +380,7 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point * begin, point *e
 
     HeapInsertPoint(matrix, heap_tree, min);
 
-    while( !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) && EmptyHeap(heap_tree) != 0)
+    while( EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) )
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
         if( get_Acum_Cost(matrix, min) != INF)
@@ -419,7 +415,7 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point * begin, point *e
 
     if(EmptyHeap(heap_tree) == 0)
     {
-        WriteFileWithFailure(turist,fp_out);
+        WriteFileWithFailure(turist, fp_out);
     }
     else
     {
@@ -458,7 +454,7 @@ void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point * begin, point *e
 
     HeapInsertPoint(matrix, heap_tree, min);
 
-    while( !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) && EmptyHeap(heap_tree) != 0)
+    while( EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT))
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
         if( get_Acum_Cost(matrix, min) != INF)
