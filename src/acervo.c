@@ -49,6 +49,10 @@ point * getIPointFromHeap(Acervo * new, int i)
  */
 void FreeAcervo(Acervo * old)
 {
+    for(int i = 0; i < old->free; i++)
+        if(old->heap[i] != NULL)
+            free(old->heap[i]);
+
     free(old->heap);
     free(old);
 }
@@ -150,5 +154,4 @@ point * HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
 int  EmptyHeap(Acervo * aux)
 {
     return aux->free;
-
 }

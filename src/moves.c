@@ -156,7 +156,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 		return;
 	}
 
-    free(vect_out);
+    free(move_struct);
 
 	// write file with success with the cost of the movement
 	//WriteFileWithSuccess(turist, fp_out);
@@ -245,6 +245,8 @@ void Free_Matrix_Variant_C(int ** matrix, int num_pontos)
 
     free(matrix);
 }
+
+
 /**
  * [Given some points gets the cheapest move with arbitrary order od points]
  * @param turist [main struct]

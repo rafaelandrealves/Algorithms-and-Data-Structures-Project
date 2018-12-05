@@ -11,6 +11,7 @@ OSOURCES = util.o points.o tabuleiros.o acervo.o dijkstra.o moves.o main.o
 
 %.o: %.c
 
+
 tuktuk: $(OSOURCES)
 	$(CC) $(CFLAGS) -o tuktuk $(OSOURCES)
 	@echo ./tuktuk ready to execute!!
@@ -37,6 +38,8 @@ acervo.o: src/acervo.c $(HSOURCES)
 dijkstra.o: src/dijkstra.c $(HSOURCES)
 	$(CC) -c $(CFLAGS) src/dijkstra.c
 
+c:	tuktuk
+	clear
 
 clean::
 	@echo Cleaning...

@@ -77,5 +77,5 @@ int main (int argc, char ** argv)
 
     fclose(fp_in);
     fclose(fp_output);
-    return (0);
+    return 0;
 }
