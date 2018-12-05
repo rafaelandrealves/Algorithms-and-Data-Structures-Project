@@ -61,11 +61,14 @@ FILE * Open_File(char * file_name, char * mode)
  */
 FILE * checkArguments(int _argc, char ** _argv)
 {
-    char * aux = NULL;
+    // char * aux = NULL;
 
-    if((aux = strstr(_argv[1], ".cities")) == NULL)
+    if(_argc > 2)
         exit(0);
-    if(*(aux + 7) != '\0')
+
+    int size = strlen(_argv[1]);
+    if(size <= 7 || !(_argv[1][size - 1] == 's' && _argv[1][size - 2] == 'e' && _argv[1][size - 3] == 'i' && _argv[1][size - 4] == 't' &&
+        _argv[1][size - 5] == 'i' && _argv[1][size - 6] == 'c' && _argv[1][size - 7] == '.'))
         exit(0);
 
     return Open_File(_argv[1], "r");
@@ -84,9 +87,9 @@ FILE * OutPutFileName(char * nome_inicial)
     int i = 0; // o i tem que ser inicializado fora do for para que a variável seja conservada fora do for
 
     //descobrir qual é a posição do '.' no ficheiro original
-    for( i = 0; i < strlen(nome_inicial) && nome_inicial[i] != '.'; i++);
+    for( i = strlen(nome_inicial); i >= 0 && nome_inicial[i] != '.'; i--);
 
-    char * novo = (char *) Checked_Malloc((strlen(".valid") + i + 1) * sizeof(char));
+    char * novo = (char *) Checked_Malloc((strlen(".walks") + i + 1) * sizeof(char));
 
     // copiar todos os caracteres até ao '.'
     for (int j = 0; j < i; j++)
