@@ -41,7 +41,9 @@ dijkstra.o: src/dijkstra.c $(HSOURCES)
 c:	tuktuk
 	clear
 
-clean::
+clean:
 	@echo Cleaning...
 	rm -f *.o core tuktuk *~
 	@echo Cleaned!!
+
+cc:	clean c

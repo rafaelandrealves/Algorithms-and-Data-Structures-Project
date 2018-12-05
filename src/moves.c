@@ -434,32 +434,6 @@ void PrintMainStruct(Problema * turista)
 
 }
 
-//Função encarregue de fazer os movimentos para todos os lados possiveis e ver qual é que é mais barato
-/*
- PARAM:
-  -> NEW: Matriz com os dados da matriz
-*/
-void movimentos(Problema *new)
-{
-    char variavelx = 'x';
-    char variavely = 'y';
-    new->passeio.custo_total = 10000;
-
-    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]),
-        get_Y_From_Point(new->passeio.points[0]) - 2, variavelx); //move_HIGH
-
-    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]),
-        get_Y_From_Point(new->passeio.points[0]) + 2, variavelx); //move_LOW
-
-    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]) + 2,
-        get_Y_From_Point(new->passeio.points[0]), variavely); //move_low_right
-
-    movimentos_num_ponto(new, getXSize(new->tabu), getYSize(new->tabu), get_X_From_Point(new->passeio.points[0]) - 2,
-        get_Y_From_Point(new->passeio.points[0]), variavely); //move_low_left
-
-    if(new->passeio.custo_total == 10000)
-        new->passeio.custo_total = 0;
-}
 
 /**
  * Writes the file with the failure
@@ -479,50 +453,4 @@ void WriteFileWithFailure(Problema * turist, FILE * fp_out)
 void WriteFileWithSuccess(Problema * turist, FILE * fp_out)
 {
     fprintf(fp_out, "%d %d %c %d 1 %d\n\n", getYSize(turist->tabu), getXSize(turist->tabu), GetModoJogo(turist), getNumPontos(turist), getCustoTotalFromProb(turist));
-}
-
-
-//Função que tem como variáveis uma condição,  que pode ser x ou y,  por exemplo,  se for x,  quer dizer que é o x que varia entre 1 ou -1 enquanto a outro váriavel mantêm-se fixa,
-// esta função tem por base o facto de que em todos os movimentos existe sempre uma variavel que varia -2 ou +2,  mas mantêm-se,  enquanto a outro varia entre -1 e 1
-// PARAM:
-/*
-    new ->matriz com os dados do ficheiro
-    xmax e ymax -> dimensões da matriz
-    x e y-> ponto de partida
-    condição -> Se a variável que oscila entre 1 e -1 é a x ou y
-    soma_min ->  soma mínima das operaçoes
-*/
-void movimentos_num_ponto(Problema *new, int xmax, int ymax, int x, int y, char condicao)
-{
-    int soma2 = 0, soma1 = 0;
-
-    if(condicao == 'y')
-    {
-        if(x < xmax && (y + 1) < ymax && x >= 0)
-            soma1 = GetPointCostFromCoord(new->tabu, y + 1, x);
-
-        if(x < xmax && x >= 0 && (y - 1) >= 0)
-            soma2 = GetPointCostFromCoord(new->tabu, y - 1, x);
-
-        if( soma1 <= new->passeio.custo_total && soma1 != 0)
-            new->passeio.custo_total = soma1;
-
-        if( soma2 <= new->passeio.custo_total && soma2 != 0)
-            new->passeio.custo_total = soma2;
-    }
-    else
-    {
-        if((x + 1) < xmax && y < ymax && y >= 0)
-            soma1 = GetPointCostFromCoord(new->tabu, y, x + 1);
-
-        if( y < ymax && (x - 1) >= 0 && y >= 0)
-            soma2 = GetPointCostFromCoord(new->tabu, y, x - 1);
-
-        if( soma1 <= new->passeio.custo_total && soma1 != 0)
-            new->passeio.custo_total = soma1;
-
-        if( soma2 <= new->passeio.custo_total && soma2 != 0)
-            new->passeio.custo_total = soma2;
-
-    }
 }

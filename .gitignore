@@ -65,7 +65,6 @@ testfiles
 *.swp
 *.walks
 *.check
-*.sh
 
 # Other
 .vscode

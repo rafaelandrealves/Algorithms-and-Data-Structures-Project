@@ -57,13 +57,9 @@ void FreeAll(Problema * turista);
 
 void PrintMainStruct(Problema * turista);
 
-void movimentos(Problema *new);
-
 void WriteFileWithFailure(Problema * turist, FILE * fp_out);
 
 void WriteFileWithSuccess(Problema * turist, FILE * fp_out);
-
-void movimentos_num_ponto(Problema * new, int xmax, int ymax, int x , int y , char condicao);
 
 void Free_Point_Vec(int num, caminho * move_struct);
 
