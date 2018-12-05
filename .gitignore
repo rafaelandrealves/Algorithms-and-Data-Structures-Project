@@ -57,6 +57,7 @@ Probs
 Sols
 Part1
 Part2
+testfiles
 
 # Files
 *.cities
@@ -64,6 +65,7 @@ Part2
 *.swp
 *.walks
 *.check
+*.sh
 
 # Other
 .vscode
