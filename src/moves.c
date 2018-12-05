@@ -270,67 +270,78 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
 
     point * inicial_point = NULL;
 
-    caminho * best = (caminho *) Checked_Malloc(sizeof(caminho));
-    best->custo_total = 0;
-    best->num_pontos = 0;
     // best->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
-
-    caminho *atual = (caminho *) Checked_Malloc(sizeof(caminho));
-    atual->custo_total = 0;
-    atual->num_pontos = 0;
+    int point_on_matrix = 0, ponto = 0, index = 0, linha_matrix = 0;
 
     bool validity = CheckAllPoints(turist);
     if(validity == false)
     {
         WriteFileWithFailure(turist, fp_out);
-        free(best);
-        free(atual);
         return;
     }
 
+
+    caminho * best = (caminho *) Checked_Malloc(sizeof(caminho));
+    best->custo_total = 0;
+    best->num_pontos = 0;
+
+
+    caminho * atual = (caminho *) Checked_Malloc(sizeof(caminho));
+    atual->custo_total = 0;
+    atual->num_pontos = 0;
+
+
     int ** PermutMatrix = get_Matrix_Variant_C(getNumPontos(turist) - 1);
+
     #if PrintCombinMatrix == 1
         printMatrix((void **) PermutMatrix, fact(getNumPontos(turist) - 1), getNumPontos(turist) - 1);
     #endif
 
-    for(int linha = 0; linha < fact(getNumPontos(turist) - 1); linha++)
+    for( linha_matrix = 0; linha_matrix < fact(getNumPontos(turist) - 1); linha_matrix++)
     {
+        *index = 0;
         atual->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
         inicial_point = getIpoint(turist, 0);
-        for(int ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
+        for(ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
         {
-            point * final_point = getIpoint(turist, PermutMatrix[linha][ponto]);
-            DijkstraAlgoritm_C(turist, fp_out, inicial_point, final_point, atual);
+            point * final_point = getIpoint(turist, PermutMatrix[linha_matrix][ponto]);
+            DijkstraAlgoritm_C(turist, fp_out, inicial_point, final_point, atual, &index);
             inicial_point = final_point;
         }
         if(first_time == true)
         {
             best->num_pontos = atual->num_pontos;
-            best->custo_total = atual->custo_total;
+            best->custo_total = index;
         	best->points = atual->points;
+            point_on_matrix = linha_matrix;
             first_time = false;
         }
         else
         {
             if(atual->custo_total < best->custo_total)
             {
-                best->custo_total = atual->custo_total;
+                point_on_matrix = linha_matrix;
+                best->custo_total = index;
                 best->num_pontos = atual->num_pontos;
-                // free(best->num_pontos = atual->points);
+                // Free_Point_Vec(index, best);
                 best->points = atual->points;
             }
         }
         atual->custo_total = 0;
         atual->num_pontos = 0;
-        free(atual->points);
 
     }
+
+    OutPUT_C(getIpoint(turist, PermutMatrix[point_on_matrix][getNumPontos(turist) - 1]),
+                                getIpoint(turist, 0), turist, fp_out, best->num_pontos, best);
 
 
 
     Free_Matrix_Variant_C(PermutMatrix, getNumPontos(turist) - 1);
-    free(atual);
-    free(best);
+    // Free_Point_Vec(index, atual);
+    // Free_Point_Vec(index, best);
+    // free(best);
+    // free(atual);
 }
 
 
