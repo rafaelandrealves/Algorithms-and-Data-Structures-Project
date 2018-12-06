@@ -299,7 +299,7 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
 
     for( linha_matrix = 0; linha_matrix < fact(getNumPontos(turist) - 1); linha_matrix++)
     {
-        *index = 0;
+        index = 0;
         atual->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
         inicial_point = getIpoint(turist, 0);
         for(ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)

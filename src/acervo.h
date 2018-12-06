@@ -8,13 +8,15 @@ typedef struct acervoStruct Acervo;
 
 #include "dijkstra.h"
 
+int get_Idx_matrix(Acervo * heap, point * virgula);
+
 int getFree(Acervo * new);
 
 point * getIPointFromHeap(Acervo * new, int i);
 
-void FreeAcervo(Acervo * old);
+void FreeAcervo(Acervo * old, int ysize);
 
-Acervo * InitAcervo();
+Acervo * InitAcervo(int sizey, int sizex);
 
 void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N);
 
