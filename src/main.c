@@ -16,35 +16,66 @@
  * @param  end_of_file [variable that checks if reached the end of file]
  * @return             [returns the main struct of the program with the new data (or empty in case of EOF)]
  */
-Problema * Read_File(FILE * fp)
+Problema * Read_File(FILE * fp, bool * validity)
 {
-    int sizey, sizex, points_num;
+    int sizey, sizex, points_num, pontox, pontoy, cost, lixo;
     char game_mode;
-    int pontox, pontoy;
-    int cost;
+    bool will_save = true;
 
     if(fscanf(fp, "%d %d %c %d", &sizey, &sizex, &game_mode, &points_num) != 4)
-        return NULL;
-
-    Problema * new ;
-    new = Alloc_Problema(sizey, sizex, game_mode, points_num);
-
-
-    for(int i = 0; i < points_num ; i = i + 1)
-        if(fscanf(fp, "%d %d", &pontoy, &pontox) == 2)
-            Aux_Set_Point(new, pontox, pontoy, i);
-
-
-    for(int yy = 0; yy < sizey; yy = yy + 1)
     {
-        for(int xx = 0; xx < getXSize(getTabuleiro(new)); xx = xx + 1)
-            if(fscanf(fp, "%d ", &cost) == 1)
-                Aux_Set_Matrix_Element(new, cost, yy, xx);
+        * validity = false;
+        return NULL;
     }
+
+    if( (game_mode == 'A' && points_num != 2) || (game_mode == 'B' && points_num < 2) || (game_mode == 'C' && points_num < 2) )
+        will_save = false;
+
+    if(game_mode != 'A' && game_mode != 'B' && game_mode != 'C')
+        will_save = false;
+
+    Problema * new = Alloc_Problema(sizey, sizex, game_mode, points_num);
+
+    if(will_save == true)
+    {
+        for(int i = 0; i < points_num ; i = i + 1)
+        {
+            if(fscanf(fp, "%d %d", &pontoy, &pontox) == 2)
+                Aux_Set_Point(new, pontox, pontoy, i);
+        }
+    }
+    else
+    {
+        for(int i = 0; i < points_num ; i = i + 1)
+        {
+            if(fscanf(fp, "%d %d", &lixo, &lixo) == 2);
+        }
+    }
+
+    if(will_save == true)
+    {
+        for(int yy = 0; yy < sizey; yy = yy + 1)
+        {
+            for(int xx = 0; xx < sizex; xx = xx + 1)
+                if(fscanf(fp, "%d ", &cost) == 1)
+                    Aux_Set_Matrix_Element(new, cost, yy, xx);
+        }
+    }
+    else
+    {
+        for(int yy = 0; yy < sizey; yy = yy + 1)
+        {
+            for(int xx = 0; xx < sizex; xx = xx + 1)
+                if(fscanf(fp, "%d ", &lixo) == 1);
+        }
+    }
+
 
     #if PrintStructs == 1
         PrintMainStruct(new);
     #endif
+
+    * validity = will_save;
 
     return new;
 }
@@ -55,26 +86,24 @@ int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);
     FILE * fp_output = OutPutFileName(argv[1]);
-    Problema * cavaleiro = Read_File(fp_in);
+    bool validity = false;
+
+    Problema * cavaleiro = Read_File(fp_in, &validity);
 
 
-    while(cavaleiro != NULL )
-    {   
-        if(GetModoJogo(cavaleiro) == 'A')
+    while(cavaleiro != NULL)
+    {
+
+        if(validity == true && GetModoJogo(cavaleiro) == 'A')
+
             Execute_A_Variant(cavaleiro, fp_output);
-        else if(GetModoJogo(cavaleiro) == 'B')
+        else if(validity == true && GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_output);
-        else if(GetModoJogo(cavaleiro) == 'C')
+        else if(validity == true && GetModoJogo(cavaleiro) == 'C')
             Execute_C_Variant(cavaleiro, fp_output);
         else
             WriteFileWithFailure(cavaleiro, fp_output);
 
         FreeAll(cavaleiro);
          cavaleiro = Read_File(fp_in);
-
     }
-
-    fclose(fp_in);
-    fclose(fp_output);
-    return 0;
-}
