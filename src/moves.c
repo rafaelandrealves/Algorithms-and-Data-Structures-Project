@@ -7,7 +7,12 @@
 #include "points.h"
 #include "dijkstra.h"
 
-#define PrintCombinMatrix 0
+#define PrintCombinMatrix 1
+
+#define Cmp_Int_Path(A) (A > 0)
+
+#define INFTY 9999
+
 
 struct caminho_t
 {
@@ -245,6 +250,70 @@ void Free_Matrix_Variant_C(int ** matrix, int num_pontos)
 }
 
 
+/**
+ * [INIT_Value_Matrix description]
+ * @param  number_of_points [description]
+ * @return                  [description]
+ */
+caminho ** INIT_Path_Matrix(int number_of_points)
+{
+    caminho ** matrix = (caminho **) Checked_Malloc(number_of_points * sizeof(caminho *));
+
+    for( int i = 0; i < number_of_points; i++)
+    {
+        matrix[i] = (caminho *)Checked_Malloc(number_of_points * sizeof(caminho));
+    }
+    return matrix;
+}
+
+
+/**
+ * [Insert_Caminho description]
+ * @param  insert                 [caminho a inserir]
+ * @param  number_Total_of_points [num_pontos do caminho a inserir + num_pontos do antigo]
+ * @param  old                    [caminho antigo, para juntar]
+ * @param  points_to_insert       [num_pontos a inserir]
+ * @return                        [description]
+ */
+caminho *Use_Caminho_PreCalculated(caminho *insert, int number_Total_of_points,caminho *old, int points_to_insert)
+{
+    caminho *new = (caminho *) Checked_Malloc(sizeof(caminho));
+    point * Path = (point *)Checked_Malloc(number_Total_of_points * sizeof(point*));
+
+    new->num_pontos = old->num_pontos;
+    new->custo_total = old->custo_total;
+    new->points = Path;
+    for(int i = 0; i < old->num_pontos; i = i + 1 )
+    {
+        new->points[i] = old->points[i];
+    }
+    for(int i = 0; i < points_to_insert; i = i + 1)
+    {
+        new->points[new->num_pontos + i] = insert->points[i];
+    }
+    new->custo_total = new->custo_total + insert->custo_total;
+    new->num_pontos = new->num_pontos + insert->num_pontos;
+
+    return new;
+}
+
+void Insert_CaminhoInMatrix(caminho ** move_matrix, caminho * to_insert, int origin, int destiny)
+{
+    //move_matrix[origin][destiny] = *to_insert;
+    move_matrix[origin][destiny].custo_total = to_insert->custo_total;
+    move_matrix[origin][destiny].num_pontos = to_insert->num_pontos;
+    printf("Custo: %d\n", move_matrix[origin][destiny].custo_total);
+    printf("Num pontos: %d\n", move_matrix[origin][destiny].num_pontos);
+}
+
+void Clean_caminho(caminho * move)
+{
+    point invalid = {.x = -1, .y = -1};
+    for(int i = 0; i < move->num_pontos; i = i + 1)
+    {
+        move->points[i] = invalid;
+    }
+}
 
 /**
  * [Given some points gets the cheapest move with arbitrary order od points]
@@ -252,15 +321,13 @@ void Free_Matrix_Variant_C(int ** matrix, int num_pontos)
  * @param fp_out [file pointer]
  * @param argv   [description]
  */
-/*
-void Execute_C_Variant(Problema * turist, FILE * fp_out)
+void Execute_C_Variant(Problema * turist, FILE * fp_out) //ATENÃO CIDADE 43, SE 1 CAMINHO FOR INVÁLIDO, ELE SAÍ LOGO?
 {
     bool first_time = true;
 
-    point * inicial_point = NULL;
+    point inicial_point, final_point;
+    int pos_init_p = 0, pos_dest_p = 0;
 
-    // best->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
-    int point_on_matrix = 0, ponto = 0, index = 0, linha_matrix = 0;
 
     bool validity = CheckAllPoints(turist);
     if(validity == false)
@@ -271,14 +338,20 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
 
 
     caminho * best = (caminho *) Checked_Malloc(sizeof(caminho));
-    best->custo_total = 0;
+    best->points = (point *) Checked_Malloc(sizeof(point) * 30000);
     best->num_pontos = 0;
+    best->custo_total = INFTY;
 
+    int point_on_matrix = 0;
+    int ponto = 0, num_pontos_combin = 0, linha = 0, No_Path = 0;
+
+    caminho ** Path_matrix = INIT_Path_Matrix(turist->passeio.num_pontos);
 
     caminho * atual = (caminho *) Checked_Malloc(sizeof(caminho));
+
+    atual->points = (point *) Checked_Malloc(sizeof(point) * 30000);
     atual->custo_total = 0;
     atual->num_pontos = 0;
-
 
     int ** PermutMatrix = get_Matrix_Variant_C(getNumPontos(turist) - 1);
 
@@ -286,54 +359,118 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
         printMatrix((void **) PermutMatrix, fact(getNumPontos(turist) - 1), getNumPontos(turist) - 1);
     #endif
 
-    for( linha_matrix = 0; linha_matrix < fact(getNumPontos(turist) - 1); linha_matrix++)
+    for( linha = 0; linha < fact(getNumPontos(turist) - 1); linha++)
     {
-        index = 0;
-        atual->points = (point *) Checked_Malloc(sizeof(point) * 3000);
+        printf("O caminho é %d \n\n\n\n\n\n",linha);
         inicial_point = getIpoint(turist, 0);
+        pos_init_p = 0;
+
         for(ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
         {
-            point * final_point = getIpoint(turist, PermutMatrix[linha_matrix][ponto]);
-            DijkstraAlgoritm_C(turist, fp_out, inicial_point, final_point, atual, &index);
+            pos_dest_p = PermutMatrix[linha][ponto];
+            printf("init - %d\t dest - %d\n", pos_init_p, pos_dest_p);
+
+            final_point = getIpoint(turist, pos_dest_p);
+            printf("\t\t O valor da soma do atual_custo toal + o proximo caminho é %d\n", atual->custo_total + Path_matrix[pos_init_p][pos_dest_p].custo_total);
+            printf("\t\t O valor do best->custo %d\n",best->custo_total);
+            if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0) && (atual->custo_total + Path_matrix[pos_init_p][pos_dest_p].custo_total) > best->custo_total)
+            {
+                printf("\t\tCusto na matriz é menor\n");
+                No_Path = 1;
+                break;
+            }
+            else if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0))
+            {
+                int total_pontos = Path_matrix[pos_init_p][pos_dest_p].num_pontos + atual->num_pontos;
+                atual = Use_Caminho_PreCalculated(&Path_matrix[pos_init_p][pos_dest_p], total_pontos, atual, Path_matrix[pos_init_p][pos_dest_p].num_pontos);
+                inicial_point = final_point;
+                printf("\t\tUsa a matriz\n\n");
+                continue;
+            }
+            DijkstraAlgoritm_C(turist, fp_out, inicial_point, final_point, atual, &num_pontos_combin, &No_Path);
+
+            if( No_Path == 0 && Path_matrix[pos_init_p][pos_dest_p].custo_total == 0)
+            {
+                Insert_CaminhoInMatrix(Path_matrix, atual, pos_init_p, pos_dest_p);
+                printf("\t\tInsere na matriz\n\n");
+            }
+            if(No_Path == 1)
+            {
+                break;
+            }
+
             inicial_point = final_point;
+            pos_init_p = pos_dest_p;
         }
-        if(first_time == true)
+
+        if(first_time == true && No_Path == 0)
         {
             best->num_pontos = atual->num_pontos;
-            best->custo_total = index;
+            best->custo_total = num_pontos_combin;
         	best->points = atual->points;
-            point_on_matrix = linha_matrix;
+            point_on_matrix = linha;
             first_time = false;
         }
-        else
+        else if (No_Path == 0)
         {
+            printf("\tO CUSTO TOTAL best %d\n\n",best->custo_total);
+            printf("\tO CUSTO TOTAL ATUAL %d\n\n",atual->custo_total);
             if(atual->custo_total < best->custo_total)
             {
-                point_on_matrix = linha_matrix;
-                best->custo_total = index;
-                best->num_pontos = atual->num_pontos;
-                // Free_Point_Vec(index, best);
-                best->points = atual->points;
+                point_on_matrix = linha;
+                best->custo_total = atual->custo_total;
+                best->num_pontos = num_pontos_combin;
+
+                printf("\tO num_pontos_combin--%d o custo---%d\n\n\n\n\n\n",best->num_pontos, atual->custo_total);
+                Clean_caminho(best);
+                best->points = Copy_Caminho(atual->points, num_pontos_combin);
+
             }
         }
         atual->custo_total = 0;
         atual->num_pontos = 0;
-
+        Clean_caminho(atual);
+        num_pontos_combin = 0;
+        No_Path = 0;
     }
 
-    OutPUT_C(getIpoint(turist, PermutMatrix[point_on_matrix][getNumPontos(turist) - 1]),
-                                getIpoint(turist, 0), turist, fp_out, best->num_pontos, best);
+    if(first_time == true)
+        WriteFileWithFailure(turist, fp_out);
+    else
+        OutPUT_C(getIpoint(turist, PermutMatrix[point_on_matrix][ponto]), getIpoint(turist, 0), turist, fp_out,best->num_pontos, best);
 
+    free(atual->points);
+    free(best);
+    free(atual);
 
-
-    Free_Matrix_Variant_C(PermutMatrix, getNumPontos(turist) - 1);
-    // Free_Point_Vec(index, atual);
-    // Free_Point_Vec(index, best);
-    // free(best);
-    // free(atual);
 }
-*/
 
+
+/**
+ * [Copy_Caminho description]
+ * @param  path       [description]
+ * @param  num_pontos [description]
+ * @return            [description]
+ */
+point * Copy_Caminho(point * path, int num_pontos)
+{
+    point * new = (point *) malloc(30000 * sizeof(point));
+
+    for(int i = 0; i < num_pontos && path[i].x != -1 && path[i].y != -1; i = i + 1)
+    {
+        new[i] = path[i];
+    }
+    return new;
+
+}
+
+/**
+ * [Aux_Set_Point description]
+ * @param turist [description]
+ * @param i      [description]
+ * @param x      [description]
+ * @param y      [description]
+ */
 void Aux_Set_Point(Problema * turist, int i, int x, int y)
 {
     SetPoint(&(turist->passeio.points[i]), x, y);

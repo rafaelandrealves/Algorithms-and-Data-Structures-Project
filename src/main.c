@@ -98,7 +98,8 @@ int main (int argc, char ** argv)
             Execute_A_Variant(cavaleiro, fp_output);
         else if(validity == true && GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_output);
-        else if(validity == true && GetModoJogo(cavaleiro) == 'C');
+        else if(validity == true && GetModoJogo(cavaleiro) == 'C')
+            Execute_C_Variant(cavaleiro, fp_output);
         else
             WriteFileWithFailure(cavaleiro, fp_output);
 
