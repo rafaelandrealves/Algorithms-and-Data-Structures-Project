@@ -67,5 +67,9 @@ void movimentos_num_ponto(Problema * new, int xmax, int ymax, int x , int y , ch
 
 void Free_Point_Vec(int num, caminho * move_struct);
 
+point ** Copy_Caminho(point ** path, int num_pontos);
+
+
+caminho ** INIT_Value_Matrix(int number_of_points);
 
 #endif

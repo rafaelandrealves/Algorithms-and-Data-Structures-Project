@@ -14,6 +14,8 @@ struct Dijk_struct
     point * pai;
 };
 
+
+
 #include "dijkstra.h"
 
 /**
@@ -237,7 +239,7 @@ void get_Move_Vector_A(DijkMatrix matrix, point * end, point * ORIGIN, Problema 
     for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
 
     point ** vect = (point **) Checked_Malloc(num * sizeof(point *));
-
+    //printf("O num %d \n",num);
     min = end;
     for(int i = 0; i < num; i++)
     {
@@ -248,6 +250,7 @@ void get_Move_Vector_A(DijkMatrix matrix, point * end, point * ORIGIN, Problema 
     for (int i = 0 ; i < num; i++)
     {
         fprintf(fp_out,"%d %d %d \n", get_Y_From_Point(vect[i]), get_X_From_Point(vect[i]), GetPointCostFromPoint(getTabuleiro(turist), vect[i]));
+        //printf("%d %d  \n",get_Y_From_Point(vect[i]), get_X_From_Point(vect[i]));
     }
     fprintf(fp_out,"\n");
     free(vect);
@@ -440,8 +443,9 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point * begin, point *e
 
 
 
-void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point * begin, point *end, caminho * move_struct)
+void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point * begin, point *end, caminho * move_struct, int *index, int * No_Path)
 {
+    //int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo();
 
@@ -454,9 +458,10 @@ void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point * begin, point *e
 
     HeapInsertPoint(matrix, heap_tree, min);
 
-    while( EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT))
+    while( EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) )
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
+        
         if( get_Acum_Cost(matrix, min) != INF)
         {
             point ** ppoints = Possible_Jump_Points(getTabuleiro(turist), min, matrix);
@@ -476,31 +481,65 @@ void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point * begin, point *e
 
                         // insert the point in the heap
                         point * aux1 = GetDupPoint(ppoints[i]);
-                        HeapInsertPoint(matrix, heap_tree, aux1);
+                        HeapInsertPoint(matrix, heap_tree, aux1);//passar a matriz
                     }
                 }
             }
             Free_Possible_Jump_Points(ppoints);
         }
         free(min);
+        min = NULL;
     }
-
     if(EmptyHeap(heap_tree) == 0)
     {
-        WriteFileWithFailure(turist,fp_out);
+        *No_Path = 1;
     }
     else
     {
         min = HeapDeleteMaxPoint(matrix, heap_tree);
         move_struct = Set_Custo_Total(move_struct, getCustoTotalFromCaminho(move_struct) + get_Acum_Cost(matrix, min));
         // *custo_total_acumulado = *custo_total_acumulado + get_Acum_Cost(matrix,min);
-        int custo_temp = getCustoTotalFromCaminho(move_struct);
-        get_Move_Vector_B(matrix, min, ORIGIN_POINT, &custo_temp, get_point_vector(move_struct));
-        move_struct = Set_Custo_Total(move_struct, custo_temp);
-
+        get_Move_Vector_B(matrix, min, ORIGIN_POINT, index, get_point_vector(move_struct));
+        //printf("Index-%d --- custo--%d-- ponto_atual %d--pontos %d\n",*index,*custo_total_acumulado,*ponto_atual,num_pontos);
+        free(min);
     }
+
 
     FreeDijk(matrix, getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
     FreeAcervo(heap_tree);
 
 }
+
+void OutPUT_C(point * end, point * ORIGIN, Problema * turist, FILE * fp_out, int num, caminho * move_struct)
+{
+    fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
+        getCustoTotalFromCaminho(move_struct), num);
+    //printf("olaaa\n");
+    for (int i = 0 ; i < num; i++)
+    {
+        //printf("olaaa\n");
+        fprintf(fp_out,"%d %d %d \n", get_Y_From_Point(getIpointFromCaminho(move_struct, i)), get_X_From_Point(getIpointFromCaminho(move_struct, i)),
+                    GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(move_struct, i)));
+        //printf("%d %d \n",get_Y_From_Point(getIpointFromCaminho(move_struct, i)), get_X_From_Point(getIpointFromCaminho(move_struct, i)));
+    }
+    fprintf(fp_out,"\n");
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

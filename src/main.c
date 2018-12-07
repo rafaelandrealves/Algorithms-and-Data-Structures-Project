@@ -58,9 +58,8 @@ int main (int argc, char ** argv)
     Problema * cavaleiro = Read_File(fp_in);
 
 
-    while(cavaleiro != NULL)
-    {
-
+    while(cavaleiro != NULL )
+    {   
         if(GetModoJogo(cavaleiro) == 'A')
             Execute_A_Variant(cavaleiro, fp_output);
         else if(GetModoJogo(cavaleiro) == 'B')
@@ -71,8 +70,8 @@ int main (int argc, char ** argv)
             WriteFileWithFailure(cavaleiro, fp_output);
 
         FreeAll(cavaleiro);
+         cavaleiro = Read_File(fp_in);
 
-        cavaleiro = Read_File(fp_in);
     }
 
     fclose(fp_in);
