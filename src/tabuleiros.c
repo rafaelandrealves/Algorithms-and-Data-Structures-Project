@@ -22,7 +22,7 @@ struct tabuleiro_t
 {
     int size_x; // sizes of the table
     int size_y;
-    int ** tab; // table matrix
+    char ** tab; // table matrix
 };
 
 #include "tabuleiros.h"
@@ -30,7 +30,7 @@ struct tabuleiro_t
 /**
  * Funtion that gets the size of the matrix in terms of columns
  * @param  table [matrix given by the initial problem]
- * @return [Size of the matrix]      
+ * @return [Size of the matrix]
  */
 int getXSize(tabuleiro * table)
 {
@@ -40,7 +40,7 @@ int getXSize(tabuleiro * table)
 /**
  * Funtion that gets the size of the matrix in terms o lines
  * @param  table [matrix given by the initial problem]
- * @return Size of the matrix      
+ * @return Size of the matrix
  */
 int getYSize(tabuleiro * table)
 {
@@ -48,11 +48,11 @@ int getYSize(tabuleiro * table)
 }
 
 /**
- * Function that gets the pointer to a matrix 
+ * Function that gets the pointer to a matrix
  * @param  table [pointer to a struct cointaining the matrix wanted]
  * @return       [pointer to the matrix wanted]
  */
-int ** getMatrixPointer(tabuleiro * table)
+char ** getMatrixPointer(tabuleiro * table)
 {
     return table->tab;
 }
@@ -63,7 +63,7 @@ int ** getMatrixPointer(tabuleiro * table)
  * @param  i     [Index of de line wanted]
  * @return       [Pointer to matrix line]
  */
-int * getMatrixLinePointer(tabuleiro * table, int i)
+char * getMatrixLinePointer(tabuleiro * table, int i)
 {
     return table->tab[i];
 }
@@ -82,10 +82,10 @@ size_t getSizeOfTabuleiro()
  * @param  ponto [point to check if is inside the table]
  * @return       [returns true is is inside the table]
  */
-bool check_Point_Inside_Table(tabuleiro * table, point * ponto)
+bool check_Point_Inside_Table(tabuleiro * table, point ponto)
 {
-    int x = get_X_From_Point(ponto);
-    int y = get_Y_From_Point(ponto);
+    int x = ponto.x;
+    int y = ponto.y;
 
     if((x < table->size_x) && (x >= 0) && (y < table->size_y) && (y >= 0))
         return true;
@@ -100,10 +100,10 @@ bool check_Point_Inside_Table(tabuleiro * table, point * ponto)
  * @param  ponto [point to be checked]
  * @return       [true if valid]
  */
-bool check_Point_Acessibility(tabuleiro * table, point * ponto)
+bool check_Point_Acessibility(tabuleiro * table, point ponto)
 {
-    int x = get_X_From_Point(ponto);
-    int y = get_Y_From_Point(ponto);
+    int x = ponto.x;
+    int y = ponto.y;
 
     if((x < table->size_x) && (x >= 0) && (y < table->size_y) && (y >= 0) && (GetPointCostFromCoord(table, y, x) != 0))
         return true;
@@ -117,9 +117,9 @@ bool check_Point_Acessibility(tabuleiro * table, point * ponto)
  * @param  ponto [point to get the cost]
  * @return       [cost of that point]
  */
-int GetPointCostFromPoint(tabuleiro * table, point * ponto)
+short GetPointCostFromPoint(tabuleiro * table, point ponto)
 {
-    return (int)(table->tab[get_Y_From_Point(ponto)][get_X_From_Point(ponto)]);
+    return (int)(table->tab[ponto.y][ponto.x]);
 }
 
 /**
@@ -129,7 +129,7 @@ int GetPointCostFromPoint(tabuleiro * table, point * ponto)
  * @param  xx    [Column of the point]
  * @return       [Point cost of a certain point]
  */
-int GetPointCostFromCoord(tabuleiro * table, int yy, int xx)
+short GetPointCostFromCoord(tabuleiro * table, int yy, int xx)
 {
     return (int)(table->tab[yy][xx]);
 }
@@ -145,9 +145,9 @@ tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex)
 {
     table->size_x = sizex;
     table->size_y = sizey;
-    table->tab = (int **) Checked_Malloc(sizey * sizeof(int*));
+    table->tab = (char **) Checked_Malloc(sizey * sizeof(char*));
     for(int i = 0; i < sizey; i++)
-        table->tab[i] = (int *) Checked_Malloc(sizex * sizeof(int));
+        table->tab[i] = (char *) Checked_Malloc(sizex * sizeof(char));
 
     return table;
 }

@@ -41,7 +41,7 @@ Problema * Read_File(FILE * fp, bool * validity)
         for(int i = 0; i < points_num ; i = i + 1)
         {
             if(fscanf(fp, "%d %d", &pontoy, &pontox) == 2)
-                Aux_Set_Point(new, pontox, pontoy, i);
+                Aux_Set_Point(new, i, pontox, pontoy);
         }
     }
     else
@@ -98,8 +98,7 @@ int main (int argc, char ** argv)
             Execute_A_Variant(cavaleiro, fp_output);
         else if(validity == true && GetModoJogo(cavaleiro) == 'B')
             Execute_B_Variant(cavaleiro, fp_output);
-        else if(validity == true && GetModoJogo(cavaleiro) == 'C')
-            Execute_C_Variant(cavaleiro, fp_output);
+        else if(validity == true && GetModoJogo(cavaleiro) == 'C');
         else
             WriteFileWithFailure(cavaleiro, fp_output);
 

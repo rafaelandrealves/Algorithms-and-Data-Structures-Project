@@ -12,8 +12,8 @@
 struct caminho_t
 {
     int num_pontos;
-    point ** points; // points pointer vector
-    int custo_total;
+    point * points; // points pointer vector
+    short custo_total;
 };
 
 struct Problema_t // main struct of the program
@@ -76,17 +76,17 @@ int getNumPontos(Problema * turist)
  * @param  i      [Index]
  * @return        [Pointer to point searched]
  */
-point * getIpoint(Problema * turist, int i)
+point getIpoint(Problema * turist, int i)
 {
     return getCaminho(turist)->points[i];
 }
 
-point * getIpointFromCaminho(caminho * way, int i)
+point getIpointFromCaminho(caminho * way, int i)
 {
     return way->points[i];
 }
 
-point ** get_point_vector(caminho * move)
+point * get_point_vector(caminho * move)
 {
     return move->points;
 }
@@ -118,13 +118,7 @@ bool CheckAllPoints(Problema * turist)
 
 void Free_Point_Vec(int num, caminho * move_struct)
 {
-    //printf("olaaa\n");
-    for (int i = 0 ; i < num; i++)
-    {
-        free(getIpointFromCaminho(move_struct, i));
-    }
     free(get_point_vector(move_struct));
-
 }
 
 
@@ -139,8 +133,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	bool validity = false;
     int index = 0;
     int pontos_atuais = 0;
-    int numMalloc = 2000;
-    point ** vect_out = (point **) Checked_Malloc(numMalloc * sizeof(point *));
+    point * vect_out = (point *) Checked_Malloc(getXSize(getTabuleiro(turist)) * getYSize(getTabuleiro(turist)) * sizeof(point));
 
     caminho * move_struct = (caminho *) Checked_Malloc(sizeof(caminho));
     move_struct->num_pontos = 0;
@@ -155,11 +148,6 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out)
 	{
 		for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
 		{
-            if((numMalloc - index) <= 1000) // é necessário alocar mais memória
-            {
-                numMalloc *= 2;
-                move_struct->points = (point **) realloc(move_struct->points, numMalloc * sizeof(point *));
-            }
             DijkstraAlgoritm_B(turist, fp_out, turist->passeio.points[i], turist->passeio.points[i + 1], &index, &pontos_atuais, move_struct);
 		}
 	}
@@ -216,7 +204,6 @@ void permutacao_recursiva(int * vetor, int ** matriz, int k, int num_ele, int *n
     {
         SetMatrix_Variant_C(matriz, vetor, num_ele, *num_linha);
         (*num_linha)++;
-        // print_vector(vetor, num_ele);
     }
 
     else
@@ -258,12 +245,14 @@ void Free_Matrix_Variant_C(int ** matrix, int num_pontos)
 }
 
 
+
 /**
  * [Given some points gets the cheapest move with arbitrary order od points]
  * @param turist [main struct]
  * @param fp_out [file pointer]
  * @param argv   [description]
  */
+/*
 void Execute_C_Variant(Problema * turist, FILE * fp_out)
 {
     bool first_time = true;
@@ -300,7 +289,7 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
     for( linha_matrix = 0; linha_matrix < fact(getNumPontos(turist) - 1); linha_matrix++)
     {
         index = 0;
-        atual->points = (point **) Checked_Malloc(sizeof(point *) * 3000);
+        atual->points = (point *) Checked_Malloc(sizeof(point) * 3000);
         inicial_point = getIpoint(turist, 0);
         for(ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
         {
@@ -343,7 +332,12 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
     // free(best);
     // free(atual);
 }
+*/
 
+void Aux_Set_Point(Problema * turist, int i, int x, int y)
+{
+    SetPoint(&(turist->passeio.points[i]), x, y);
+}
 
 /**
  * [Allocs memory for the Problema struct]
@@ -359,24 +353,12 @@ Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
     turist->tabu = (tabuleiro *) Checked_Malloc(getSizeOfTabuleiro());
 	turist->tabu = Set_Lenght_Width(turist->tabu, sizey, sizex);
     turist->passeio.num_pontos = points_num;
-	turist->passeio.points = (point **) Checked_Malloc( getNumPontos(turist) * getSizeOfPointAst());
+	turist->passeio.points = (point *) Checked_Malloc( getNumPontos(turist) * sizeof(point));
     turist->modo_jogo = game_mode;
 
 	return turist;
 }
 
-/**
- * Function that allocates memory for a point to be added in the path
- * @param turist [Struct Problema]
- * @param x      [x of point to be added]
- * @param y      [y of point to be added]
- * @param i      [Index]
- */
-void Aux_Set_Point(Problema * turist, int x, int y, int i)
-{
-    turist->passeio.points[i] = (point *) Checked_Malloc(getSizeOfPoint());
-    SetPoint(turist->passeio.points[i], x, y);
-}
 
 /**
  * [Aux_Set_Matrix_Element description]
@@ -407,10 +389,6 @@ char GetModoJogo(Problema * turist)
  */
 void FreeAll(Problema * turista)
 {
-    // fazer free do caminho lido do ficheiro
-    for(int j = 0; j < getNumPontos(turista); j++)
-        free(turista->passeio.points[j]);
-
     free(turista->passeio.points);
 
     for(int i = 0; i < getYSize(turista->tabu); i = i + 1)
@@ -432,7 +410,7 @@ void PrintMainStruct(Problema * turista)
     printf("%d %d %c %d\n", getYSize(turista->tabu), getXSize(turista->tabu), GetModoJogo(turista), getNumPontos(turista));
 
     for(int i = 0; i < getNumPontos(turista); i = i + 1)
-        printf("%d %d\n", get_Y_From_Point(turista->passeio.points[i]), get_X_From_Point(turista->passeio.points[i]));
+        printf("%d %d\n", turista->passeio.points[i].y, turista->passeio.points[i].x);
 
     for(int yy = 0; yy < getYSize(turista->tabu); yy = yy + 1)
     {

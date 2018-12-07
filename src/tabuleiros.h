@@ -31,19 +31,19 @@ int getXSize(tabuleiro * table);
 
 int getYSize(tabuleiro * table);
 
-int ** getMatrixPointer(tabuleiro * table);
+char ** getMatrixPointer(tabuleiro * table);
 
-int * getMatrixLinePointer(tabuleiro * table, int i);
+char * getMatrixLinePointer(tabuleiro * table, int i);
 
 size_t getSizeOfTabuleiro();
 
-bool check_Point_Inside_Table(tabuleiro * table, point * ponto);
+bool check_Point_Inside_Table(tabuleiro * table, point ponto);
 
-bool check_Point_Acessibility(tabuleiro * table, point * ponto);
+bool check_Point_Acessibility(tabuleiro * table, point ponto);
 
-int GetPointCostFromPoint(tabuleiro * table, point * ponto);
+short GetPointCostFromPoint(tabuleiro * table, point ponto);
 
-int GetPointCostFromCoord(tabuleiro * table, int yy, int xx);
+short GetPointCostFromCoord(tabuleiro * table, int yy, int xx);
 
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex);
 

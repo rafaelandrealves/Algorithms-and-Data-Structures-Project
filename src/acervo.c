@@ -9,19 +9,17 @@
 
 struct acervoStruct
 {
-    point ** heap;
+    point * heap;
     int free;
-    int ** idx_matrix;
+    short ** idx_matrix;
 };
 
 
 #include "acervo.h"
 
 #define lessPri(A, B) (A > B)
-#define exch(A, B) {Item t = A; A = B; B = t; }
+#define exch(A, B) {point t = A; A = B; B = t; }
 #define swap_int(A, B){int t = A; A = B; B = t; }
-
-int num_elementos = 200;
 
 /**
  * [get_Idx_matrix description]
@@ -29,9 +27,9 @@ int num_elementos = 200;
  * @param  virgula [description]
  * @return         [description]
  */
-int get_Idx_matrix(Acervo * heap, point * virgula)
+int get_Idx_matrix(Acervo * heap, point virgula)
 {
-    return heap->idx_matrix[get_Y_From_Point(virgula)][get_X_From_Point(virgula)];
+    return heap->idx_matrix[virgula.y][virgula.x];
 }
 /**
  * [getFree description]
@@ -49,7 +47,7 @@ int getFree(Acervo * new)
  * @param  i   [description]
  * @return     [description]
  */
-point * getIPointFromHeap(Acervo * new, int i)
+point getIPointFromHeap(Acervo * new, int i)
 {
     return new->heap[i];
 }
@@ -60,10 +58,6 @@ point * getIPointFromHeap(Acervo * new, int i)
  */
 void FreeAcervo(Acervo * old, int ysize)
 {
-    for(int i = 0; i < old->free; i++)
-        if(old->heap[i] != NULL)
-            free(old->heap[i]);
-
     for(int i = 0; i < ysize; i++)
         free(old->idx_matrix[i]);
 
@@ -79,13 +73,13 @@ void FreeAcervo(Acervo * old, int ysize)
 Acervo * InitAcervo(int sizey, int sizex)
 {
     Acervo * new = (Acervo *) Checked_Malloc(sizeof(Acervo));
-    new->heap = (point **) Checked_Malloc(num_elementos * sizeof(point *));
+    new->heap = (point *) Checked_Malloc(sizey*sizex * sizeof(point));
     new->free = 0;
 
-    new->idx_matrix = (int **) Checked_Malloc(sizey * sizeof(int*));
+    new->idx_matrix = (short **) Checked_Malloc(sizey * sizeof(short*));
     for(int i = 0; i < sizey; i++)
     {
-        new->idx_matrix[i] = (int *) Checked_Malloc(sizex * sizeof(int));
+        new->idx_matrix[i] = (short *) Checked_Malloc(sizex * sizeof(short));
         for(int j = 0; j < sizex; j++)
             new->idx_matrix[i][j] = -1; // never entered the heap_tree
     }
@@ -98,21 +92,13 @@ Acervo * InitAcervo(int sizey, int sizex)
  * @param new    [description]
  * @param I      [description]
  */
-void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point * I)
+void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point I)
 {
     // Insere novo elemento no fim e restabelece ordenação com FixUp
     new->heap[new->free] = I;
     (new->free)++;
-    if(new->free == num_elementos - 1)
-    {
-        num_elementos *= 2;
-        new->heap = (point **) realloc(new->heap, sizeof(point *) * num_elementos);
-    }
-    new->heap[new->free] = NULL;
 
-    int xcoor = get_X_From_Point(I);
-    int ycoord = get_Y_From_Point(I);
-    new->idx_matrix[ycoord][xcoor] = new->free - 1;
+    new->idx_matrix[I.y][I.x] = new->free - 1;
 
     FixUp(matrix, new, new->free - 1);
 }
@@ -129,16 +115,11 @@ void FixUp(DijkMatrix matrix, Acervo * aux, int Idx)
 
     while (Idx > 0 && lessPri(get_Acum_Cost(matrix, aux->heap[(Idx - 1)/2]), get_Acum_Cost(matrix, aux->heap[Idx])))
     {
-        point * child_point = getIPointFromHeap(aux, Idx);
-        point * dad_point = getIPointFromHeap(aux, (Idx - 1)/2);
+        point child_point = getIPointFromHeap(aux, Idx);
+        point dad_point = getIPointFromHeap(aux, (Idx - 1)/2);
 
-        int xdad = get_X_From_Point(dad_point);
-        int ydad = get_Y_From_Point(dad_point);
-        int xchild = get_X_From_Point(child_point);
-        int ychild = get_Y_From_Point(child_point);
+        swap_int(aux->idx_matrix[dad_point.y][dad_point.x], aux->idx_matrix[child_point.y][child_point.x]);
 
-        swap_int(aux->idx_matrix[ydad][xdad], aux->idx_matrix[ychild][xchild]);
-        
         exch(aux->heap[Idx], aux->heap[(Idx - 1)/2]);
 
         Idx = (Idx - 1)/2;
@@ -165,16 +146,11 @@ void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N)
         if (!lessPri(get_Acum_Cost(matrix, aux->heap[Idx]), get_Acum_Cost(matrix, aux->heap[Child]))) break; /* condição acervo */
         /* satisfeita */
 
-        point * dad_point = getIPointFromHeap(aux, Idx);
-        point * child_point = getIPointFromHeap(aux, Child);
+        point dad_point = getIPointFromHeap(aux, Idx);
+        point child_point = getIPointFromHeap(aux, Child);
         exch(aux->heap[Idx], aux->heap[Child]);
 
-        int xdad = get_X_From_Point(dad_point);
-        int ydad = get_Y_From_Point(dad_point);
-        int xchild = get_X_From_Point(child_point);
-        int ychild = get_Y_From_Point(child_point);
-
-        swap_int(aux->idx_matrix[ydad][xdad], aux->idx_matrix[ychild][xchild]);
+        swap_int(aux->idx_matrix[dad_point.y][dad_point.x], aux->idx_matrix[child_point.y][child_point.x]);
 
         /* continua a descer a árvore */
         Idx = Child;
@@ -187,25 +163,13 @@ void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N)
  * @param  aux    [description]
  * @return        [description]
  */
-point * HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
+point HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
 {
-    point * to_remove = getIPointFromHeap(aux, 0);
-    point * to_exch = getIPointFromHeap(aux, aux->free - 1);
+    point to_remove = getIPointFromHeap(aux, 0);
+    point to_exch = getIPointFromHeap(aux, aux->free - 1);
 
-    // int x_remove = get_X_From_Point(to_remove);
-    // int y_remove = get_Y_From_Point(to_remove);
-    // int x_exch = get_X_From_Point(to_exch);
-    // int y_exch = get_Y_From_Point(to_exch);
-
-
-    // swap_int(aux->idx_matrix[y_exch][x_exch], aux->idx_matrix[y_remove][x_remove]);
-    //
-    // aux->idx_matrix[y_remove][x_remove] = -2;
-
-    // aux->idx_matrix[get_Y_From_Point(to_exch)][get_X_From_Point(to_exch)] = aux->idx_matrix[get_Y_From_Point(to_remove)][get_X_From_Point(to_remove)]
-
-    aux->idx_matrix[get_Y_From_Point(to_exch)][get_X_From_Point(to_exch)] = 0;
-    aux->idx_matrix[get_Y_From_Point(to_remove)][get_X_From_Point(to_remove)] = -2;
+    aux->idx_matrix[to_exch.y][to_exch.x] = 0;
+    aux->idx_matrix[to_remove.y][to_remove.x] = -2;
 
     exch(aux->heap[0], aux->heap[aux->free - 1]);
 

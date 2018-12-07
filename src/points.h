@@ -8,22 +8,22 @@
 #include "defs.h"
 
 
-typedef struct point_t point;
+// typedef struct point_t point;
 
 
-int get_X_From_Point(point * ponto);
+int get_X_From_Point(point ponto);
 
-int get_Y_From_Point(point * ponto);
+int get_Y_From_Point(point ponto);
 
 size_t getSizeOfPoint(void);
 
 size_t getSizeOfPointAst();
 
-bool SamePoint(point * ponto1,  point * ponto2);
+bool SamePoint(point ponto1,  point ponto2);
 
-bool CheckHorseJump(point * ponto1, point * ponto2);
+bool CheckHorseJump(point ponto1, point ponto2);
 
-point * SetPoint(point * ponto, int x, int y);
+void SetPoint(point *ponto, int x, int y);
 
 
 #endif
