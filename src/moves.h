@@ -73,6 +73,6 @@ void WriteFileWithSuccess(Problema * turist, FILE * fp_out);
 
 void Free_Point_Vec(int num, caminho * move_struct);
 
-void Free_INIT_Path_Matrix(caminho ** Path_Matrix, int num_points)
+void Free_INIT_Path_Matrix(caminho ** Path_Matrix, int num_points);
 
 #endif
