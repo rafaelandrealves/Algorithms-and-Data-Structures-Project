@@ -404,7 +404,7 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     *index = num + *index;
     return num;
 }
-void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point begin, point end, caminho * move_struct,caminho *momentum,int *index,int *cost_from_point, int * No_Path)
+void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * move_struct,caminho *momentum, int *index, int *number_points, int * No_Path)
 {
     // int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
@@ -468,7 +468,7 @@ void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point begin, point end,
         //get_Move_Vector_B(matrix, min, ORIGIN_POINT, index, get_point_vector(move_struct));
 
         //get_Move_Vector_C(matrix, min, ORIGIN_POINT,&sign, get_point_vector(momentum));
-        *cost_from_point = get_Move_Vector_C(matrix,min, ORIGIN_POINT,get_point_vector(momentum),get_point_vector(move_struct),index);
+        *number_points = get_Move_Vector_C(matrix,min, ORIGIN_POINT,get_point_vector(momentum),get_point_vector(move_struct),index);
         //printf("Index-%d --- custo--%d-- ponto_atual %d--pontos %d\n",*index,*custo_total_acumulado,*ponto_atual,num_pontos);
     }
 
@@ -487,7 +487,7 @@ void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point begin, point end,
  * @param num         [description]
  * @param move_struct [description]
  */
-void OutPUT_C(point end, point ORIGIN, Problema * turist, FILE * fp_out, int num, caminho * move_struct)
+void OutPUT_C(Problema * turist, FILE * fp_out, int num, caminho * move_struct)
 {
     fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
         getCustoTotalFromCaminho(move_struct), num);
