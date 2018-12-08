@@ -29,13 +29,13 @@ point * get_point_vector(caminho * move);
 
 caminho * Set_Custo_Total(caminho *move, int value);
 
-void permutacao_recursiva(int * vetor, int ** matriz, int k, int num_ele, int *num_linha);
+void permutacao_recursiva(int * vetor, char ** matriz, int k, int num_ele, int *num_linha);
 
 void troca_int(int * str, int p1, int p2);
 
-void SetMatrix_Variant_C(int ** matriz, int * vetor, int num_ele, int num_linha);
+void SetMatrix_Variant_C(char ** matriz, int * vetor, int num_ele, int num_linha);
 
-void Free_Matrix_Variant_C(int ** matrix, int num_pontos);
+void Free_Matrix_Variant_C(char ** matrix, int num_pontos);
 
 bool CheckAllPoints(Problema * turist);
 

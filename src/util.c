@@ -27,7 +27,7 @@ Item Checked_Malloc(size_t size)
     Item mem = calloc(1, size);
     if(mem == NULL)
     {
-        printf("Error alocating memory. Exiting\n");
+        printf("Error alocating memory. Exiting...\n");
         exit(0);
     }
     return mem;
@@ -63,7 +63,7 @@ FILE * checkArguments(int _argc, char ** _argv)
 {
     // char * aux = NULL;
 
-    if(_argc > 2)
+    if(_argc > 2 || _argc < 2)
         exit(0);
 
     int size = strlen(_argv[1]);
@@ -103,7 +103,7 @@ FILE * OutPutFileName(char * nome_inicial)
     return fp;
 }
 
-int fact(int n)
+unsigned long int fact(int n)
 {
     if(n == 1 || n == 0)
         return 1;
@@ -117,7 +117,7 @@ void printMatrix(Item * matrix, int sizey, int sizex)
     {
         for(int j = 0; j < sizex; j++)
         {
-            printf("%d ", ((int *)matrix[i])[j]);
+            printf("%d ", ((char *)matrix[i])[j]);
         }
         printf("\n");
     }

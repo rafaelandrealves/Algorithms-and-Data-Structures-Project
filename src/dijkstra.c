@@ -202,7 +202,7 @@ void get_Move_Vector_B(DijkMatrix matrix, point end, point ORIGIN, int *index, p
     for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
 
     min = end;
-    printf("O num + index =%d\n",num + *index);
+    // printf("O num + index =%d\n",num + *index);
     for(int i = 0; i < num; i++)
     {
         vect[(num + *index) - i - 1] = min;
@@ -495,7 +495,7 @@ void OutPUT_C(point end, point ORIGIN, Problema * turist, FILE * fp_out, int num
     for (int i = 0 ; i < num; i++)
     {
         //printf("olaaa\n");
-        fprintf(fp_out,"%d %d %d \n", getIpointFromCaminho(move_struct, i).y, getIpointFromCaminho(move_struct, i).x,
+        fprintf(fp_out,"%d %d %d\n", getIpointFromCaminho(move_struct, i).y, getIpointFromCaminho(move_struct, i).x,
                     GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(move_struct, i)));
         //printf("%d %d \n",get_Y_From_Point(getIpointFromCaminho(move_struct, i)), get_X_From_Point(getIpointFromCaminho(move_struct, i)));
     }

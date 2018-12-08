@@ -30,7 +30,7 @@ FILE * checkArguments(int _argc, char ** _argv);
 
 FILE * OutPutFileName(char * nome_inicial);
 
-int fact(int n);
+unsigned long int fact(int n);
 
 void printMatrix(Item * matrix, int sizey, int sizex);
 
