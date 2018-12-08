@@ -1,5 +1,6 @@
 
 
+
 #include "defs.h"
 #include "points.h"
 #include "util.h"
@@ -201,6 +202,7 @@ void get_Move_Vector_B(DijkMatrix matrix, point end, point ORIGIN, int *index, p
     for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
 
     min = end;
+    printf("O num + index =%d\n",num + *index);
     for(int i = 0; i < num; i++)
     {
         vect[(num + *index) - i - 1] = min;
@@ -383,9 +385,26 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     FreeAcervo(heap_tree, getYSize(getTabuleiro(turist)));
 }
 
+ int get_Move_Vector_C(DijkMatrix matrix, point end, point ORIGIN, point * vect,point * atual, int *index)
+{
+    int num = 0;
+    point min = end;
 
+    for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
 
-void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point begin, point end, caminho * move_struct, int *index, int * No_Path)
+    min = end;
+   // printf("olaa %d\n",num);
+    for(int i = 0; i < num; i++)
+    {
+ //       printf("olaa1\n");
+        atual[(num + *index) - i - 1] = min;
+        vect[num - i - 1] = min;
+        min = get_Father(matrix, min);
+    }
+    *index = num + *index;
+    return num;
+}
+void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point begin, point end, caminho * move_struct,caminho *momentum,int *index,int *cost_from_point, int * No_Path)
 {
     // int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
@@ -443,16 +462,19 @@ void DijkstraAlgoritm_C(Problema * turist,FILE * fp_out, point begin, point end,
     else
     {
         min = HeapDeleteMaxPoint(matrix, heap_tree);
+        momentum = Set_Custo_Total(momentum,get_Acum_Cost(matrix, min));
         move_struct = Set_Custo_Total(move_struct, getCustoTotalFromCaminho(move_struct) + get_Acum_Cost(matrix, min));
-        // *custo_total_acumulado = *custo_total_acumulado + get_Acum_Cost(matrix,min);
-        get_Move_Vector_B(matrix, min, ORIGIN_POINT, index, get_point_vector(move_struct));
+        //*custo_total_acumulado = *custo_total_acumulado + get_Acum_Cost(matrix,min);
+        //get_Move_Vector_B(matrix, min, ORIGIN_POINT, index, get_point_vector(move_struct));
+
+        //get_Move_Vector_C(matrix, min, ORIGIN_POINT,&sign, get_point_vector(momentum));
+        *cost_from_point = get_Move_Vector_C(matrix,min, ORIGIN_POINT,get_point_vector(momentum),get_point_vector(move_struct),index);
         //printf("Index-%d --- custo--%d-- ponto_atual %d--pontos %d\n",*index,*custo_total_acumulado,*ponto_atual,num_pontos);
     }
 
 
     FreeDijk(matrix, getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
     FreeAcervo(heap_tree, getYSize(getTabuleiro(turist)));
-
 }
 
 

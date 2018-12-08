@@ -45,7 +45,7 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out);
 
 caminho ** INIT_Path_Matrix(int number_of_points);
 
-caminho *Use_Caminho_PreCalculated(caminho *insert, int number_Total_of_points, caminho *old, int points_to_insert);
+void Use_Caminho_PreCalculated(caminho insert, caminho *old, int points_to_insert);
 
 void Insert_CaminhoInMatrix(caminho ** move_matrix, caminho * to_insert, int origin, int destiny);
 
@@ -53,7 +53,7 @@ void Clean_caminho(caminho * move);
 
 void Execute_C_Variant(Problema * turist, FILE * fp_out);
 
-point * Copy_Caminho(point * path, int num_pontos);
+void Copy_Caminho(point * path, caminho * best);
 
 void Aux_Set_Point(Problema * turist, int i, int x, int y);
 
@@ -73,5 +73,6 @@ void WriteFileWithSuccess(Problema * turist, FILE * fp_out);
 
 void Free_Point_Vec(int num, caminho * move_struct);
 
+void Free_INIT_Path_Matrix(caminho ** Path_Matrix, int num_points)
 
 #endif
