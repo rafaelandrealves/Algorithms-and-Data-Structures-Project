@@ -29,7 +29,7 @@ point * get_point_vector(caminho * move);
 
 caminho * Set_Custo_Total(caminho *move, int value);
 
-void caminhos_recursiva(int * vetor, Problema * turist, int k, caminho ** Path_Matrix, caminho * best, bool * first_time);
+void caminhos_recursiva(int * vetor, Problema * turist, int k, caminho ** Path_Matrix, caminho * best, bool * first_time, caminho * atual, caminho * move_to_save);
 
 void troca_int(int * str, int p1, int p2);
 
@@ -43,13 +43,13 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out);
 
 void Execute_A_Variant(Problema * turist, FILE * fp_out);
 
-void for_one_path(Problema * turist, int * comb_vector, caminho ** Path_Matrix, bool * first_time, caminho * best);
+void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix, bool * first_time, caminho * best, caminho * atual, caminho * move_to_save);
 
 caminho ** INIT_Path_Matrix(int number_of_points);
 
 void Use_Caminho_PreCalculated(caminho insert, caminho *old, int points_to_insert);
 
-caminho *getSymestricPath(caminho * to_go, int cost_final_to_go, int cost_inicial_to_go, point inicial_point_to_go);
+void Insert_Reverse_Move(caminho * to_go, caminho ** caminho_path_matrix, int cost_final_to_go, int cost_inicial_to_go, point inicial_point_to_go, int init_pos, int dest_pos);
 
 void Insert_CaminhoInMatrix(caminho ** move_matrix, caminho * to_insert, int origin, int destiny);
 
