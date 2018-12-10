@@ -59,6 +59,11 @@ DijkMatrix AllocDijk(int ysize, int xsize)
     return new;
 }
 
+/**
+ * [GetDupPoint description]
+ * @param  ponto [description]
+ * @return       [description]
+ */
 point * GetDupPoint(point * ponto)
 {
     point * aux = (point *) Checked_Malloc(sizeof(point *));
@@ -318,6 +323,7 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo(getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
+    bool validity_origin = false,validity_destiny=false ;
 
     point ORIGIN_POINT = begin;
     point DESTINY_POINT = end;
@@ -326,9 +332,26 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
 
     matrix[ORIGIN_POINT.y][ORIGIN_POINT.x].acum_cost = 0;
 
+    point * to_verify_origin = Possible_Jump_Points(getTabuleiro(turist), ORIGIN_POINT, matrix);
+    point * to_verify_destiny = Possible_Jump_Points(getTabuleiro(turist), DESTINY_POINT, matrix);
+    for(int i = 0; i < 8; i = i + 1)
+    {
+        if(!(to_verify_origin[i].x == -1 || to_verify_origin[i].y == -1 ))
+        {
+            validity_origin = true;
+        }
+        if(!(to_verify_destiny[i].x == -1 || to_verify_destiny[i].y == -1))
+        {
+            validity_destiny = true;
+        }
+    }
+
+    free(to_verify_origin);
+    free(to_verify_destiny);
+
     HeapInsertPoint(matrix, heap_tree, min);
 
-    while( EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) )
+    while( validity_origin == true && validity_destiny == true && EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT))
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
 
@@ -368,7 +391,7 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     }
 
     // there is no way to reach the final point
-    if(EmptyHeap(heap_tree) == 0)
+    if(EmptyHeap(heap_tree) == 0 || !(validity_origin && validity_destiny))
     {
         WriteFileWithFailure(turist, fp_out);
     }
@@ -388,6 +411,16 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     FreeAcervo(heap_tree, getYSize(getTabuleiro(turist)));
 }
 
+/**
+ * [get_Move_Vector_C description]
+ * @param  matrix           [description]
+ * @param  end              [description]
+ * @param  ORIGIN           [description]
+ * @param  for_one_step     [description]
+ * @param  atual            [description]
+ * @param  num_total_pontos [description]
+ * @return                  [description]
+ */
  int get_Move_Vector_C(DijkMatrix matrix, point end, point ORIGIN, point * for_one_step, point * atual, int *num_total_pontos)
 {
     int num = 0;
@@ -408,31 +441,60 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     return num;
 }
 
-
-void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atual, caminho *momentum, int *num_pts_1combin, int *number_points, int * No_Path)
+/**
+ * [DijkstraAlgoritm_C description]
+ * @param turist          [description]
+ * @param begin           [description]
+ * @param end             [description]
+ * @param atual           [description]
+ * @param momentum        [description]
+ * @param num_pts_1combin [description]
+ * @param number_points   [description]
+ * @param No_Path         [description]
+ */
+void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atual, caminho *momentum, int *num_pts_1combin, int *number_points, bool * No_Path)
 {
     // int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo(getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
+    bool validity_origin = false, validity_destiny = false;
 
     point ORIGIN_POINT = begin;
     point DESTINY_POINT = end;
 
     point min = ORIGIN_POINT;
 
+    point * to_verify_origin = Possible_Jump_Points(getTabuleiro(turist), ORIGIN_POINT, matrix);
+    point * to_verify_destiny = Possible_Jump_Points(getTabuleiro(turist), DESTINY_POINT, matrix);
+    for(int i = 0; i < 8; i = i + 1)
+    {
+        if(!(to_verify_origin[i].x == -1 || to_verify_origin[i].y == -1 ))
+        {
+            validity_origin = true;
+        }
+        if(!(to_verify_destiny[i].x == -1 || to_verify_destiny[i].y == -1))
+        {
+            validity_destiny = true;
+        }
+    }
+
+    free(to_verify_origin);
+    free(to_verify_destiny);
+
     matrix[ORIGIN_POINT.y][ORIGIN_POINT.x].acum_cost = 0;
 
     HeapInsertPoint(matrix, heap_tree, min);
 
-    while( EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) )
+    while( validity_origin == true && validity_destiny == true && EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) )
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
-
         point * ppoints = Possible_Jump_Points(getTabuleiro(turist), min, matrix);
         for(int i = 0; i < 8; i++)
         {
             if(ppoints[i].x == -1 && ppoints[i].y == -1) // invalid point
+            {
                 continue;
+            }
 
             if(get_Idx_matrix(heap_tree, ppoints[i]) == -1)
             {
@@ -460,9 +522,9 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atu
         free(ppoints);
     }
 
-    if(EmptyHeap(heap_tree) == 0)
+    if(EmptyHeap(heap_tree) == 0 || !(validity_origin && validity_destiny))
     {
-        *No_Path = 1;
+        *No_Path = true;
     }
     else
     {

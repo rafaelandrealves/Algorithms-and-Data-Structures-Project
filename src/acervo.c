@@ -22,53 +22,56 @@ struct acervoStruct
 #define swap_int(A, B){int t = A; A = B; B = t; }
 
 /**
- * [get_Idx_matrix description]
- * @param  heap    [description]
- * @param  virgula [description]
- * @return         [description]
+ * [gets the position of one given point in the heap]
+ * @param  heap    [the heap struct]
+ * @param  virgula [point to get the index]
+ * @return         [heap position of one given point]
  */
 int get_Idx_matrix(Acervo * heap, point virgula)
 {
     return heap->idx_matrix[virgula.y][virgula.x];
 }
 /**
- * [getFree description]
- * @param  new [description]
- * @return     [description]
+ * [get the free variable of the heap struct]
+ * @param  heap [heap struct]
+ * @return     [value of free]
  */
-int getFree(Acervo * new)
+int getFree(Acervo * heap)
 {
-    return new->free;
+    return heap->free;
 }
 
 /**
- * [getIPointFromHeap description]
- * @param  new [description]
- * @param  i   [description]
- * @return     [description]
+ * [given one index of the heap returns the point in 'i' position of the heap]
+ * @param  heap [heap struct]
+ * @param  i   [position in the heap to get the point]
+ * @return     [point in the 'i' position]
  */
-point getIPointFromHeap(Acervo * new, int i)
+point getIPointFromHeap(Acervo * heap, int i)
 {
-    return new->heap[i];
+    return heap->heap[i];
 }
 
 /**
- * [FreeAcervo description]
- * @param old [description]
+ * [Frees all the memory related to the heap]
+ * @param heap   [heap struct to be freed]
+ * @param ysize [size of the index matrix contained in the heap struct]
  */
-void FreeAcervo(Acervo * old, int ysize)
+void FreeAcervo(Acervo * heap, int ysize)
 {
     for(int i = 0; i < ysize; i++)
-        free(old->idx_matrix[i]);
+        free(heap->idx_matrix[i]);
 
-    free(old->idx_matrix);
-    free(old->heap);
-    free(old);
+    free(heap->idx_matrix);
+    free(heap->heap);
+    free(heap);
 }
 
 /**
- * [InitAcervo description]
- * @return [description]
+ * [Inicializes the heap struct allocating memory and inicializing some values]
+ * @param  sizey [size_x of the board to alloc the heap vector]
+ * @param  sizex [size-Y of the board to alloc the heap vector]
+ * @return       [heap allocated and inicialized]
  */
 Acervo * InitAcervo(int sizey, int sizex)
 {
@@ -87,70 +90,70 @@ Acervo * InitAcervo(int sizey, int sizex)
 }
 
 /**
- * [HeapInsertPoint description]
- * @param matrix [description]
- * @param new    [description]
- * @param I      [description]
+ * [Inserts one point in the heap vector, incrementing the free variable, reestablishes the order in the heap]
+ * @param matrix [graph matrix]
+ * @param heap    [heap]
+ * @param I      [point to insert in the heap]
  */
-void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point I)
+void HeapInsertPoint(DijkMatrix matrix, Acervo * acervo, point I)
 {
-    // Insere novo elemento no fim e restabelece ordenação com FixUp
-    new->heap[new->free] = I;
-    (new->free)++;
+    acervo->heap[acervo->free] = I;
+    (acervo->free)++;
 
-    new->idx_matrix[I.y][I.x] = new->free - 1;
+    // saves the heap position in the matrix of index
+    acervo->idx_matrix[I.y][I.x] = acervo->free - 1;
 
-    FixUp(matrix, new, new->free - 1);
+    FixUp(matrix, acervo, acervo->free - 1);
 }
 
+
 /**
- * [FixUp description]
- * @param matrix [description]
- * @param aux    [description]
- * @param Idx    [description]
+ * [Given one point reestablishes the order by priority in the heap from that point to the top of the heap]
+ * @param matrix [graph matrix]
+ * @param acervo    [heap struct]
+ * @param Idx    [index of the point to fix up]
  */
-void FixUp(DijkMatrix matrix, Acervo * aux, int Idx)
+void FixUp(DijkMatrix matrix, Acervo * acervo, int Idx)
 {
     if(Idx == 0) return; // in this case the heap only have one point
 
-    while (Idx > 0 && lessPri(get_Acum_Cost(matrix, aux->heap[(Idx - 1)/2]), get_Acum_Cost(matrix, aux->heap[Idx])))
+    while (Idx > 0 && lessPri(get_Acum_Cost(matrix, acervo->heap[(Idx - 1)/2]), get_Acum_Cost(matrix, acervo->heap[Idx])))
     {
-        point child_point = getIPointFromHeap(aux, Idx);
-        point dad_point = getIPointFromHeap(aux, (Idx - 1)/2);
+        point child_point = getIPointFromHeap(acervo, Idx);
+        point dad_point = getIPointFromHeap(acervo, (Idx - 1)/2);
 
-        swap_int(aux->idx_matrix[dad_point.y][dad_point.x], aux->idx_matrix[child_point.y][child_point.x]);
+        swap_int(acervo->idx_matrix[dad_point.y][dad_point.x], acervo->idx_matrix[child_point.y][child_point.x]);
 
-        exch(aux->heap[Idx], aux->heap[(Idx - 1)/2]);
+        exch(acervo->heap[Idx], acervo->heap[(Idx - 1)/2]);
 
         Idx = (Idx - 1)/2;
     }
 }
 
 /**
- * [FixDown description]
- * @param matrix [description]
- * @param aux    [description]
- * @param Idx    [description]
- * @param N      [description]
+ * [Given one point reestablishes the order by priority in the heap from that point to the bottom of the heap]
+ * @param matrix [graph matrix]
+ * @param acervo    [heap struct]
+ * @param Idx    [index of the point to order]
+ * @param N      [index of the last element of the heap]
  */
-void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N)
+void FixDown(DijkMatrix matrix, Acervo * acervo, int Idx, int N)
 {
-    int Child; /* índice de um nó descendente */
-    while(2 * Idx < N - 1)  /* enquanto não chegar às folhas */
+    int Child;
+    while(2 * Idx < N - 1) // while doesn't reach the leafs
     {
         Child = 2 * Idx + 1;
-        /* Selecciona o maior descendente. */
-        /* Nota: se índice Child é N-1, então só há um descendente */
-        if (Child < (N - 1) && lessPri(get_Acum_Cost(matrix, aux->heap[Child]), get_Acum_Cost(matrix, aux->heap[Child + 1]))) Child++;
+        // selects the most priority descendent
+        if (Child < (N - 1) && lessPri(get_Acum_Cost(matrix, acervo->heap[Child]), get_Acum_Cost(matrix, acervo->heap[Child + 1]))) Child++;
 
-        if (!lessPri(get_Acum_Cost(matrix, aux->heap[Idx]), get_Acum_Cost(matrix, aux->heap[Child]))) break; /* condição acervo */
-        /* satisfeita */
+        // to verify the heap condition
+        if (!lessPri(get_Acum_Cost(matrix, acervo->heap[Idx]), get_Acum_Cost(matrix, acervo->heap[Child]))) break;
 
-        point dad_point = getIPointFromHeap(aux, Idx);
-        point child_point = getIPointFromHeap(aux, Child);
-        exch(aux->heap[Idx], aux->heap[Child]);
+        point dad_point = getIPointFromHeap(acervo, Idx);
+        point child_point = getIPointFromHeap(acervo, Child);
+        exch(acervo->heap[Idx], acervo->heap[Child]);
 
-        swap_int(aux->idx_matrix[dad_point.y][dad_point.x], aux->idx_matrix[child_point.y][child_point.x]);
+        swap_int(acervo->idx_matrix[dad_point.y][dad_point.x], acervo->idx_matrix[child_point.y][child_point.x]);
 
         /* continua a descer a árvore */
         Idx = Child;
@@ -158,32 +161,32 @@ void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N)
 }
 
 /**
- * [HeapDeleteMaxPoint description]
- * @param  matrix [description]
- * @param  aux    [description]
- * @return        [description]
+ * [Removes the most priority point in the heap]
+ * @param  matrix [graph matrix]
+ * @param  acervo    [heap struct]
+ * @return        [returns the deleted point]
  */
-point HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux)
+point HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * acervo)
 {
-    point to_remove = getIPointFromHeap(aux, 0);
-    point to_exch = getIPointFromHeap(aux, aux->free - 1);
+    point to_remove = getIPointFromHeap(acervo, 0);
+    point to_exch = getIPointFromHeap(acervo, acervo->free - 1);
 
-    aux->idx_matrix[to_exch.y][to_exch.x] = 0;
-    aux->idx_matrix[to_remove.y][to_remove.x] = -2;
+    acervo->idx_matrix[to_exch.y][to_exch.x] = 0;
+    acervo->idx_matrix[to_remove.y][to_remove.x] = -2;
 
-    exch(aux->heap[0], aux->heap[aux->free - 1]);
+    exch(acervo->heap[0], acervo->heap[acervo->free - 1]);
 
-    FixDown(matrix, aux, 0, aux->free - 1);
+    FixDown(matrix, acervo, 0, acervo->free - 1);
 
-    return aux->heap[--(aux->free)];
+    return acervo->heap[--(acervo->free)];
 }
 
 /**
- * [EmptyHeap description]
- * @param  aux [description]
- * @return     [description]
+ * [Verify if the heap is empty by returning the free value. If free == 0 means that heap is empty]
+ * @param  acervo [heap struct]
+ * @return     [free value]
  */
-int  EmptyHeap(Acervo * aux)
+int EmptyHeap(Acervo * acervo)
 {
-    return aux->free;
+    return acervo->free;
 }

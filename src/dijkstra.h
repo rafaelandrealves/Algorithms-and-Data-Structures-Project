@@ -26,7 +26,7 @@ void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point begin, point end)
 
 void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end, int *index, int *ponto_atual, caminho * move_vect);
 
-void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *move_struct,caminho *momentum, int *index,int *cost_from_point, int * No_Path);
+void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *move_struct,caminho *momentum, int *index,int *cost_from_point, bool * No_Path);
 
 void get_Move_Vector_A(DijkMatrix matrix, point end, point ORIGIN, Problema * turist, FILE * fp_out);
 

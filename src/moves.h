@@ -29,7 +29,7 @@ point * get_point_vector(caminho * move);
 
 caminho * Set_Custo_Total(caminho *move, int value);
 
-void caminhos_recursiva(int * vetor, Problema * turist, int k, caminho ** Path_Matrix, caminho * best, bool * first_time, caminho * atual, caminho * move_to_save);
+void caminhos_recursiva(int * vetor, Problema * turist, int k, caminho ** Path_Matrix, caminho * best, bool * first_time, caminho * atual, caminho * move_to_save, bool * No_Path);
 
 void troca_int(int * str, int p1, int p2);
 
@@ -43,7 +43,7 @@ void Execute_B_Variant(Problema * turist, FILE * fp_out);
 
 void Execute_A_Variant(Problema * turist, FILE * fp_out);
 
-void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix, bool * first_time, caminho * best, caminho * atual, caminho * move_to_save);
+void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix, bool * first_time, caminho * best, caminho * atual, caminho * move_to_save, bool * No_Path);
 
 caminho ** INIT_Path_Matrix(int number_of_points);
 
