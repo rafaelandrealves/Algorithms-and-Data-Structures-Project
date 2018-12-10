@@ -1,6 +1,3 @@
-
-
-
 #include "defs.h"
 #include "points.h"
 #include "util.h"
@@ -413,15 +410,13 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
 
 /**
  * [get_Move_Vector_C description]
- * @param  matrix           [description]
- * @param  end              [description]
- * @param  ORIGIN           [description]
- * @param  for_one_step     [description]
- * @param  atual            [description]
- * @param  num_total_pontos [description]
- * @return                  [description]
+ * @param  matrix       [description]
+ * @param  end          [description]
+ * @param  ORIGIN       [description]
+ * @param  for_one_step [description]
+ * @return              [description]
  */
- int get_Move_Vector_C(DijkMatrix matrix, point end, point ORIGIN, point * for_one_step, point * atual, int *num_total_pontos)
+ int get_Move_Vector_C(DijkMatrix matrix, point end, point ORIGIN, point * for_one_step)
 {
     int num = 0;
     point min = end;
@@ -433,26 +428,16 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     for(int i = 0; i < num; i++)
     {
         // printf("olaa1\n");
-        atual[(num + *num_total_pontos) - i - 1] = min;
+        //atual[(num + *num_total_pontos) - i - 1] = min;
         for_one_step[num - i - 1] = min;
         min = get_Father(matrix, min);
     }
-    *num_total_pontos = num + *num_total_pontos;
+    //*num_total_pontos = num + *num_total_pontos;
     return num;
 }
 
-/**
- * [DijkstraAlgoritm_C description]
- * @param turist          [description]
- * @param begin           [description]
- * @param end             [description]
- * @param atual           [description]
- * @param momentum        [description]
- * @param num_pts_1combin [description]
- * @param number_points   [description]
- * @param No_Path         [description]
- */
-void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atual, caminho *momentum, int *num_pts_1combin, int *number_points, bool * No_Path)
+
+void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *momentum, int *number_points, bool * No_Path)
 {
     // int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
@@ -483,12 +468,14 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atu
 
     matrix[ORIGIN_POINT.y][ORIGIN_POINT.x].acum_cost = 0;
 
+
     HeapInsertPoint(matrix, heap_tree, min);
 
     while( validity_origin == true && validity_destiny == true && EmptyHeap(heap_tree) != 0 && !SamePoint(getIPointFromHeap(heap_tree, 0), DESTINY_POINT) )
     {
         min = HeapDeleteMaxPoint( matrix, heap_tree);
         point * ppoints = Possible_Jump_Points(getTabuleiro(turist), min, matrix);
+
         for(int i = 0; i < 8; i++)
         {
             if(ppoints[i].x == -1 && ppoints[i].y == -1) // invalid point
@@ -530,12 +517,12 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atu
     {
         min = HeapDeleteMaxPoint(matrix, heap_tree);
         momentum = Set_Custo_Total(momentum, get_Acum_Cost(matrix, min));
-        atual = Set_Custo_Total(atual, getCustoTotalFromCaminho(atual) + get_Acum_Cost(matrix, min));
+        //atual = Set_Custo_Total(atual, getCustoTotalFromCaminho(atual) + get_Acum_Cost(matrix, min));
         //*custo_total_acumulado = *custo_total_acumulado + get_Acum_Cost(matrix,min);
         //get_Move_Vector_B(matrix, min, ORIGIN_POINT, num_pts_1combin, get_point_vector(atual));
 
         //get_Move_Vector_C(matrix, min, ORIGIN_POINT,&sign, get_point_vector(momentum));
-        *number_points = get_Move_Vector_C(matrix, min, ORIGIN_POINT, get_point_vector(momentum), get_point_vector(atual), num_pts_1combin);
+        *number_points = get_Move_Vector_C(matrix, min, ORIGIN_POINT, get_point_vector(momentum));
         //printf("num_pts_1combin-%d --- custo--%d-- ponto_atual %d--pontos %d\n",*num_pts_1combin,*custo_total_acumulado,*ponto_atual,num_pontos);
     }
 
@@ -554,16 +541,33 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho * atu
  * @param num         [description]
  * @param atual [description]
  */
-void OutPUT_C(Problema * turist, FILE * fp_out, int num, caminho * atual)
+void OutPUT_C(Problema * turist, FILE * fp_out, caminho ** best)
 {
-    fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
-        getCustoTotalFromCaminho(atual), num);
-    //printf("olaaa\n");
-    for (int i = 0 ; i < num; i++)
+    int custo_total = 0,numero_de_pontos = 0;
+
+    for(int i = 0; i < (getNumPontos(turist)- 1) && best[i] != NULL; i++)
     {
+        custo_total += getCustoTotalFromCaminho(best[i]);
+        numero_de_pontos += getNumPontosFromCaminho(best[i]);
+    }
+
+
+
+    fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
+        custo_total, numero_de_pontos);
+    //printf("olaaa\n");
+    for (int i = 0 ; i < getNumPontos(turist) - 1; i++)
+    {
+
+        for(int j = 0; j < getNumPontosFromCaminho(best[i]); j++)
+        {
+            fprintf(fp_out,"%d %d %d\n", getIpointFromCaminho(best[i], j).y, getIpointFromCaminho(best[i], j).x,
+                GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(best[i], j)));
+
+
+        }
         //printf("olaaa\n");
-        fprintf(fp_out,"%d %d %d\n", getIpointFromCaminho(atual, i).y, getIpointFromCaminho(atual, i).x,
-                    GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(atual, i)));
+
         //printf("%d %d \n",get_Y_From_Point(getIpointFromCaminho(atual, i)), get_X_From_Point(getIpointFromCaminho(atual, i)));
     }
     fprintf(fp_out,"\n");

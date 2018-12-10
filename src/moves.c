@@ -79,6 +79,13 @@ int getNumPontos(Problema * turist)
 	return getCaminho(turist)->num_pontos;
 }
 
+
+int getNumPontosFromCaminho(caminho *move)
+{
+	return move->num_pontos;
+}
+
+
 /**
  * Function that gets the i point of a certain path
  * @param  turist [Main struct Problema]
@@ -235,33 +242,17 @@ void troca_int(int * str, int p1, int p2)
   str[p2] = tmp;
 }
 
-/**
- * [caminhos_recursiva description]
- * @param vetor_combi  [description]
- * @param turist       [description]
- * @param k            [description]
- * @param Path_Matrix  [description]
- * @param best         [description]
- * @param first_time   [description]
- * @param atual        [description]
- * @param move_to_save [description]
- */
-void caminhos_recursiva(int * vetor_combi, Problema * turist, int k, caminho ** Path_Matrix, caminho * best, bool * first_time, caminho * atual, caminho * move_to_save, bool * No_Path)
+
+void caminhos_recursiva(int * vetor_combi, Problema * turist, int k, caminho ** Path_Matrix, caminho ** best,caminho **atual, bool * first_time, caminho * move_to_save,bool *No_Path)
 {
     int i;
     int * copia_vetor_combi = vetor_combi;
-
     if(*No_Path == true)
         return;
 
-
     if (k == turist->passeio.num_pontos - 1)
     {
-        // for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
-        //     printf("%d ", vetor_combi[i]);
-        //
-        // printf("\n");
-        C_for_one_path(turist, vetor_combi, Path_Matrix, first_time, best, atual, move_to_save, No_Path);
+        C_for_one_path(turist, vetor_combi, Path_Matrix, first_time, best,atual, move_to_save,No_Path);
         if(*No_Path == true)
             return;
     }
@@ -271,7 +262,7 @@ void caminhos_recursiva(int * vetor_combi, Problema * turist, int k, caminho ** 
         for (i = k; i < turist->passeio.num_pontos - 1; i++)
         {
             troca_int(copia_vetor_combi, k, i);
-            caminhos_recursiva(vetor_combi, turist, k + 1, Path_Matrix, best, first_time, atual, move_to_save, No_Path);
+            caminhos_recursiva(vetor_combi, turist, k + 1, Path_Matrix, best,atual,first_time, move_to_save,No_Path);
             troca_int(copia_vetor_combi, i, k);
         }
     }
@@ -299,15 +290,16 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
     for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
         vetor_combinacoes[i] = i + 1;
 
-    caminho * best = (caminho *) Checked_Malloc(sizeof(caminho));
-    best->custo_total = 0;
-    best->num_pontos = 0;
-    best->points = (point *) Checked_Malloc(sizeof(point) * 20000);
+    caminho ** best = (caminho **) Checked_Malloc(sizeof(caminho*) *  turist->passeio.num_pontos);
 
-    caminho *atual = (caminho *) Checked_Malloc(sizeof(caminho));
-    atual->custo_total = 0;
-    atual->num_pontos = 0;
-    atual->points = (point *) Checked_Malloc(sizeof(point ) * 20000);
+
+    caminho ** atual = (caminho **) Checked_Malloc(sizeof(caminho*) * turist->passeio.num_pontos);
+    for( int i = 0; i < turist->passeio.num_pontos - 1 ;i++)
+    {
+        best[i] = NULL;
+        atual[i]= NULL;
+    }
+
 
     caminho * move_to_save = (caminho *) Checked_Malloc(sizeof(caminho));
     move_to_save->num_pontos = 0;
@@ -318,21 +310,21 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
     bool first_time = true;
 
 
-    caminhos_recursiva(vetor_combinacoes, turist, 0, Path_matrix, best, &first_time, atual, move_to_save, &No_Path);
+    caminhos_recursiva(vetor_combinacoes, turist, 0, Path_matrix, best,atual, &first_time, move_to_save, &No_Path);
 
 
 
     if(first_time == true && No_Path == true)
         WriteFileWithFailure(turist, fp_out);
     else
-        OutPUT_C(turist, fp_out, best->num_pontos, best);
+        OutPUT_C(turist, fp_out, best);
 
 
     Free_INIT_Path_Matrix(Path_matrix,turist->passeio.num_pontos);
     free(vetor_combinacoes);
-    free(best->points);
+    //free(best->points);
     free(best);
-    free(atual->points);
+    //free(atual->points);
     free(atual);
     free(move_to_save->points);
     free(move_to_save);
@@ -430,130 +422,121 @@ void Insert_CaminhoInMatrix(caminho ** move_matrix, caminho * to_insert, int ori
     move_matrix[origin][destiny].custo_total = to_insert->custo_total;
     move_matrix[origin][destiny].num_pontos = to_insert->num_pontos;
 }
-
-/**
- * [Clean_caminho description]
- * @param move [description]
- */
-void Clean_caminho(caminho * move)
+int GetCostFromOnePath(caminho ** move)
 {
-    point invalid = {.x = -1, .y = -1};
-    for(int i = 0; i < move->num_pontos; i = i + 1)
+    int custo = 0;
+
+    for (int i = 0; move[i] != NULL; i++)
     {
-        move->points[i] = invalid;
+        custo += move[i]->custo_total;
     }
+
+
+    return custo;
 }
 
-/**
- * [C_for_one_path description]
- * @param turist       [description]
- * @param comb_vector  [description]
- * @param Path_matrix  [description]
- * @param first_time   [description]
- * @param best         [description]
- * @param atual        [description]
- * @param move_to_save [description]
- */
-void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix, bool * first_time, caminho * best, caminho * atual, caminho * move_to_save, bool * No_Path)
+void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix, bool * first_time, caminho ** best,caminho ** atual, caminho * move_to_save, bool * No_Path)
 {
-    int pos_init_p = 0, pos_dest_p, num_pontos_combin = 0, not_better_path = 0;
+    int pos_init_p = 0, pos_dest_p;
     point final_point, inicial_point;
-
-    atual->custo_total = 0;
-    atual->num_pontos = 0;
+    int custo_acumulado = 0;
+    int not_better_path = 0;
 
     inicial_point = getIpoint(turist, 0);
     for(int ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
     {
         pos_dest_p = comb_vector[ponto];
 
-        // printf("\tCaminho de %d para %d\n", pos_init_p, pos_dest_p);
+        //printf("\tCaminho de %d para %d\n", pos_init_p, pos_dest_p);
 
         final_point = getIpoint(turist, pos_dest_p);
 
         move_to_save->custo_total = 0;
         move_to_save->num_pontos = 0;
 
-        // there is no possible path from inicial_point to final_point
-        if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0) && (atual->custo_total + Path_matrix[pos_init_p][pos_dest_p].custo_total) > best->custo_total)
+        if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0) && (custo_acumulado + Path_matrix[pos_init_p][pos_dest_p].custo_total) > GetCostFromOnePath(best))
         {
-            // printf("\t\tBranchingggg\n");
+            //printf("\t\tBranchingggg\n");
             not_better_path = 1;
             break;
         }
 
         if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0))
         {
-            Use_Caminho_PreCalculated(Path_matrix[pos_init_p][pos_dest_p], atual, Path_matrix[pos_init_p][pos_dest_p].num_pontos);
-            // printf("\t\tFui buscar à matriz com --%d-- pontos com --%d-- custo\n", atual->num_pontos, Path_matrix[pos_init_p][pos_dest_p].custo_total);
+            //Use_Caminho_PreCalculated(Path_matrix[pos_init_p][pos_dest_p], atual, Path_matrix[pos_init_p][pos_dest_p].num_pontos);
+            atual[ponto] = &Path_matrix[pos_init_p][pos_dest_p];
+
+            custo_acumulado = custo_acumulado + atual[ponto]->custo_total;
+            //printf("\t\tFui buscar à matriz com --%d-- pontos com --%d-- custo\n", atual->num_pontos, Path_matrix[pos_init_p][pos_dest_p].custo_total);
             inicial_point = final_point;
             pos_init_p = pos_dest_p;
             continue;
         }
         int num_points = 0;
-        num_pontos_combin = atual->num_pontos;
+        //num_pontos_combin = atual->num_pontos;
 
-        DijkstraAlgoritm_C(turist, inicial_point, final_point, atual, move_to_save, &num_pontos_combin, &num_points, No_Path);
+        DijkstraAlgoritm_C(turist, inicial_point, final_point, move_to_save, &num_points, No_Path);
 
         move_to_save->num_pontos = num_points ;
-        atual->num_pontos = num_pontos_combin;
+        //atual->num_pontos = num_pontos_combin;
         if(*No_Path == true)
             break;
-
 
         if( not_better_path == 0 && Path_matrix[pos_init_p][pos_dest_p].custo_total == 0 )
         {
             Insert_CaminhoInMatrix(Path_matrix, move_to_save, pos_init_p, pos_dest_p);
+            atual[ponto] = &Path_matrix[pos_init_p][pos_dest_p];
+            custo_acumulado = custo_acumulado + atual[ponto]->custo_total;
             Insert_Reverse_Move(move_to_save, Path_matrix, GetPointCostFromPoint(getTabuleiro(turist), final_point),
                                 GetPointCostFromPoint(getTabuleiro(turist), inicial_point), inicial_point, pos_init_p, pos_dest_p);
 
-            // printf("\t\tInseri na matriz\n");
+            //printf("\t\tInseri na matriz\n");
             // Insert_CaminhoInMatrix(Path_matrix, reverse_move, pos_dest_p, pos_init_p);
             // free(reverse_move->points);
             // free(reverse_move);
         }
         if(not_better_path == 1)
         {
-            Path_matrix[pos_init_p][pos_dest_p].custo_total = -1;
-            Path_matrix[pos_dest_p][pos_init_p].custo_total = -1;
+
             break;
         }
 
-        // printf("\t\tAtual depois do dijktra com  --%d-- pontos\n", atual->num_pontos);
+        //printf("\t\tAtual depois do dijktra com  --%d-- pontos\n", atual->num_pontos);
         inicial_point = final_point;
         pos_init_p = pos_dest_p;
     }
 
     if(*first_time == true && not_better_path == 0 && *No_Path == false)
     {
-        best->num_pontos = num_pontos_combin;
-        best->custo_total = atual->custo_total;
-        Copy_Caminho(atual->points,best);
+        //best->num_pontos = num_pontos_combin;
+
+        //Copy_Caminho(atual->points,best);
+        //Insert_In_best(best,atual,turist->passeio.num_pontos);
+        for(int i = 0; i < getNumPontos(turist) && atual[i] != NULL; i++)
+        {
+            best[i] = atual[i];
+        }
         *first_time = false;
     }
     else if (not_better_path == 0 && *No_Path == false)
     {
-        if(atual->custo_total < best->custo_total )
+        if(custo_acumulado < GetCostFromOnePath(best))
         {
-            best->custo_total = atual->custo_total;
-            best->num_pontos = atual->num_pontos;
+            //best->custo_total = custo_acumulado;
+            //Insert_In_best(best,atual,turist->passeio.num_pontos);
 
-            Copy_Caminho(atual->points, best);
+            for(int i = 0; i < getNumPontos(turist) && atual[i] != NULL; i++)
+            {
+                best[i] = atual[i];
+            }
+            //Copy_Caminho(atual->points, best);
 
         }
     }
+    for( int i = 0; i < getNumPontos(turist);i++)
+        atual[i] = NULL;
 }
 
-/**
- * [Insert_Reverse_Move description]
- * @param to_go               [description]
- * @param caminho_path_matrix [description]
- * @param cost_final_to_go    [description]
- * @param cost_inicial_to_go  [description]
- * @param inicial_point_to_go [description]
- * @param init_pos            [description]
- * @param dest_pos            [description]
- */
 void Insert_Reverse_Move(caminho * to_go, caminho ** caminho_path_matrix, int cost_final_to_go, int cost_inicial_to_go, point inicial_point_to_go, int init_pos, int dest_pos)
 {
     // caminho * to_get_back = (caminho *) Checked_Malloc(sizeof(caminho));
@@ -577,7 +560,6 @@ void Insert_Reverse_Move(caminho * to_go, caminho ** caminho_path_matrix, int co
     // to_get_back->points[to_get_back->num_pontos - 1] = inicial_point_to_go;
     caminho_path_matrix[dest_pos][init_pos].points[num_pontos_to_go - 1] = inicial_point_to_go;
 
-    // return to_get_back;
 }
 
 /**
