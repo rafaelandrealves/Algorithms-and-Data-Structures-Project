@@ -61,8 +61,6 @@ FILE * Open_File(char * file_name, char * mode)
  */
 FILE * checkArguments(int _argc, char ** _argv)
 {
-    // char * aux = NULL;
-
     if(_argc > 2 || _argc < 2)
         exit(0);
 
@@ -86,12 +84,12 @@ FILE * OutPutFileName(char * nome_inicial)
 {
     int i = 0; // o i tem que ser inicializado fora do for para que a variável seja conservada fora do for
 
-    //descobrir qual é a posição do '.' no ficheiro original
+    // i gets the position of '.'
     for( i = strlen(nome_inicial); i >= 0 && nome_inicial[i] != '.'; i--);
 
     char * novo = (char *) Checked_Malloc((strlen(".walks") + i + 1) * sizeof(char));
 
-    // copiar todos os caracteres até ao '.'
+    // copy all chars until the '.'
     for (int j = 0; j < i; j++)
         novo[j] = nome_inicial[j];
 
@@ -103,6 +101,11 @@ FILE * OutPutFileName(char * nome_inicial)
     return fp;
 }
 
+/**
+ * Factorial of integer n
+ * @param  n [number]
+ * @return   [n!]
+ */
 unsigned long int fact(int n)
 {
     if(n == 1 || n == 0)
@@ -111,6 +114,12 @@ unsigned long int fact(int n)
     return n * fact(n - 1);
 }
 
+/**
+ * Auxiliary function to print one matrix to help in the debug
+ * @param matrix [matrix]
+ * @param sizey  [size y of the matrix]
+ * @param sizex  [size x of the matrix]
+ */
 void printMatrix(Item * matrix, int sizey, int sizex)
 {
     for(int i = 0; i < sizey; i ++)

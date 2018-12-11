@@ -1,4 +1,15 @@
 
+/******************************************************************************
+ *
+ * File Name: moves.c
+
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     moves.c - Functions related with one move. The main and auxiliary functions to execute the A, B and C variant. 
+ *
+*/
 
 
 #include "defs.h"
@@ -8,8 +19,6 @@
 #include "dijkstra.h"
 
 #define PrintCombinMatrix 0
-
-#define Cmp_Int_Path(A) (A > 0)
 
 #define INFTY 9999
 
@@ -59,6 +68,43 @@ int getCustoTotalFromProb(Problema * turist)
 	return getCaminho(turist)->custo_total;
 }
 
+
+/**
+ * [Set the matrix element ]
+ * @param turist [main struct]
+ * @param cost   [cost of the point]
+ * @param yy     [y coordinates]
+ * @param xx     [x coordinates]
+ */
+void Aux_Set_Matrix_Element(Problema * turist, short cost, int yy, int xx)
+{
+	SetMatrixElement(turist->tabu, cost, yy, xx);
+}
+
+/**
+ * [Auxiliary function to set one point with x and y coordinates]
+ * @param turist [description]
+ * @param i      [description]
+ * @param x      [description]
+ * @param y      [description]
+ */
+void Aux_Set_Point(Problema * turist, int i, int x, int y)
+{
+    SetPoint(&(turist->passeio.points[i]), x, y);
+}
+
+
+/**
+ * Function that gets the mode of a certain problem
+ * @param  turist [Main struct Problema]
+ * @return        [Game mode]
+ */
+char GetModoJogo(Problema * turist)
+{
+	return (turist->modo_jogo);
+}
+
+
 /**
  * [getCustoTotalFromCaminho description]
  * @param  way [description]
@@ -80,6 +126,27 @@ int getNumPontos(Problema * turist)
 }
 
 
+/**
+ * [Gets the cost of one entire combination with the vector of pointers to single jump paths]
+ * @param  move [vector of caminho *]
+ * @return      [cost of one combination]
+ */
+int GetCostFromOnePath(caminho ** move)
+{
+    int custo = 0;
+
+    for (int i = 0; move[i] != NULL; i++)
+    {
+        custo += move[i]->custo_total;
+    }
+    return custo;
+}
+
+/**
+ * [Given one move returns the number of points that it contains]
+ * @param  move [represents the move]
+ * @return      [number of poitns]
+ */
 int getNumPontosFromCaminho(caminho *move)
 {
 	return move->num_pontos;
@@ -98,10 +165,10 @@ point getIpoint(Problema * turist, int i)
 }
 
 /**
- * [getIpointFromCaminho description]
- * @param  way [description]
- * @param  i   [description]
- * @return     [description]
+ * Get the 'i' point from one Path_Matrix
+ * @param  way [path struct]
+ * @param  i   [position of the point]
+ * @return     [point with the 'i' index]
  */
 point getIpointFromCaminho(caminho * way, int i)
 {
@@ -109,9 +176,9 @@ point getIpointFromCaminho(caminho * way, int i)
 }
 
 /**
- * [get_point_vector description]
- * @param  move [description]
- * @return      [description]
+ * [Get the pointer to the points vector inside the path struct]
+ * @param  move [path struct]
+ * @return      [pointer to the point vector]
  */
 point * get_point_vector(caminho * move)
 {
@@ -119,10 +186,10 @@ point * get_point_vector(caminho * move)
 }
 
 /**
- * [Set_Custo_Total description]
- * @param  move  [description]
- * @param  value [description]
- * @return       [description]
+ * [Set the cost of one path ]
+ * @param  move  [path to set its cost]
+ * @param  value [value of the cost to be set]
+ * @return       [path set]
  */
 caminho * Set_Custo_Total(caminho *move, int value)
 {
@@ -149,53 +216,12 @@ bool CheckAllPoints(Problema * turist)
 
 
 /**
- * [Free_Point_Vec description]
- * @param num         [description]
- * @param move_struct [description]
+ * [Frees the memory related with the path struct]
+ * @param move_struct [path struct]
  */
-void Free_Point_Vec(int num, caminho * move_struct)
+void Free_Point_Vec(caminho * move_struct)
 {
     free(get_point_vector(move_struct));
-}
-
-
-/**
- * Given some points checks if it is a valid move which means if all points are valid
- * 	are accesible and only make horse jumps
- * @param turist [main struct]
- * @param fp_out [output file pointer ]
- */
-void Execute_B_Variant(Problema * turist, FILE * fp_out)
-{
-	bool validity = false;
-    int index = 0;
-    int pontos_atuais = 0;
-    point * vect_out = (point *) Checked_Malloc(getXSize(getTabuleiro(turist)) * getYSize(getTabuleiro(turist)) * sizeof(point));
-
-    caminho * move_struct = (caminho *) Checked_Malloc(sizeof(caminho));
-    move_struct->num_pontos = 0;
-    move_struct->points = vect_out;
-    move_struct->custo_total = 0;
-
-
-	// means that one or more points aren't inside the table or are inaccessible
-	validity = CheckAllPoints(turist);
-
-	if(validity == true) // if all points are valid program will check if all make horse jumps
-	{
-		for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
-		{
-            DijkstraAlgoritm_B(turist, fp_out, turist->passeio.points[i], turist->passeio.points[i + 1], &index, &pontos_atuais, move_struct);
-		}
-	}
-	else
-	{
-		// write file with failure because one (or more) point(s) aren't inside the matrix
-		WriteFileWithFailure(turist, fp_out);
-	}
-
-    Free_Point_Vec(index, move_struct);
-    free(move_struct);
 }
 
 /**
@@ -215,63 +241,52 @@ void Execute_A_Variant(Problema * turist, FILE * fp_out)
 
 }
 
+
 /**
- * [SetMatrix_Variant_C description]
- * @param matriz    [description]
- * @param vetor     [description]
- * @param num_ele   [description]
- * @param num_linha [description]
+ * Given some points checks if it is a valid move which means if all points are valid
+ * 	are accesible and only make horse jumps
+ * @param turist [main struct]
+ * @param fp_out [output file pointer]
  */
-void SetMatrix_Variant_C(char ** matriz, int * vetor, int num_ele, int num_linha)
+void Execute_B_Variant(Problema * turist, FILE * fp_out)
 {
-    for(int i = 0; i < num_ele; i++)
-        matriz[num_linha][i] = vetor[i];
+	bool validity = false;
+    int index = 0;
+    int pontos_atuais = 0;
+    point * vect_out = (point *) Checked_Malloc(getXSize(getTabuleiro(turist)) * getYSize(getTabuleiro(turist)) * sizeof(point));
+
+    caminho * move_struct = (caminho *) Checked_Malloc(sizeof(caminho));
+    move_struct->num_pontos = 0;
+    move_struct->points = vect_out;
+    move_struct->custo_total = 0;
+
+
+	// means that one or more points aren't inside the table or are inaccessible
+	validity = CheckAllPoints(turist);
+
+	if(validity == true) // if all points are valid program will check if all make horse jumps
+	{
+        // executes the Dijkstra for each 2 pair of points
+		for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
+		{
+            DijkstraAlgoritm_B(turist, fp_out, turist->passeio.points[i], turist->passeio.points[i + 1], &index, &pontos_atuais, move_struct);
+		}
+	}
+	else
+	{
+		// write file with failure because one (or more) point(s) aren't inside the matrix
+		WriteFileWithFailure(turist, fp_out);
+	}
+
+    Free_Point_Vec(move_struct);
+    free(move_struct);
 }
+
 
 /**
- * [troca_int description]
- * @param str [description]
- * @param p1  [description]
- * @param p2  [description]
- */
-void troca_int(int * str, int p1, int p2)
-{
-  int tmp;
-  tmp = str[p1];
-  str[p1] = str[p2];
-  str[p2] = tmp;
-}
-
-
-void caminhos_recursiva(int * vetor_combi, Problema * turist, int k, caminho ** Path_Matrix, caminho ** best,caminho **atual, bool * first_time, caminho * move_to_save,bool *No_Path)
-{
-    int i;
-    int * copia_vetor_combi = vetor_combi;
-    if(*No_Path == true)
-        return;
-
-    if (k == turist->passeio.num_pontos - 1)
-    {
-        C_for_one_path(turist, vetor_combi, Path_Matrix, first_time, best,atual, move_to_save,No_Path);
-        if(*No_Path == true)
-            return;
-    }
-
-    else
-    {
-        for (i = k; i < turist->passeio.num_pontos - 1; i++)
-        {
-            troca_int(copia_vetor_combi, k, i);
-            caminhos_recursiva(vetor_combi, turist, k + 1, Path_Matrix, best,atual,first_time, move_to_save,No_Path);
-            troca_int(copia_vetor_combi, i, k);
-        }
-    }
-}
-
-/**
- * [Execute_C_Variant description]
- * @param turist [description]
- * @param fp_out [description]
+ * [Given one path it calculates the cheapest path changing the order of the turist points]
+ * @param turist [struct with the information read from the file]
+ * @param fp_out [file pointer to the output file]
  */
 void Execute_C_Variant(Problema * turist, FILE * fp_out)
 {
@@ -284,17 +299,18 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
     bool No_Path = false;
 
 
-    // vetor auxiliar para a criação das combinações de caminhos
+    // auxiliary vector to compute all the path combinations
     // printf("num pontos: %d\n", turist->passeio.num_pontos);
     int * vetor_combinacoes = (int *) Checked_Malloc(sizeof(int) * (turist->passeio.num_pontos - 1));
     for(int i = 0; i < turist->passeio.num_pontos - 1; i++)
         vetor_combinacoes[i] = i + 1;
 
+    // vector that contains pointers to path in each position
     caminho ** best = (caminho **) Checked_Malloc(sizeof(caminho*) *  turist->passeio.num_pontos);
 
-
+    // vector that contains pointers to path in each position
     caminho ** atual = (caminho **) Checked_Malloc(sizeof(caminho*) * turist->passeio.num_pontos);
-    for( int i = 0; i < turist->passeio.num_pontos - 1 ;i++)
+    for( int i = 0; i < turist->passeio.num_pontos - 1 ; i++)
     {
         best[i] = NULL;
         atual[i]= NULL;
@@ -322,32 +338,69 @@ void Execute_C_Variant(Problema * turist, FILE * fp_out)
 
     Free_INIT_Path_Matrix(Path_matrix,turist->passeio.num_pontos);
     free(vetor_combinacoes);
-    //free(best->points);
     free(best);
-    //free(atual->points);
     free(atual);
     free(move_to_save->points);
     free(move_to_save);
 }
 
 /**
- * [Free_Matrix_Variant_C description]
- * @param matrix     [description]
- * @param num_pontos [description]
+ * [generates each combination on the turist points and compute the DIjkstra algorithm to get the cheapest path for that combination]
+ * @param vetor_combi  [vector of the combinations]
+ * @param turist       [struct of the problem]
+ * @param k            [description]
+ * @param Path_Matrix  [saves the path from one single jump path]
+ * @param best         [best path]
+ * @param atual        [current path]
+ * @param first_time   [checks if it is the first time that the problem is computed]
+ * @param move_to_save [path to save the single jump path in the Path_Matrix]
+ * @param No_Path      [checks is there is no path on this combination]
  */
-void Free_Matrix_Variant_C(char ** matrix, int num_pontos)
+void caminhos_recursiva(int * vetor_combi, Problema * turist, int k, caminho ** Path_Matrix, caminho ** best, caminho **atual, bool * first_time, caminho * move_to_save, bool *No_Path)
 {
-    for(int i = 0; i < fact(num_pontos); i++)
-        free(matrix[i]);
+    int i;
+    int * copia_vetor_combi = vetor_combi;
+    if(*No_Path == true)
+        return;
 
-    free(matrix);
+    if ( k == turist->passeio.num_pontos - 1)
+    {
+        // executes the Dijkstra for this path combination
+        C_for_one_path(turist, vetor_combi, Path_Matrix, first_time, best,atual, move_to_save,No_Path);
+        if(*No_Path == true)
+            return;
+    }
+    else
+    {
+        for (i = k; i < turist->passeio.num_pontos - 1; i++)
+        {
+            troca_int(copia_vetor_combi, k, i);
+            caminhos_recursiva(vetor_combi, turist, k + 1, Path_Matrix, best,atual,first_time, move_to_save,No_Path);
+            troca_int(copia_vetor_combi, i, k);
+        }
+    }
 }
 
 
 /**
- * [INIT_Value_Matrix description]
- * @param  number_of_points [description]
- * @return                  [description]
+ * [exchange 2 integers]
+ * @param str [int vector]
+ * @param p1  [position 1 of vector]
+ * @param p2  [position 2 of vector]
+ */
+void troca_int(int * str, int p1, int p2)
+{
+  int tmp;
+  tmp = str[p1];
+  str[p1] = str[p2];
+  str[p2] = tmp;
+}
+
+
+/**
+ * [Allocs and inicializes the path matrix to ]
+ * @param  number_of_points [number of points in the path]
+ * @return                  [path matrix allocated and inicialized]
  */
 caminho ** INIT_Path_Matrix(int number_of_points)
 {
@@ -355,7 +408,7 @@ caminho ** INIT_Path_Matrix(int number_of_points)
 
     for( int i = 0; i < number_of_points; i++)
     {
-        matrix[i] = (caminho *)Checked_Malloc(number_of_points * sizeof(caminho));
+        matrix[i] = (caminho *) Checked_Malloc(number_of_points * sizeof(caminho));
         for(int j = 0; j < number_of_points; j++)
         {
             matrix[i][j].points = (point *) Checked_Malloc(sizeof(point) * 20000);
@@ -380,36 +433,15 @@ void Free_INIT_Path_Matrix(caminho ** Path_Matrix, int num_points)
         free(Path_Matrix[i]);
     }
     free(Path_Matrix);
-
-
 }
 
 
 /**
- * [Insert_Caminho description]
- * @param  insert                 [caminho a inserir]
- * @param  number_Total_of_points [num_pontos do caminho a inserir + num_pontos do antigo]
- * @param  old                    [caminho antigo, para juntar]
- * @param  points_to_insert       [num_pontos a inserir]
- * @return                        [description]
- */
-void Use_Caminho_PreCalculated(caminho saved, caminho *atual, int points_to_insert)
-{
-    for(int i = 0; i < points_to_insert; i++)
-    {
-        atual->points[atual->num_pontos + i] = saved.points[i];
-        //printf("-%d %d\n",new->points[i].y,new->points[i].x);
-    }
-    atual->custo_total = atual->custo_total + saved.custo_total;
-    atual->num_pontos = atual->num_pontos + saved.num_pontos;
-}
-
-/**
- * [Insert_CaminhoInMatrix description]
- * @param move_matrix [description]
- * @param to_insert   [description]
- * @param origin      [description]
- * @param destiny     [description]
+ * [Inserts one single jump path in the Path_Matrix]
+ * @param move_matrix [matrix with all the paths]
+ * @param to_insert   [path to insert in the matrix]
+ * @param origin      [origin index of the matrix]
+ * @param destiny     [destiny index of the matrix]
  */
 void Insert_CaminhoInMatrix(caminho ** move_matrix, caminho * to_insert, int origin, int destiny)
 {
@@ -422,29 +454,28 @@ void Insert_CaminhoInMatrix(caminho ** move_matrix, caminho * to_insert, int ori
     move_matrix[origin][destiny].custo_total = to_insert->custo_total;
     move_matrix[origin][destiny].num_pontos = to_insert->num_pontos;
 }
-int GetCostFromOnePath(caminho ** move)
-{
-    int custo = 0;
-
-    for (int i = 0; move[i] != NULL; i++)
-    {
-        custo += move[i]->custo_total;
-    }
 
 
-    return custo;
-}
-
+/**
+ * [C_for_one_path description]
+ * @param turist       [struct with the info read from the file]
+ * @param comb_vector  [current combination]
+ * @param Path_matrix  [matrix with thesingle jump paths]
+ * @param first_time   [variable to check if it is the first time]
+ * @param best         [path of the best combination]
+ * @param atual        [path of the current combination]
+ * @param move_to_save [path of one single jump (A->B) to save in the path matrix if necessary]
+ * @param No_Path      [variable to check if there is a possible path]
+ */
 void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix, bool * first_time, caminho ** best,caminho ** atual, caminho * move_to_save, bool * No_Path)
 {
-    int pos_init_p = 0, pos_dest_p;
+    int pos_init_p = 0, pos_dest_p, custo_acumulado = 0, not_better_path = 0;
     point final_point, inicial_point;
-    int custo_acumulado = 0;
-    int not_better_path = 0;
 
     inicial_point = getIpoint(turist, 0);
     for(int ponto = 0; ponto < getNumPontos(turist) - 1; ponto++)
     {
+        // access the combination vector to check the index of final point
         pos_dest_p = comb_vector[ponto];
 
         //printf("\tCaminho de %d para %d\n", pos_init_p, pos_dest_p);
@@ -454,6 +485,8 @@ void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix
         move_to_save->custo_total = 0;
         move_to_save->num_pontos = 0;
 
+        // Branching!! If the cost of the current path is higher than the best path is not worth it to calculate it and can go
+        // to the next combination (break the for loop)
         if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0) && (custo_acumulado + Path_matrix[pos_init_p][pos_dest_p].custo_total) > GetCostFromOnePath(best))
         {
             //printf("\t\tBranchingggg\n");
@@ -461,9 +494,9 @@ void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix
             break;
         }
 
+        // if the move to calculate is already saved in the path matrix it will load it and won't execute the Dijkstra
         if((Path_matrix[pos_init_p][pos_dest_p].custo_total > 0))
         {
-            //Use_Caminho_PreCalculated(Path_matrix[pos_init_p][pos_dest_p], atual, Path_matrix[pos_init_p][pos_dest_p].num_pontos);
             atual[ponto] = &Path_matrix[pos_init_p][pos_dest_p];
 
             custo_acumulado = custo_acumulado + atual[ponto]->custo_total;
@@ -473,15 +506,15 @@ void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix
             continue;
         }
         int num_points = 0;
-        //num_pontos_combin = atual->num_pontos;
 
         DijkstraAlgoritm_C(turist, inicial_point, final_point, move_to_save, &num_points, No_Path);
 
-        move_to_save->num_pontos = num_points ;
-        //atual->num_pontos = num_pontos_combin;
+        // refresh the number of points in the path to save in the matrix
+        move_to_save->num_pontos = num_points;
         if(*No_Path == true)
             break;
 
+        // will save the current path in the Path Matrix and will also insert the reverse
         if( not_better_path == 0 && Path_matrix[pos_init_p][pos_dest_p].custo_total == 0 )
         {
             Insert_CaminhoInMatrix(Path_matrix, move_to_save, pos_init_p, pos_dest_p);
@@ -491,13 +524,9 @@ void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix
                                 GetPointCostFromPoint(getTabuleiro(turist), inicial_point), inicial_point, pos_init_p, pos_dest_p);
 
             //printf("\t\tInseri na matriz\n");
-            // Insert_CaminhoInMatrix(Path_matrix, reverse_move, pos_dest_p, pos_init_p);
-            // free(reverse_move->points);
-            // free(reverse_move);
         }
         if(not_better_path == 1)
         {
-
             break;
         }
 
@@ -506,90 +535,60 @@ void C_for_one_path(Problema * turist, int * comb_vector, caminho ** Path_matrix
         pos_init_p = pos_dest_p;
     }
 
+    // if it is the first time will load the current path to the best path
     if(*first_time == true && not_better_path == 0 && *No_Path == false)
     {
-        //best->num_pontos = num_pontos_combin;
-
-        //Copy_Caminho(atual->points,best);
-        //Insert_In_best(best,atual,turist->passeio.num_pontos);
         for(int i = 0; i < getNumPontos(turist) && atual[i] != NULL; i++)
         {
             best[i] = atual[i];
         }
         *first_time = false;
     }
+    // oterwise the best path will only be changed when it finds a better path
     else if (not_better_path == 0 && *No_Path == false)
     {
         if(custo_acumulado < GetCostFromOnePath(best))
         {
-            //best->custo_total = custo_acumulado;
-            //Insert_In_best(best,atual,turist->passeio.num_pontos);
-
+            // load the path
             for(int i = 0; i < getNumPontos(turist) && atual[i] != NULL; i++)
             {
                 best[i] = atual[i];
             }
-            //Copy_Caminho(atual->points, best);
-
         }
     }
+    // reset the current path with NULL
     for( int i = 0; i < getNumPontos(turist);i++)
         atual[i] = NULL;
 }
 
+/**
+ * [Insert the inverse move in the path matrix]
+ * @param to_go               [path move to go A->B]
+ * @param caminho_path_matrix [path matrix]
+ * @param cost_final_to_go    [cost of final point in the to_go move]
+ * @param cost_inicial_to_go  [cost of inicial point in the to_go move]
+ * @param inicial_point_to_go [inicial point in the to_go move]
+ * @param init_pos            [index of the inicial point to index the matrix]
+ * @param dest_pos            [index of the final points to index the matrix]
+ */
 void Insert_Reverse_Move(caminho * to_go, caminho ** caminho_path_matrix, int cost_final_to_go, int cost_inicial_to_go, point inicial_point_to_go, int init_pos, int dest_pos)
 {
-    // caminho * to_get_back = (caminho *) Checked_Malloc(sizeof(caminho));
-    // to_get_back->points = (point *) Checked_Malloc(sizeof(point) * to_go->num_pontos);
-
-    // to_get_back->num_pontos = to_go->num_pontos;
-    // to_get_back->custo_total = to_go->custo_total - cost_final_to_go + cost_inicial_to_go;
-
     caminho_path_matrix[dest_pos][init_pos].custo_total = to_go->custo_total - cost_final_to_go + cost_inicial_to_go;
     caminho_path_matrix[dest_pos][init_pos].num_pontos = to_go->num_pontos;
 
+    // set the number of points
     int num_pontos_to_go = to_go->num_pontos;
 
+    // insert the points in the correct order
     for(int i = 0; i < to_go->num_pontos - 1; i = i + 1)
     {
-        // to_get_back->points[i] = to_go->points[to_go->num_pontos - 1 - i];
         caminho_path_matrix[dest_pos][init_pos].points[i] = to_go->points[num_pontos_to_go - 2 - i];
-        // o -1 é para ele não copiar o ponto final do to_go que é o ponto inicial do caminho de voltar
     }
     // insert last point
-    // to_get_back->points[to_get_back->num_pontos - 1] = inicial_point_to_go;
     caminho_path_matrix[dest_pos][init_pos].points[num_pontos_to_go - 1] = inicial_point_to_go;
 
 }
 
-/**
- * [Copy_Caminho description]
- * @param  path       [description]
- * @param  num_pontos [description]
- * @return            [description]
- */
-void Copy_Caminho(point * path, caminho * best)
-{
-    int num_pontos = best->num_pontos;
-    point * new = best->points;
-    for(int i = 0; i < num_pontos; i++)
-    {
-        new[i] = path[i];
-    }
-
-}
-
-/**
- * [Aux_Set_Point description]
- * @param turist [description]
- * @param i      [description]
- * @param x      [description]
- * @param y      [description]
- */
-void Aux_Set_Point(Problema * turist, int i, int x, int y)
-{
-    SetPoint(&(turist->passeio.points[i]), x, y);
-}
 
 /**
  * [Allocs memory for the Problema struct]
@@ -613,30 +612,7 @@ Problema * Alloc_Problema(int sizey, int sizex, char game_mode, int points_num)
 
 
 /**
- * [Aux_Set_Matrix_Element description]
- * @param turist [description]
- * @param cost   [description]
- * @param yy     [description]
- * @param xx     [description]
- */
-void Aux_Set_Matrix_Element(Problema * turist, short cost, int yy, int xx)
-{
-	SetMatrixElement(turist->tabu, cost, yy, xx);
-}
-
-/**
- * Function that gets the mode of a certain problem
- * @param  turist [Main struct Problema]
- * @return        [Game mode]
- */
-char GetModoJogo(Problema * turist)
-{
-	return (turist->modo_jogo);
-}
-
-
-/**
- * Free all memory from one struct
+ * Free all memory from the main
  * @param turista [struct to be freed]
  */
 void FreeAll(Problema * turista)

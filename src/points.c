@@ -1,56 +1,19 @@
 
+/******************************************************************************
+ *
+ * File Name: points.c
+
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     points.c - Functions related to points like set one point, check if it is the same point, ...
+ *
+*/
 
 #include "defs.h"
-
-// struct point_t
-// {
-//     int x;
-//     int y;
-// };
-
 #include "util.h"
 #include "points.h"
-
-
-/**
- * Access the x coordinate of one point
- * @param  ponto [point to see the x coordinte]
- * @return       [x coordinate from point]
- */
-int get_X_From_Point(point ponto)
-{
-    return ponto.x;
-}
-
-
-/**
- * Access the y coordinate of one point
- * @param  ponto [point to see the y coordinate]
- * @return       [y coordinate from point]
- */
-int get_Y_From_Point(point ponto)
-{
-    return ponto.y;
-}
-
-/**
- * [getSizeOfPoint description]
- * @return [description]
- */
-size_t getSizeOfPoint()
-{
-    return sizeof(point );
-}
-
-/**
- * [getSizeOfPointAst description]
- * @return [description]
- */
-size_t getSizeOfPointAst()
-{
-    return sizeof(point *);
-}
-
 
 /**
  * Given 2 points checks if are the same point
@@ -58,7 +21,7 @@ size_t getSizeOfPointAst()
  * @param  ponto2 [point 2]
  * @return        [true in case of being the same point]
  */
-bool SamePoint(point ponto1,  point ponto2)
+bool SamePoint(point ponto1, point ponto2)
 {
     if( ponto1.x == ponto2.x && ponto1.y == ponto2.y)
         return true;
@@ -68,11 +31,11 @@ bool SamePoint(point ponto1,  point ponto2)
 
 /**
  * Given 2 points cheks if it is a horse jump
- * @param  ponto1 [description]
- * @param  ponto2 [description]
- * @return        [description]
+ * @param  ponto1 [point 1]
+ * @param  ponto2 [point 2]
+ * @return        [true if it is a horse jump]
  */
-bool CheckHorseJump(point ponto1,  point ponto2)
+bool CheckHorseJump(point ponto1, point ponto2)
 {
     if (SamePoint(ponto1, ponto2))
         return false;
@@ -96,11 +59,10 @@ bool CheckHorseJump(point ponto1,  point ponto2)
 }
 
 /**
- * [SetPoint description]
- * @param  ponto [description]
- * @param  x     [description]
- * @param  y     [description]
- * @return       [description]
+ * [Given one point * it sets the x and y values of that point]
+ * @param  ponto [addres of point]
+ * @param  x     [x value]
+ * @param  y     [y value]
  */
 void SetPoint(point * ponto, int x, int y)
 {

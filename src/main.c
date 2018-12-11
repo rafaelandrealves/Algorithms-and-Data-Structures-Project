@@ -1,4 +1,15 @@
 
+/******************************************************************************
+ *
+ * File Name: main.c
+
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     main.c - Main and the function to read the file
+ *
+*/
 
 
 #include "defs.h"
@@ -7,13 +18,10 @@
 
 #define PrintStructs 0
 
-
-
-
 /**
  * Reads and saves the information of one problem in the input file
  * @param  fp          [file pointer to the reading file]
- * @param  end_of_file [variable that checks if reached the end of file]
+ * @param  validity [checks the validity of the problem]
  * @return             [returns the main struct of the program with the new data (or empty in case of EOF)]
  */
 Problema * Read_File(FILE * fp, bool * validity)
@@ -81,7 +89,12 @@ Problema * Read_File(FILE * fp, bool * validity)
 }
 
 
-
+/**
+ * [main function]
+ * @param  argc [number of arguments when the program is executed]
+ * @param  argv [vector with the arguments]
+ * @return      [0]
+ */
 int main (int argc, char ** argv)
 {
     FILE * fp_in = checkArguments(argc, argv);

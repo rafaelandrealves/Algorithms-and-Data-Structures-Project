@@ -1,4 +1,16 @@
 
+/******************************************************************************
+ *
+ * File Name: defs.h
+
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     defs.h - Some usefull definitions
+ *
+*/
+
 
 
 #ifndef _DEFS_H

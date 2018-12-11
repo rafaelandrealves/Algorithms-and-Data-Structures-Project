@@ -20,9 +20,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-
-
-void * Checked_Malloc(size_t size);
+Item Checked_Malloc(size_t size);
 
 FILE * Open_File(char * file_name, char * mode);
 
@@ -33,7 +31,5 @@ FILE * OutPutFileName(char * nome_inicial);
 unsigned long int fact(int n);
 
 void printMatrix(Item * matrix, int sizey, int sizex);
-
-
 
 #endif

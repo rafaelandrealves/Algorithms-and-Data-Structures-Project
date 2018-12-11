@@ -1,12 +1,12 @@
 /******************************************************************************
  *
- * File Name: leitura_fich.h
+ * File Name: tabuleiro.h
 
  * Author:    Rafael Cordeiro & Rodrigo Figueiredo
  * Revision:  27 Oct 2018
  *
  * NAME
- *     leitura_fich.h - Implementation of reading file functions
+ *     tabuleiro.h - Headers of functions in tabuleiros.c
  *
 */
 
@@ -24,8 +24,6 @@
 
 typedef struct tabuleiro_t tabuleiro;
 
-
-// função para ler o ficheiro e colocar a informação na estrutura WAY
 
 int getXSize(tabuleiro * table);
 
@@ -48,6 +46,5 @@ short GetPointCostFromCoord(tabuleiro * table, int yy, int xx);
 tabuleiro * Set_Lenght_Width(tabuleiro * table, int sizey, int sizex);
 
 void SetMatrixElement(tabuleiro * table, int cost, int yy, int xx);
-
 
 #endif

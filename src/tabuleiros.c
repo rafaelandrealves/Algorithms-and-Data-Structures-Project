@@ -1,16 +1,15 @@
 
 /******************************************************************************
  *
- * File Name: leitura_fich.c
+ * File Name: tabuleiro.c
 
  * Author:    Rafael Cordeiro & Rodrigo Figueiredo
  * Revision:  27 Oct 2018
  *
  * NAME
- *     util.c - Implementation of reading file functions
+ *     tabuleiro.c - Implementation of functions to manage the matrix of the problem
  *
 */
-
 
 
 #include "defs.h"
@@ -69,8 +68,8 @@ char * getMatrixLinePointer(tabuleiro * table, int i)
 }
 
 /**
- * [getSizeOfTabuleiro description]
- * @return [description]
+ * Function that returns the sizeof(tabuleiro) to alloc memory out of this file
+ * @return [size of tabuleiro struct]
  */
 size_t getSizeOfTabuleiro()
 {
@@ -87,6 +86,7 @@ bool check_Point_Inside_Table(tabuleiro * table, point ponto)
     int x = ponto.x;
     int y = ponto.y;
 
+    // check if the point has the requirements
     if((x < table->size_x) && (x >= 0) && (y < table->size_y) && (y >= 0))
         return true;
 
@@ -105,6 +105,7 @@ bool check_Point_Acessibility(tabuleiro * table, point ponto)
     int x = ponto.x;
     int y = ponto.y;
 
+    // if point in inside the matrix and its cost is != 0
     if((x < table->size_x) && (x >= 0) && (y < table->size_y) && (y >= 0) && (GetPointCostFromCoord(table, y, x) != 0))
         return true;
 

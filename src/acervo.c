@@ -1,5 +1,15 @@
 
+/******************************************************************************
+ *
+ * File Name: acervo.c
 
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     acervo.c - Implementation of functions realted to the heap like insert points in the heap, remove, fixup, fixdown, ...
+ *
+*/
 
 
 #include "defs.h"
@@ -17,9 +27,28 @@ struct acervoStruct
 
 #include "acervo.h"
 
+/**
+ * [Macro to compare 2 values]
+ * @param  A [value A]
+ * @param  B [value B]
+ * @return   [if(A>B) returns 1; else returns 0]
+ */
 #define lessPri(A, B) (A > B)
-#define exch(A, B) {point t = A; A = B; B = t; }
+
+/**
+ * [exchange 2 points]
+ * @param  A [point A]
+ * @param  B [point B]
+ */
+#define exch_pts(A, B) {point t = A; A = B; B = t; }
+
+/**
+ * [swap two integers]
+ * @param  A [integer A]
+ * @param  B [integer B]
+ */
 #define swap_int(A, B){int t = A; A = B; B = t; }
+
 
 /**
  * [gets the position of one given point in the heap]
@@ -122,9 +151,11 @@ void FixUp(DijkMatrix matrix, Acervo * acervo, int Idx)
         point child_point = getIPointFromHeap(acervo, Idx);
         point dad_point = getIPointFromHeap(acervo, (Idx - 1)/2);
 
+        // exchange the position of the points in the heap
         swap_int(acervo->idx_matrix[dad_point.y][dad_point.x], acervo->idx_matrix[child_point.y][child_point.x]);
 
-        exch(acervo->heap[Idx], acervo->heap[(Idx - 1)/2]);
+        // exchange the 2 points in the heap
+        exch_pts(acervo->heap[Idx], acervo->heap[(Idx - 1)/2]);
 
         Idx = (Idx - 1)/2;
     }
@@ -151,7 +182,7 @@ void FixDown(DijkMatrix matrix, Acervo * acervo, int Idx, int N)
 
         point dad_point = getIPointFromHeap(acervo, Idx);
         point child_point = getIPointFromHeap(acervo, Child);
-        exch(acervo->heap[Idx], acervo->heap[Child]);
+        exch_pts(acervo->heap[Idx], acervo->heap[Child]);
 
         swap_int(acervo->idx_matrix[dad_point.y][dad_point.x], acervo->idx_matrix[child_point.y][child_point.x]);
 
@@ -171,10 +202,12 @@ point HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * acervo)
     point to_remove = getIPointFromHeap(acervo, 0);
     point to_exch = getIPointFromHeap(acervo, acervo->free - 1);
 
+    // reset the positions on those points in the heap
     acervo->idx_matrix[to_exch.y][to_exch.x] = 0;
     acervo->idx_matrix[to_remove.y][to_remove.x] = -2;
 
-    exch(acervo->heap[0], acervo->heap[acervo->free - 1]);
+    // exchange the 2 points
+    exch_pts(acervo->heap[0], acervo->heap[acervo->free - 1]);
 
     FixDown(matrix, acervo, 0, acervo->free - 1);
 

@@ -1,6 +1,20 @@
 
+/******************************************************************************
+ *
+ * File Name: acervo.h
+
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     acervo.h - Headers of acervo.c
+ *
+*/
+
+
 #ifndef _ACERVO_H
 #define _ACERVO_H
+
 
 #include "defs.h"
 
@@ -10,22 +24,22 @@ typedef struct acervoStruct Acervo;
 
 int get_Idx_matrix(Acervo * heap, point virgula);
 
-int getFree(Acervo * new);
+int getFree(Acervo * heap);
 
-point getIPointFromHeap(Acervo * new, int i);
+point getIPointFromHeap(Acervo * heap, int i);
 
-void FreeAcervo(Acervo * old, int ysize);
+void FreeAcervo(Acervo * heap, int ysize);
 
 Acervo * InitAcervo(int sizey, int sizex);
 
-void FixDown(DijkMatrix matrix, Acervo * aux, int Idx, int N);
+void HeapInsertPoint(DijkMatrix matrix, Acervo * acervo, point I);
 
-void HeapInsertPoint(DijkMatrix matrix, Acervo * new, point I);
+void FixUp(DijkMatrix matrix, Acervo * acervo, int Idx);
 
-void FixUp(DijkMatrix matrix, Acervo * aux, int Idx);
+void FixDown(DijkMatrix matrix, Acervo * acervo, int Idx, int N);
 
-point HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * aux);
+point HeapDeleteMaxPoint(DijkMatrix matrix, Acervo * acervo);
 
-int  EmptyHeap(Acervo * aux);
+int EmptyHeap(Acervo * acervo);
 
 #endif

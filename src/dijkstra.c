@@ -1,3 +1,17 @@
+
+/******************************************************************************
+ *
+ * File Name: dijkstra.c
+
+ * Author:    Rafael Cordeiro & Rodrigo Figueiredo
+ * Revision:  11 Dez 2018
+ *
+ * NAME
+ *     dijkstra.c - Functions related to the dijkstra algorith
+ *
+*/
+
+
 #include "defs.h"
 #include "points.h"
 #include "util.h"
@@ -20,9 +34,9 @@ struct Dijk_struct
  * @param  ponto [point struct to consider]
  * @return       [acumulated cost of point given]
  */
-int get_Acum_Cost(DijkMatrix aux, point ponto)
+int get_Acum_Cost(DijkMatrix matrix, point ponto)
 {
-    return aux[ponto.y][ponto.x].acum_cost;
+    return matrix[ponto.y][ponto.x].acum_cost;
 }
 
 
@@ -32,10 +46,10 @@ int get_Acum_Cost(DijkMatrix aux, point ponto)
  * @param  ponto [point struct to consider]
  * @return       [father point]
  */
-point get_Father(DijkMatrix aux, point ponto)
+point get_Father(DijkMatrix matrix, point ponto)
 {
 
-    return aux[ponto.y][ponto.x].pai;
+    return matrix[ponto.y][ponto.x].pai;
 }
 
 
@@ -56,18 +70,6 @@ DijkMatrix AllocDijk(int ysize, int xsize)
     return new;
 }
 
-/**
- * [GetDupPoint description]
- * @param  ponto [description]
- * @return       [description]
- */
-point * GetDupPoint(point * ponto)
-{
-    point * aux = (point *) Checked_Malloc(sizeof(point *));
-    aux->x = ponto->x;
-    aux->y = ponto->y;
-    return aux;
-}
 
 /**
  * Free of Matrix with acumulated cost and father bond of each point
@@ -166,11 +168,13 @@ void get_Move_Vector_A(DijkMatrix matrix, point end, point ORIGIN, Problema * tu
     int num = 0;
     point min = end;
 
+    // to get the number of points in the path
     for(num = 0; !SamePoint(min, ORIGIN); num++)
     {
         min = get_Father(matrix, min);
     }
 
+    // alloc a vector with the size of number of points that the path need
     point * vect = (point *) Checked_Malloc(num * sizeof(point));
 
     min = end;
@@ -188,47 +192,46 @@ void get_Move_Vector_A(DijkMatrix matrix, point end, point ORIGIN, Problema * tu
     free(vect);
 }
 
+
 /**
- * [Funtion that prints the diferent points of the course to the destination on the exit file]
+ * [Sets the vect point vector with the points of the path]
  * @param matrix [matrix with the acumulated cost and father bond of each point]
  * @param end    [Destiny point]
  * @param ORIGIN [Origin point]
- * @param turist [Struct with the matrix given by the initial file]
- * @param fp_out [File to insert the output]
+ * @param num_pontos  [number of points]
+ * @param vect   [point vector to insert the path]
  */
-void get_Move_Vector_B(DijkMatrix matrix, point end, point ORIGIN, int *index, point * vect)
+void get_Move_Vector_B(DijkMatrix matrix, point end, point ORIGIN, int *num_pontos, point * vect)
 {
     int num = 0;
     point min = end;
 
+    // to get the number of points to tha path
     for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
 
     min = end;
     // printf("O num + index =%d\n",num + *index);
     for(int i = 0; i < num; i++)
     {
-        vect[(num + *index) - i - 1] = min;
+        vect[(num + *num_pontos) - i - 1] = min;
         min = get_Father(matrix, min);
     }
 
-    *index = num + *index;
+    *num_pontos = num + *num_pontos;
 }
 
 /**
  * [OutPUT_B description]
- * @param matrix      [description]
- * @param end         [description]
- * @param ORIGIN      [description]
- * @param turist      [description]
- * @param fp_out      [description]
- * @param num         [description]
- * @param atual [description]
+ * @param turist     [Problem read from file]
+ * @param fp_out     [file pointer to the output file]
+ * @param num_pontos [number of points in the vector]
+ * @param atual      [path with the points]
  */
-void OutPUT_B(DijkMatrix matrix, point end, point ORIGIN, Problema * turist, FILE * fp_out, int num, caminho * atual)
+void OutPUT_B(Problema * turist, FILE * fp_out, int num_pontos, caminho * atual)
 {
     fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
-        getCustoTotalFromCaminho(atual), num);
-    for (int i = 0 ; i < num; i++)
+        getCustoTotalFromCaminho(atual), num_pontos);
+    for (int i = 0 ; i < num_pontos; i++)
     {
         fprintf(fp_out,"%d %d %d \n", getIpointFromCaminho(atual, i).y, getIpointFromCaminho(atual, i).x,
                     GetPointCostFromPoint(getTabuleiro(turist), getIpointFromCaminho(atual, i)));
@@ -238,11 +241,11 @@ void OutPUT_B(DijkMatrix matrix, point end, point ORIGIN, Problema * turist, FIL
 }
 
 /**
- * [DijkstraAlgoritm_A description]
- * @param turist [description]
- * @param fp_out [description]
- * @param begin  [description]
- * @param end    [description]
+ * [Given 2 points is calculates the cheapest path from 'begin' to 'end']
+ * @param turist [problem read from file]
+ * @param fp_out [file pointer to the output file]
+ * @param begin  [begin point of the path]
+ * @param end    [end point of the path]
  */
 void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point begin, point end)
 {
@@ -265,9 +268,11 @@ void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point begin, point end)
         point * ppoints = Possible_Jump_Points(getTabuleiro(turist), min, matrix);
         for(int i = 0; i < 8; i++)
         {
-            if(ppoints[i].x == -1 && ppoints[i].y == -1) // invalid point
+            // invalid point
+            if(ppoints[i].x == -1 && ppoints[i].y == -1)
                 continue;
 
+            // the point had never been in the heap
             if(get_Idx_matrix(heap_tree, ppoints[i]) == -1)
             {
 
@@ -277,22 +282,26 @@ void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point begin, point end)
                 matrix[ppoints[i].y][ppoints[i].x].pai = min;
                 HeapInsertPoint(matrix, heap_tree, aux1);
             }
+            // the point was in the heap and it was already deleted
             else if(get_Idx_matrix(heap_tree, ppoints[i]) == -2)
             {
                 continue;
             }
+            // if is finds a better jump to optimise the path
             else if( matrix[ppoints[i].y][ppoints[i].x].acum_cost >
             (matrix[min.y][min.x].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i])) )
             {
                 matrix[ppoints[i].y][ppoints[i].x].acum_cost =
                     matrix[min.y][min.x].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
 
+                // fixup from the point to keep the heap order by priority
                 FixUp(matrix, heap_tree, get_Idx_matrix(heap_tree, ppoints[i]));
             }
         }
         free(ppoints);
     }
 
+    // when the dijkstra finished means that there is no possible path or the next point to remove from heap is the destiny point
     if(EmptyHeap(heap_tree) == 0)
     {
         WriteFileWithFailure(turist, fp_out);
@@ -310,14 +319,17 @@ void DijkstraAlgoritm_A(Problema * turist,FILE * fp_out, point begin, point end)
 
 
 /**
- * [Funtion that performs the DijkstraAlgorithm in order to find the cheapest course to a Destiny Point]
- * @param turist [Struct that has the initial matrix given by the problem]
- * @param argv   [Pointer to the name of the file]
- * @param fp_out [Exit file to insert the data]
+ * [Gets the cheapest path from 'begin' to 'end' ]
+ * @param turist [problem read from file]
+ * @param fp_out [file pointer to the output file]
+ * @param begin  [begin point of the path]
+ * @param end    [end point of the path]
+ * @param num_pontos [number of points]
+ * @param ponto_atual [number of the actual points to see when the dijkstra is ready]
+ * @param atual       [actual move]
  */
-void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end, int *index, int *ponto_atual, caminho * atual)
+void DijkstraAlgoritm_B(Problema * turist, FILE * fp_out, point begin, point end, int *num_pontos, int *ponto_atual, caminho * atual)
 {
-    int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo(getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
     bool validity_origin = false,validity_destiny=false ;
@@ -329,6 +341,7 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
 
     matrix[ORIGIN_POINT.y][ORIGIN_POINT.x].acum_cost = 0;
 
+    // verifies if either the originpoint or the destination point have a possible jump
     point * to_verify_origin = Possible_Jump_Points(getTabuleiro(turist), ORIGIN_POINT, matrix);
     point * to_verify_destiny = Possible_Jump_Points(getTabuleiro(turist), DESTINY_POINT, matrix);
     for(int i = 0; i < 8; i = i + 1)
@@ -361,12 +374,12 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
             // the point had never been in the heap
             if(get_Idx_matrix(heap_tree, ppoints[i]) == -1)
             {
-
                 point aux1 = ppoints[i];
 
                 matrix[ppoints[i].y][ppoints[i].x].acum_cost = matrix[min.y][min.x].acum_cost +
                     GetPointCostFromPoint(getTabuleiro(turist), ppoints[i]);
                 matrix[ppoints[i].y][ppoints[i].x].pai = min;
+                // insert the point in the heap
                 HeapInsertPoint(matrix, heap_tree, aux1);
             }
             // the point was in the heap and it was already deleted from it
@@ -396,11 +409,12 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
     {
         min = HeapDeleteMaxPoint(matrix, heap_tree);
         atual = Set_Custo_Total(atual, getCustoTotalFromCaminho(atual) + get_Acum_Cost(matrix, min));
-        get_Move_Vector_B(matrix, min, ORIGIN_POINT, index, get_point_vector(atual));
+        get_Move_Vector_B(matrix, min, ORIGIN_POINT, num_pontos, get_point_vector(atual));
         *ponto_atual = *ponto_atual + 1;
-        if(*ponto_atual == num_pontos - 1)
+        // when there are no more points to see is writes the file
+        if(*ponto_atual == getNumPontos(turist) - 1)
         {
-            OutPUT_B(matrix, min, ORIGIN_POINT, turist, fp_out, *index, atual);
+            OutPUT_B(turist, fp_out, *num_pontos, atual);
         }
     }
 
@@ -409,18 +423,19 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
 }
 
 /**
- * [get_Move_Vector_C description]
- * @param  matrix       [description]
- * @param  end          [description]
- * @param  ORIGIN       [description]
- * @param  for_one_step [description]
- * @return              [description]
+ * [get the path points for one step_ path]
+ * @param  matrix       [DIjkstra Matrix]
+ * @param  end          [destination point]
+ * @param  ORIGIN       [origin point]
+ * @param  for_one_step [point vector for one path]
+ * @return              [number of points]
  */
  int get_Move_Vector_C(DijkMatrix matrix, point end, point ORIGIN, point * for_one_step)
 {
     int num = 0;
     point min = end;
 
+    // to calculate the number of points
     for(num = 0; !SamePoint(min, ORIGIN); num++, min = get_Father(matrix, min));
 
     min = end;
@@ -437,9 +452,17 @@ void DijkstraAlgoritm_B(Problema * turist,FILE * fp_out, point begin, point end,
 }
 
 
+/**
+ * [Calculates the cheapest move from 'begin' to 'end']
+ * @param turist        [problem read from the file]
+ * @param begin         [inicial point]
+ * @param end           [end point]
+ * @param momentum      [move for one step]
+ * @param number_points [number of points in that move]
+ * @param No_Path       [variable to set == true if there is no path]
+ */
 void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *momentum, int *number_points, bool * No_Path)
 {
-    // int num_pontos = getNumPontos(turist);
     DijkMatrix matrix = Problema2Dijk(turist);
     Acervo * heap_tree = InitAcervo(getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)));
     bool validity_origin = false, validity_destiny = false;
@@ -449,6 +472,7 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *mome
 
     point min = ORIGIN_POINT;
 
+    // verifies if either the originpoint or the destination point have a possible jump
     point * to_verify_origin = Possible_Jump_Points(getTabuleiro(turist), ORIGIN_POINT, matrix);
     point * to_verify_destiny = Possible_Jump_Points(getTabuleiro(turist), DESTINY_POINT, matrix);
     for(int i = 0; i < 8; i = i + 1)
@@ -483,6 +507,7 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *mome
                 continue;
             }
 
+            // the point had never been in the heap so it will be inserted
             if(get_Idx_matrix(heap_tree, ppoints[i]) == -1)
             {
 
@@ -493,10 +518,12 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *mome
                 matrix[ppoints[i].y][ppoints[i].x].pai = min;
                 HeapInsertPoint(matrix, heap_tree, aux1);
             }
+            // the point was in the heap but was already deleted
             else if(get_Idx_matrix(heap_tree, ppoints[i]) == -2)
             {
                 continue;
             }
+            // the point is in the heap and was found one cheapest path so the cost will be replaced
             else if( matrix[ppoints[i].y][ppoints[i].x].acum_cost >
             (matrix[min.y][min.x].acum_cost + GetPointCostFromPoint(getTabuleiro(turist), ppoints[i])) )
             {
@@ -509,6 +536,7 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *mome
         free(ppoints);
     }
 
+    // there is no possible move or either the origin point or destiny point have no jump possibilities
     if(EmptyHeap(heap_tree) == 0 || !(validity_origin && validity_destiny))
     {
         *No_Path = true;
@@ -517,11 +545,6 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *mome
     {
         min = HeapDeleteMaxPoint(matrix, heap_tree);
         momentum = Set_Custo_Total(momentum, get_Acum_Cost(matrix, min));
-        //atual = Set_Custo_Total(atual, getCustoTotalFromCaminho(atual) + get_Acum_Cost(matrix, min));
-        //*custo_total_acumulado = *custo_total_acumulado + get_Acum_Cost(matrix,min);
-        //get_Move_Vector_B(matrix, min, ORIGIN_POINT, num_pts_1combin, get_point_vector(atual));
-
-        //get_Move_Vector_C(matrix, min, ORIGIN_POINT,&sign, get_point_vector(momentum));
         *number_points = get_Move_Vector_C(matrix, min, ORIGIN_POINT, get_point_vector(momentum));
         //printf("num_pts_1combin-%d --- custo--%d-- ponto_atual %d--pontos %d\n",*num_pts_1combin,*custo_total_acumulado,*ponto_atual,num_pontos);
     }
@@ -533,13 +556,10 @@ void DijkstraAlgoritm_C(Problema * turist, point begin, point end, caminho *mome
 
 
 /**
- * [OutPUT_C description]
- * @param end         [description]
- * @param ORIGIN      [description]
- * @param turist      [description]
- * @param fp_out      [description]
- * @param num         [description]
- * @param atual [description]
+ * [printf the soluction file to variant C problem]
+ * @param turist [problem read from file]
+ * @param fp_out [file pointer to the output file]
+ * @param best   [vector of move pointers]
  */
 void OutPUT_C(Problema * turist, FILE * fp_out, caminho ** best)
 {
@@ -551,14 +571,12 @@ void OutPUT_C(Problema * turist, FILE * fp_out, caminho ** best)
         numero_de_pontos += getNumPontosFromCaminho(best[i]);
     }
 
-
-
     fprintf(fp_out, "%d %d %c %d %d %d\n", getYSize(getTabuleiro(turist)), getXSize(getTabuleiro(turist)), GetModoJogo(turist), getNumPontos(turist),
         custo_total, numero_de_pontos);
     //printf("olaaa\n");
+
     for (int i = 0 ; i < getNumPontos(turist) - 1; i++)
     {
-
         for(int j = 0; j < getNumPontosFromCaminho(best[i]); j++)
         {
             fprintf(fp_out,"%d %d %d\n", getIpointFromCaminho(best[i], j).y, getIpointFromCaminho(best[i], j).x,
